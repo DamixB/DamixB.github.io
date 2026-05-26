@@ -1,10 +1,10 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Regulamin | damixb.pl",
+  title: "Regulamin | damixb.github.io",
   description:
-    "Regulamin korzystania z serwisu damixb.pl — warunki, prawa autorskie i odpowiedzialność.",
+    "Regulamin korzystania z serwisu damixb.github.io — warunki, prawa autorskie i odpowiedzialność.",
 };
 
 export default function RegulaminPage() {
@@ -57,7 +57,7 @@ export default function RegulaminPage() {
                 Niniejszy Regulamin określa zasady korzystania z serwisu
                 internetowego dostępnego pod adresem{" "}
                 <strong style={{ color: "var(--text-primary)" }}>
-                  damixb.pl
+                  damixb.github.io
                 </strong>{" "}
                 (dalej: &bdquo;Serwis&rdquo;).
               </li>
@@ -87,7 +87,7 @@ export default function RegulaminPage() {
             <ol className="list-decimal space-y-2 pl-6">
               <li>
                 <strong style={{ color: "var(--text-primary)" }}>Serwis</strong>{" "}
-                — strona internetowa damixb.pl wraz ze wszystkimi podstronami.
+                — strona internetowa damixb.github.io wraz ze wszystkimi podstronami.
               </li>
               <li>
                 <strong style={{ color: "var(--text-primary)" }}>
@@ -256,11 +256,11 @@ export default function RegulaminPage() {
                 W razie pytań dotyczących Regulaminu prosimy o kontakt pod
                 adresem:{" "}
                 <a
-                  href="mailto:kontakt@damixb.pl"
+                  href="mailto:kontakt@damixb.github.io"
                   className="underline underline-offset-2"
                   style={{ color: "var(--neon-cyan)" }}
                 >
-                  kontakt@damixb.pl
+                  kontakt@damixb.github.io
                 </a>
                 .
               </li>
@@ -277,7 +277,7 @@ export default function RegulaminPage() {
           }}
         />
         <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-          © {new Date().getFullYear()} damixb.pl — Wszelkie prawa zastrzeżone.
+          © {new Date().getFullYear()} damixb.github.io — Wszelkie prawa zastrzeżone.
         </p>
       </article>
     </main>

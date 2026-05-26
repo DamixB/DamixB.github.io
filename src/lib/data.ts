@@ -73,11 +73,19 @@ export const skills = [
 
 export const projects = [
   {
+    id: "scadia",
+    title: "Scadia",
+    description: "Twój Asystent AI OpenSCAD i Bambu Lab. Narzędzie AI do generowania i wizualizacji 3D parametrycznych modeli.",
+    technologies: ["HTML", "Three.js", "AI API"],
+    link: "/scadia.html",
+    category: "Narzędzie AI",
+  },
+  {
     id: "nailflow",
     title: "NailFlow",
     description: "Aplikacja i strona główna systemu do zarządzania salonami kosmetycznymi.",
     technologies: ["HTML", "CSS", "JS"],
-    link: "/nailflow",
+    link: "/nailflow/index.html",
     category: "Aplikacja webowa",
   },
   {
@@ -93,7 +101,7 @@ export const projects = [
     title: "Magia Wspomnień",
     description: "Elegancka strona landing page dla usług z branży ślubnej / eventowej.",
     technologies: ["HTML", "CSS"],
-    link: "/magiawspomnien",
+    link: "/magiawspomnien/index.html",
     category: "Strona www",
   },
   {
@@ -108,7 +116,6 @@ export const projects = [
 
 export const navLinks = [
   { label: "O mnie", href: "/#about" },
-  { label: "CV", href: "/cv" },
   { label: "Projekty", href: "/#projects" },
   { label: "Kontakt", href: "/#contact" },
 ];

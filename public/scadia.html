@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scadia - Twój Asystent OpenSCAD i Bambu Lab</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Three.js i eksportery do obsługi sceny 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/STLExporter.js"></script>
+
+    <style>
+        /* Zmienne CSS - Nowoczesna paleta */
+        :root {
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-1: #3b82f6;
+            --accent-2: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.2);
+            --nav-bg: rgba(248, 250, 252, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(15, 23, 42, 0.08);
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --grid-line: rgba(15, 23, 42, 0.04);
+            --msg-user: var(--accent-1);
+            --msg-ai: #ffffff;
+            --workspace-bg: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #020617;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --accent-1: #60a5fa;
+                --accent-2: #a78bfa;
+                --accent-glow: rgba(167, 139, 250, 0.2);
+                --nav-bg: rgba(2, 6, 23, 0.85);
+                --card-bg: rgba(30, 41, 59, 0.6);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --code-bg: #0f172a;
+                --code-text: #e2e8f0;
+                --grid-line: rgba(255, 255, 255, 0.03);
+                --msg-user: var(--accent-1);
+                --msg-ai: rgba(30, 41, 59, 0.8);
+                --workspace-bg: #0b0f19;
+                --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+                --shadow-lg: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; transition: background-color 0.3s ease, color 0.3s ease; }
+        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .text-gradient { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* UI Components */
+        nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border); padding: 16px 0; transition: all 0.3s ease; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 8px; font-weight: 500; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: none; font-size: 1rem; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: #fff; box-shadow: 0 4px 15px var(--accent-glow); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3); }
+        .btn-primary:active { transform: translateY(0); }
+        @media (prefers-color-scheme: dark) { .btn-primary { color: #fff; } }
+        
+        .btn-secondary { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--card-border); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-icon { padding: 12px; background: transparent; border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { background: var(--card-border); color: var(--text-main); }
+        .btn-small { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; }
+
+        section { padding: 96px 0; }
+        .hero { min-height: calc(100vh - 70px); display: flex; align-items: center; position: relative; overflow: hidden; padding-top: 48px; }
+        .hero-grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
+        @media (min-width: 992px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
+        .hero-content h1 { font-size: 3.5rem; margin-bottom: 24px; letter-spacing: -0.02em; }
+        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 32px; max-width: 500px; }
+        .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+        
+        .cta-section { text-align: center; padding: 120px 0; position: relative; }
+        .cta-box { background: linear-gradient(135deg, var(--card-bg), var(--accent-glow)); border: 1px solid var(--accent-1); border-radius: 24px; padding: 64px 24px; max-width: 800px; margin: 0 auto; box-shadow: var(--shadow-lg); backdrop-filter: blur(10px); }
+        .cta-box h2 { font-size: 2.5rem; margin-bottom: 24px; }
+        footer { border-top: 1px solid var(--card-border); padding: 48px 0; text-align: center; color: var(--text-muted); }
+
+        /* --- Scadia Workspace Modal --- */
+        .app-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .app-modal.active { opacity: 1; pointer-events: auto; }
+
+        .app-modal-content {
+            background: var(--bg-color); width: 98%; max-width: 1600px; height: 95vh;
+            border-radius: 16px; border: 1px solid var(--card-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+            transform: translateY(20px) scale(0.98); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
+        }
+        .app-modal.active .app-modal-content { transform: translateY(0) scale(1); }
+
+        .modal-header {
+            padding: 12px 24px; background: var(--nav-bg); border-bottom: 1px solid var(--card-border);
+            display: flex; justify-content: space-between; align-items: center; height: 60px;
+        }
+
+        .modal-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .modal-status { font-size: 0.8rem; color: #10b981; display: flex; align-items: center; gap: 6px; font-weight: 500; }
+        .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .close-modal { background: transparent; border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .close-modal:hover { background: var(--card-border); color: var(--text-main); }
+
+        /* Workspace Layout */
+        .workspace-body { display: flex; flex-grow: 1; overflow: hidden; }
+
+        /* Left: Chat */
+        .workspace-left {
+            width: 35%; min-width: 380px; max-width: 500px;
+            display: flex; flex-direction: column; border-right: 1px solid var(--card-border);
+            background: var(--bg-color); position: relative; z-index: 10;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+        }
+
+        .modal-chat-area { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
+        
+        .message { display: flex; gap: 16px; max-width: 90%; animation: msgFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes msgFadeIn { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        
+        .avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.9rem; }
+        .message.ai .avatar { background: var(--accent-2); }
+        .message.user .avatar { background: var(--text-muted); }
+
+        .bubble { background: var(--msg-ai); padding: 14px 20px; border-radius: 16px; border-top-left-radius: 4px; font-size: 0.95rem; border: 1px solid var(--card-border); line-height: 1.6; word-wrap: break-word; overflow-x: hidden; box-shadow: var(--shadow-sm); }
+        .message.user .bubble { background: var(--msg-user); color: #fff; border-radius: 16px; border-top-right-radius: 4px; border: none; }
+        .bubble img { max-width: 100%; border-radius: 8px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.2); }
+
+        .chat-code-snippet {
+            margin-top: 12px; background: rgba(0,0,0,0.03); border: 1px solid var(--card-border);
+            padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; font-family: monospace;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .modal-input-container { padding: 20px; background: var(--nav-bg); border-top: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 12px; backdrop-filter: blur(10px); }
+        .image-preview-area { display: flex; gap: 8px; flex-wrap: wrap; }
+        .img-preview-chip { position: relative; width: 60px; height: 60px; border-radius: 8px; border: 1px solid var(--card-border); overflow: hidden; background: var(--card-bg); }
+        .img-preview-chip img { width: 100%; height: 100%; object-fit: cover; }
+        .img-preview-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: white; border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .img-preview-remove:hover { background: #ef4444; }
+        
+        .modal-input-row { display: flex; gap: 10px; align-items: flex-end; }
+        .modal-input-row textarea { flex-grow: 1; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-main); font-size: 0.95rem; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; resize: none; min-height: 50px; max-height: 150px; overflow-y: auto; }
+        .modal-input-row textarea:focus { border-color: var(--accent-1); box-shadow: 0 0 0 3px var(--accent-glow); }
+        #file-upload { display: none; }
+        
+        .typing-indicator { display: none; gap: 4px; padding: 14px 18px; background: var(--card-bg); border-radius: 16px; border-top-left-radius: 4px; width: fit-content; border: 1px solid var(--card-border); align-self: flex-start; margin-left: 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+        .typing-indicator.active { display: flex; }
+        .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Right: Editor & 3D */
+        .workspace-right { flex-grow: 1; display: flex; flex-direction: column; background: var(--workspace-bg); position: relative; }
+        
+        .workspace-tabs { display: flex; background: var(--nav-bg); border-bottom: 1px solid var(--card-border); padding: 0 24px; gap: 24px; height: 50px; align-items: flex-end; }
+        .tab-btn { padding: 12px 0; background: transparent; border: none; font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; font-size: 0.95rem; transition: color 0.2s; }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { color: var(--accent-1); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-1); border-radius: 2px 2px 0 0; }
+
+        .tab-content { flex-grow: 1; display: none; flex-direction: column; position: relative; }
+        .tab-content.active { display: flex; }
+
+        /* Code Editor */
+        .editor-container { flex-grow: 1; background: var(--code-bg); padding: 24px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--code-text); line-height: 1.5; }
+        .editor-container pre { margin: 0; white-space: pre-wrap; }
+        
+        .editor-toolbar { height: 56px; background: rgba(0,0,0,0.15); border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 10px; }
+        .toolbar-title { color: var(--text-muted); font-size: 0.85rem; margin-right: auto; font-family: monospace; }
+
+        /* 3D View */
+        #render-container { flex-grow: 1; background: #18181b; position: relative; overflow: hidden; }
+        .view-overlay { position: absolute; top: 16px; left: 16px; pointer-events: none; color: rgba(255,255,255,0.6); font-family: monospace; font-size: 0.85rem; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                Scadia
+            </div>
+            <button class="btn btn-primary open-app-trigger" style="padding: 8px 16px; font-size: 0.9rem;">Otwórz Asystenta</button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1>Od pomysłu do wydruku 3D <span class="text-gradient">w minuty</span></h1>
+                    <p>Twój asystent AI dla OpenSCAD i inżynier druku dla Bambu Lab. Skup się na funkcji, kod napiszę za Ciebie.</p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary open-app-trigger">Zacznij modelowanie</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-section container">
+            <div class="cta-box">
+                <h2>Gotowy na pierwszy wydruk bez siedzenia w CADzie?</h2>
+                <button class="btn btn-primary open-app-trigger" style="font-size: 1.125rem; padding: 16px 32px; margin-top: 16px;">Uruchom Scadia Workspace</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal IDE Scadia -->
+    <div id="app-modal" class="app-modal">
+        <div class="app-modal-content">
+            
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                    Scadia Workspace
+                </div>
+                <div class="modal-status">
+                    <div class="status-dot"></div> Gotowy (Silnik: Gemini 2.5 Flash + WebGL)
+                </div>
+                <button id="close-modal-btn" class="close-modal">&times;</button>
+            </div>
+
+            <div class="workspace-body">
+                
+                <!-- Lewa: Czat (Vibecoding) -->
+                <div class="workspace-left">
+                    <div class="modal-chat-area" id="chat-container">
+                        <div class="message ai">
+                            <div class="avatar">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12V2a10 10 0 0 1 10 10H12z"/></svg>
+                            </div>
+                            <div class="bubble">
+                                Cześć! Zbudowałem to środowisko tak, żeby oszczędzić Ci czasu. Ty dajesz wizję – ja zajmuję się kodem i weryfikuję geometrię pod kątem FDM.<br><br>
+                                Co robimy? Wrzuć zdjęcie lub opisz projekt. Jak wygeneruję kod, użyj przycisku <strong>Kompiluj</strong> po prawej stronie, aby od razu zobaczyć bryłę na stole roboczym.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                    </div>
+
+                    <div class="modal-input-container">
+                        <div class="image-preview-area" id="image-preview-area"></div>
+                        <div class="modal-input-row">
+                            <input type="file" id="file-upload" accept="image/png, image/jpeg, image/webp">
+                            <button class="btn-icon" id="attach-btn" title="Załącz zdjęcie">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            </button>
+                            <textarea id="chat-input" placeholder="Wpisz polecenie (np. 'Prosty uchwyt na słuchawki, grubość 5mm')..." rows="1"></textarea>
+                            <button class="btn btn-primary btn-small" id="send-btn" style="padding: 12px 20px;">Wyślij</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prawa: IDE & Renderer -->
+                <div class="workspace-right">
+                    <div class="workspace-tabs">
+                        <button class="tab-btn active" data-target="tab-code">Kod OpenSCAD</button>
+                        <button class="tab-btn" data-target="tab-3d">Podgląd 3D (Render)</button>
+                    </div>
+
+                    <!-- Tab: Kod -->
+                    <div class="tab-content active" id="tab-code">
+                        <div class="editor-container" id="code-editor">
+                            <pre><span style="color:#5c6370; font-style:italic;">// Przestrzeń robocza OpenSCAD
+// Czekam na wygenerowanie pierwszego modelu...</span></pre>
+                        </div>
+                        <div class="editor-toolbar">
+                            <span class="toolbar-title">model.scad</span>
+                            <button class="btn btn-secondary btn-small" id="download-scad-btn" disabled>Pobierz .scad</button>
+                            <button class="btn btn-secondary btn-small" id="download-stl-btn" disabled title="Eksport siatki modelu z przeglądarki">Pobierz .stl</button>
+                            <button class="btn btn-secondary btn-small" id="download-stp-btn" disabled title="Pobierz plik STEP (NURBS)">Pobierz .stp</button>
+                            <button class="btn btn-secondary btn-small" id="copy-code-btn" disabled>Kopiuj kod</button>
+                            <button class="btn btn-primary btn-small" id="compile-btn" disabled>Kompiluj i Pokaż 3D</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab: 3D Render -->
+                    <div class="tab-content" id="tab-3d">
+                        <div id="render-container">
+                            <div class="view-overlay">
+                                Profil: Bambu Lab A1 (256x256x256)<br>
+                                Render: WebGL (Fast Preview)<br>
+                                <span id="render-status" style="color: #10b981;">Brak obiektu na stole. Skompiluj kod.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURACJA API GEMINI ---
+        const apiKey = ""; 
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        
+        // Unikamy dosłownych znaków backtick w tekście
+        const ticks = "\x60\x60\x60";
+
+        const systemPrompt = `Masz na imię Pixel. Jesteś inżynierem druku 3D (specjalizacja Bambu Lab) i ekspertem OpenSCAD.
+Jesteś świetnym doradcą, myślisz krytycznie. Mówisz wprost, jeśli coś nie zadziała z punktu widzenia FDM. Używasz krótkich zdań, zero korpomowy ("It's not x, it's x"). Używaj polskich cudzysłowów „”.
+
+KLUCZOWE ZADANIE:
+Kiedy generujesz model, musisz wygenerować DWA bloki kodu w jednej odpowiedzi:
+1. Blok \${ticks}openscad zawierający w pełni parametryczny kod do wydruku.
+2. Blok \${ticks}javascript zawierający kod Three.js, który wizualizuje ten sam model.
+
+Zasady bloku javascript:
+- Zwracaj TYLKO sam kod (ciało funkcji), który tworzy THREE.Group lub THREE.Mesh i kończy się instrukcją "return mesh;".
+- NIE dodawaj importów (np. import * as THREE z 'three'). Zmienna THREE jest już globalnie dostępna.
+- NIE dodawaj kamery, sceny ani świateł. Utwórz obiekt i go zwróć.
+- Używaj materiału: new THREE.MeshStandardMaterial({color: 0x3b82f6, roughness: 0.4}).
+- KOD JS MUSI BYĆ POPRAWNY. Będzie uruchomiony w przeglądarce.
+
+Przykład bloku javascript dla sześcianu:
+\${ticks}javascript
+const geo = new THREE.BoxGeometry(20, 20, 20);
+const mat = new THREE.MeshStandardMaterial({color: 0x3b82f6, roughness: 0.4, metalness: 0.1});
+const mesh = new THREE.Mesh(geo, mat);
+mesh.position.y = 10;
+return mesh;
+\${ticks}`;
+
+        let chatHistory = [];
+        let currentImage = null; 
+        let latestGeneratedScad = "";
+        let latestGeneratedJs = "";
+
+        // --- DOM Elements ---
+        const appModal = document.getElementById('app-modal');
+        const openTriggers = document.querySelectorAll('.open-app-trigger');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachBtn = document.getElementById('attach-btn');
+        const fileUpload = document.getElementById('file-upload');
+        const imagePreviewArea = document.getElementById('image-preview-area');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        const codeEditor = document.getElementById('code-editor').querySelector('pre');
+        const copyCodeBtn = document.getElementById('copy-code-btn');
+        const downloadScadBtn = document.getElementById('download-scad-btn');
+        const downloadStlBtn = document.getElementById('download-stl-btn');
+        const downloadStpBtn = document.getElementById('download-stp-btn');
+        const compileBtn = document.getElementById('compile-btn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const renderStatus = document.getElementById('render-status');
+
+        // --- LOGIKA ZAKŁADEK ---
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+                if (btn.dataset.target === 'tab-3d' && renderer) setTimeout(() => onWindowResize(), 50); 
+            });
+        });
+
+        // --- SILNIK 3D (Three.js) ---
+        let scene, camera, renderer, controls, currentModelGroup;
+
+        function init3DScene() {
+            const container = document.getElementById('render-container');
+            if (renderer) return;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x18181b);
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 2000);
+            camera.position.set(150, 150, 200);
+
+            // Stół Bambu A1 (256x256)
+            const bedGeo = new THREE.PlaneGeometry(256, 256);
+            const bedMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.8, side: THREE.DoubleSide });
+            const bed = new THREE.Mesh(bedGeo, bedMat);
+            bed.rotation.x = -Math.PI / 2;
+            scene.add(bed);
+
+            // Siatka milimetrowa na stole
+            const gridHelper = new THREE.GridHelper(256, 25, 0x52525b, 0x3f3f46);
+            gridHelper.position.y = 0.1;
+            scene.add(gridHelper);
+
+            // Światła
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(100, 200, 50);
+            scene.add(dirLight);
+            
+            const fillLight = new THREE.DirectionalLight(0xa78bfa, 0.3);
+            fillLight.position.set(-100, 50, -100);
+            scene.add(fillLight);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+            container.appendChild(renderer.domElement);
+
+            // Kontroler kamery
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.1; 
+
+            // Pusta grupa na modele
+            currentModelGroup = new THREE.Group();
+            scene.add(currentModelGroup);
+
+            animate();
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            if (!renderer) return;
+            const container = document.getElementById('render-container');
+            if (container.clientWidth === 0) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // --- OBSŁUGA WIZUALIZACJI ---
+        function renderModelFromCode(jsCode) {
+            try {
+                // Wyczyść starą scenę
+                while(currentModelGroup.children.length > 0){ 
+                    currentModelGroup.remove(currentModelGroup.children[0]); 
+                }
+
+                // Autokorekta popularnych błędów zrzucanych przez AI
+                let cleanCode = jsCode
+                    .replace(/import.*?from.*?;?/gi, '') // usuń ewentualne importy
+                    .replace(/export\s+default\s+/gi, ''); // usuń exporty
+
+                // Tworzymy wirtualną scenę na wypadek, gdyby AI użyło instrukcji scene.add() zamiast return
+                const dummyScene = new THREE.Scene();
+
+                // Kompiluj kod w locie, wstrzykując wirtualną scenę
+                const createModel = new Function('THREE', 'scene', cleanCode);
+                const returnedModel = createModel(THREE, dummyScene);
+                
+                // Przechwytujemy model: szukamy zwróconego, albo pierwszego dodanego do wirtualnej sceny
+                let model = returnedModel;
+                if (!model && dummyScene.children.length > 0) {
+                    model = dummyScene.children[0];
+                }
+
+                if (model && (model.isMesh || model.isGroup || model.isObject3D)) {
+                    // Dodaj krawędzie
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            const edges = new THREE.EdgesGeometry(child.geometry);
+                            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.3, transparent: true }));
+                            child.add(line);
+                        }
+                    });
+
+                    currentModelGroup.add(model);
+                    renderStatus.textContent = "Kompilacja udana. Render w czasie rzeczywistym.";
+                    renderStatus.style.color = "#10b981";
+
+                    // Aktywuj eksporty modeli po udanym renderze
+                    downloadStlBtn.disabled = false;
+                    downloadStpBtn.disabled = false;
+                } else {
+                    throw new Error("Skrypt nie wygenerował obiektu 3D (spróbuj wygenerować kod ponownie).");
+                }
+            } catch (error) {
+                console.error("Szczegóły błędu:", error, "\nKod JS:", jsCode);
+                renderStatus.textContent = "Błąd: " + error.message; 
+                renderStatus.style.color = "#ef4444";
+                downloadStlBtn.disabled = true;
+                downloadStpBtn.disabled = true;
+            }
+        }
+
+        // --- UI MODAL ACTIONS ---
+        openTriggers.forEach(btn => {
+            btn.addEventListener('click', () => {
+                appModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => { chatInput.focus(); init3DScene(); }, 150);
+            });
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            appModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        // --- OBSŁUGA ZDJĘĆ ---
+        attachBtn.addEventListener('click', () => fileUpload.click());
+
+        fileUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const dataUrl = event.target.result;
+                currentImage = { base64: dataUrl.split(',')[1], mimeType: file.type, dataUrl: dataUrl };
+                imagePreviewArea.innerHTML = `<div class="img-preview-chip"><img src="\${dataUrl}"><button class="img-preview-remove" onclick="removeImage()">✕</button></div>`;
+            };
+            reader.readAsDataURL(file);
+            this.value = '';
+        });
+
+        window.removeImage = function() {
+            currentImage = null;
+            imagePreviewArea.innerHTML = '';
+        };
+
+        // --- LOGIKA CZATU I LLM ---
+        async function fetchGeminiResponse(userText, imageObj) {
+            const url = \`https://generativelanguage.googleapis.com/v1beta/models/\${MODEL_NAME}:generateContent?key=\${apiKey}\`;
+            
+            let parts = [];
+            if (userText) parts.push({ text: userText });
+            if (imageObj) parts.push({ inlineData: { mimeType: imageObj.mimeType, data: imageObj.base64 } });
+            chatHistory.push({ role: "user", parts: parts });
+
+            const payload = {
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: chatHistory,
+                generationConfig: { temperature: 0.4 } 
+            };
+
+            const maxRetries = 3;
+            const delays = [1000, 2000, 4000];
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(\`API HTTP Error: \${response.status}\`);
+                    const data = await response.json();
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Brak odpowiedzi.";
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                    return aiText;
+                } catch (error) {
+                    if (i === maxRetries - 1) return \`Błąd połączenia. Próby wyczerpane.\`;
+                    await new Promise(r => setTimeout(r, delays[i]));
+                }
+            }
+        }
+
+        function appendMessage(role, text, imageUrl = null) {
+            const div = document.createElement('div');
+            div.className = \`message \${role}\`;
+            
+            let avatarHtml = role === 'user' ? \`<div class="avatar">U</div>\` : \`<div class="avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12V2a10 10 0 0 1 10 10H12z"/></svg></div>\`;
+            let contentHtml = imageUrl ? \`<img src="\${imageUrl}">\` : '';
+
+            let displayTxt = text;
+            latestGeneratedJs = ""; 
+            
+            const scadRegexMatch = new RegExp('\\\\x60\\\\x60\\\\x60(?:openscad)?\\\\r?\\\\n([\\\\s\\\\S]*?)\\\\x60\\\\x60\\\\x60', 'i');
+            const scadRegexReplace = new RegExp('\\\\x60\\\\x60\\\\x60(?:openscad)?\\\\r?\\\\n([\\\\s\\\\S]*?)\\\\x60\\\\x60\\\\x60', 'gi');
+            
+            const jsRegexMatch = new RegExp('\\\\x60\\\\x60\\\\x60(?:javascript|js)\\\\r?\\\\n([\\\\s\\\\S]*?)\\\\x60\\\\x60\\\\x60', 'i');
+            const jsRegexReplace = new RegExp('\\\\x60\\\\x60\\\\x60(?:javascript|js)\\\\r?\\\\n([\\\\s\\\\S]*?)\\\\x60\\\\x60\\\\x60', 'gi');
+
+            const scadMatch = displayTxt.match(scadRegexMatch);
+            if (scadMatch && role === 'ai') {
+                latestGeneratedScad = scadMatch[1];
+                updateCodeEditor(latestGeneratedScad);
+                
+                compileBtn.disabled = false;
+                copyCodeBtn.disabled = false;
+                downloadScadBtn.disabled = false;
+
+                displayTxt = displayTxt.replace(scadRegexReplace, 
+                    \`<div class="chat-code-snippet">
+                        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:6px; color: var(--accent-1);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Wygenerowano kod: model.scad</span>
+                    </div>\`
+                );
+            }
+
+            const jsMatch = displayTxt.match(jsRegexMatch);
+            if (jsMatch && role === 'ai') {
+                latestGeneratedJs = jsMatch[1];
+                displayTxt = displayTxt.replace(jsRegexReplace, '');
+            }
+
+            displayTxt = displayTxt.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+            displayTxt = displayTxt.replace(/\\n/g, '<br>');
+
+            div.innerHTML = \`\${avatarHtml}<div class="bubble">\${contentHtml}\${displayTxt}</div>\`;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        function updateCodeEditor(code) {
+            let coloredCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            coloredCode = coloredCode.replace(/(\\/\\/.*)/g, '<span style="color:#64748b; font-style:italic;">$1</span>');
+            coloredCode = coloredCode.replace(/\\b(module|difference|union|intersection|translate|rotate|scale|minkowski|hull|for|if|else)\\b/g, '<span style="color:#c678dd; font-weight:bold;">$1</span>');
+            coloredCode = coloredCode.replace(/\\b(cube|sphere|cylinder|polyhedron|square|circle|polygon|linear_extrude)\\b/g, '<span style="color:#61afef;">$1</span>');
+            coloredCode = coloredCode.replace(/\\b(\\d+(\\.\\d+)?)\\b/g, '<span style="color:#d19a66;">$1</span>');
+            codeEditor.innerHTML = coloredCode;
+        }
+
+        // --- AKCJE EDYTORA I POBIERANIA ---
+        copyCodeBtn.addEventListener('click', () => {
+            if(!latestGeneratedScad) return;
+            navigator.clipboard.writeText(latestGeneratedScad).then(() => {
+                const originalText = copyCodeBtn.textContent;
+                copyCodeBtn.textContent = 'Skopiowano!';
+                setTimeout(() => copyCodeBtn.textContent = originalText, 2000);
+            });
+        });
+
+        downloadScadBtn.addEventListener('click', () => {
+            if(!latestGeneratedScad) return;
+            const blob = new Blob([latestGeneratedScad], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "model.scad";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Pobieranie STL z Three.js
+        downloadStlBtn.addEventListener('click', () => {
+            if(!currentModelGroup || currentModelGroup.children.length === 0) {
+                alert("Najpierw skompiluj i zrenderuj model 3D.");
+                return;
+            }
+            const exporter = new THREE.STLExporter();
+            const stlString = exporter.parse(currentModelGroup);
+            const blob = new Blob([stlString], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "model.stl";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // "Pobieranie" STP (Wymaga backendu - tu tworzymy atrapę dla demonstracji UI)
+        downloadStpBtn.addEventListener('click', () => {
+            if(!latestGeneratedScad) return;
+            
+            alert("Eksport do perfekcyjnego, bryłowego pliku STEP (NURBS) wymaga podpięcia zewnętrznego silnika (np. backendu w OpenSCAD/FreeCAD). W tej wersji demonstracyjnej wygenerowany zostanie plik zastępczy, obrazujący ten proces.");
+            
+            const dummyStpContent = "ISO-10303-21;\\nHEADER;\\n/* Zastępczy plik STEP - do pełnego działania wymaga backendu CSG->STEP. */\\nENDSEC;\\nEND-ISO-10303-21;";
+            const blob = new Blob([dummyStpContent], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "model_mock.stp";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        compileBtn.addEventListener('click', () => {
+            if(!latestGeneratedJs) {
+                alert("Brak danych wizualizacji. Model nie wygenerował podglądu 3D.");
+                return;
+            }
+            
+            const originalText = compileBtn.textContent;
+            compileBtn.textContent = 'Renderowanie...';
+            compileBtn.disabled = true;
+
+            setTimeout(() => {
+                compileBtn.textContent = originalText;
+                compileBtn.disabled = false;
+                
+                document.querySelector('[data-target="tab-3d"]').click();
+                renderModelFromCode(latestGeneratedJs);
+            }, 300);
+        });
+
+        async function handleSend() {
+            const text = chatInput.value.trim();
+            if (!text && !currentImage) return;
+
+            const imgToPass = currentImage;
+            const imgUrlToShow = currentImage ? currentImage.dataUrl : null;
+            
+            appendMessage('user', text, imgUrlToShow);
+            
+            chatInput.value = '';
+            chatInput.style.height = '50px';
+            removeImage();
+            
+            typingIndicator.classList.add('active');
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+
+            const responseText = await fetchGeminiResponse(text, imgToPass);
+            
+            typingIndicator.classList.remove('active');
+            appendMessage('ai', responseText);
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        chatInput.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let index in items) {
+                const item = items[index];
+                if (item.kind === 'file') {
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const dataUrl = event.target.result;
+                        currentImage = { base64: dataUrl.split(',')[1], mimeType: blob.type, dataUrl: dataUrl };
+                        imagePreviewArea.innerHTML = \`<div class="img-preview-chip"><img src="\${dataUrl}"><button class="img-preview-remove" onclick="removeImage()">✕</button></div>\`;
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

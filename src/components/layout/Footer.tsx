@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <Link href="/" className="text-xl font-extrabold tracking-tighter" style={{ color: "var(--text-primary)" }}>
-              damixb<span style={{ color: "var(--text-muted)" }}>.pl</span>
+              damixb<span style={{ color: "var(--text-muted)" }}>.github.io</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               Technolog i twórca rozwiązań cyfrowych. Optymalizuję procesy i buduję nowoczesne strony internetowe.
@@ -56,7 +56,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between border-t pt-8 md:flex-row" style={{ borderColor: "var(--border-subtle)" }}>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            © {new Date().getFullYear()} damixb.pl — Wszystkie prawa zastrzeżone
+            © {new Date().getFullYear()} damixb.github.io — Wszystkie prawa zastrzeżone
           </p>
           <p className="mt-2 text-sm md:mt-0" style={{ color: "var(--text-muted)" }}>
             Zbudowane z pasją przez Damiana

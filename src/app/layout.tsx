@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Damian B. — Technolog PMP | Developer | Creator | damixb.pl",
+  title: "Damian B. — Technolog PMP | Developer | Creator | damixb.github.io",
   description:
     "Osobista strona wizytówkowa Damiana B. — technologa PMP, developera i twórcy innowacyjnych rozwiązań. Portfolio, doświadczenie, projekty i narzędzia.",
   keywords: [
@@ -30,14 +30,14 @@ export const metadata: Metadata = {
     "web developer",
     "mechatronika",
   ],
-  authors: [{ name: "Damian B.", url: "https://damixb.pl" }],
+  authors: [{ name: "Damian B.", url: "https://damixb.github.io" }],
   creator: "Damian B.",
   openGraph: {
     title: "Damian B. — Technolog PMP | Developer | Creator",
     description:
       "Osobista strona wizytówkowa Damiana B. — technologa PMP, developera i twórcy innowacyjnych rozwiązań.",
-    url: "https://damixb.pl",
-    siteName: "damixb.pl",
+    url: "https://damixb.github.io",
+    siteName: "damixb.github.io",
     locale: "pl_PL",
     type: "website",
   },

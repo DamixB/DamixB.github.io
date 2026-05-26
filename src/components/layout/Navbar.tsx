@@ -75,7 +75,7 @@ export default function Navbar() {
           className="text-2xl font-extrabold tracking-tighter transition-opacity hover:opacity-80"
           style={{ color: "var(--text-primary)" }}
         >
-          damixb<span style={{ color: "var(--text-muted)" }}>.pl</span>
+          damixb<span style={{ color: "var(--text-muted)" }}>.github.io</span>
         </Link>
 
         {/* Desktop Menu */}

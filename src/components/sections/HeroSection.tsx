@@ -61,17 +61,6 @@ export default function HeroSection() {
             >
               Zobacz projekty
             </Link>
-            <Link
-              href="/cv"
-              className="inline-flex h-12 items-center justify-center rounded-full px-8 font-medium transition-colors"
-              style={{
-                backgroundColor: "transparent",
-                color: "var(--text-primary)",
-                border: "1px solid var(--border-strong)",
-              }}
-            >
-              Szczegółowe CV
-            </Link>
           </motion.div>
         </motion.div>
       </div>

@@ -1,10 +1,10 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Polityka Prywatności | damixb.pl",
+  title: "Polityka Prywatności | damixb.github.io",
   description:
-    "Polityka prywatności serwisu damixb.pl — informacje o przetwarzaniu danych osobowych zgodnie z RODO.",
+    "Polityka prywatności serwisu damixb.github.io — informacje o przetwarzaniu danych osobowych zgodnie z RODO.",
 };
 
 export default function PolitykaPrywatnosciPage() {
@@ -59,7 +59,7 @@ export default function PolitykaPrywatnosciPage() {
               </strong>
               , prowadzący serwis internetowy pod adresem{" "}
               <strong style={{ color: "var(--text-primary)" }}>
-                damixb.pl
+                damixb.github.io
               </strong>{" "}
               (dalej: &bdquo;Administrator&rdquo;).
             </p>
@@ -67,11 +67,11 @@ export default function PolitykaPrywatnosciPage() {
               W sprawach dotyczących ochrony danych osobowych możesz skontaktować
               się z Administratorem pod adresem e-mail:{" "}
               <a
-                href="mailto:kontakt@damixb.pl"
+                href="mailto:kontakt@damixb.github.io"
                 className="underline underline-offset-2"
                 style={{ color: "var(--neon-cyan)" }}
               >
-                kontakt@damixb.pl
+                kontakt@damixb.github.io
               </a>
               .
             </p>
@@ -249,11 +249,11 @@ export default function PolitykaPrywatnosciPage() {
               W celu realizacji swoich praw, skontaktuj się z Administratorem
               pod adresem:{" "}
               <a
-                href="mailto:kontakt@damixb.pl"
+                href="mailto:kontakt@damixb.github.io"
                 className="underline underline-offset-2"
                 style={{ color: "var(--neon-cyan)" }}
               >
-                kontakt@damixb.pl
+                kontakt@damixb.github.io
               </a>
               .
             </p>
@@ -310,7 +310,7 @@ export default function PolitykaPrywatnosciPage() {
                 Aktualna wersja Polityki Prywatności jest zawsze dostępna pod
                 adresem{" "}
                 <strong style={{ color: "var(--text-primary)" }}>
-                  damixb.pl/polityka-prywatnosci
+                  damixb.github.io/polityka-prywatnosci
                 </strong>
                 .
               </li>
@@ -330,7 +330,7 @@ export default function PolitykaPrywatnosciPage() {
           className="mt-4 text-center text-xs"
           style={{ color: "var(--text-muted)" }}
         >
-          © {new Date().getFullYear()} damixb.pl — Wszelkie prawa zastrzeżone.
+          © {new Date().getFullYear()} damixb.github.io — Wszelkie prawa zastrzeżone.
         </p>
       </article>
     </main>
