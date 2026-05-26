@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IleZaDruk3D | Kalkulator Kosztów Druku 3D</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- Biblioteka Open CASCADE do obsługi plików CAD (STEP/IGES) w przeglądarce -->
+    <script src="https://cdn.jsdelivr.net/npm/occt-import-js@0.0.22/dist/occt-import-js.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --color-bg: 248 250 252;
+            --color-card: 255 255 255;
+            --color-surface: 241 245 249;
+            --color-accent: 59 130 246;
+            --color-accent-hover: 37 99 235;
+            --color-accent-glow: 147 197 253;
+            --color-text-main: 15 23 42;
+            --color-text-muted: 100 116 139;
+            --color-border: 226 232 240;
+            --color-shadow: rgba(0, 0, 0, 0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: 8 17 33;
+                --color-card: 17 28 51;
+                --color-surface: 30 41 59;
+                --color-accent: 59 130 246;
+                --color-accent-hover: 37 99 235;
+                --color-accent-glow: 96 165 250;
+                --color-text-main: 248 250 252;
+                --color-text-muted: 148 163 184;
+                --color-border: 30 41 59;
+                --color-shadow: rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        body {
+            background-color: rgb(var(--color-bg));
+            color: rgb(var(--color-text-main));
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease; 
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--color-bg)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--color-border)); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--color-accent)); }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        .glass-nav {
+            background: rgba(var(--color-bg), 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            bg: 'rgb(var(--color-bg) / <alpha-value>)',
+                            card: 'rgb(var(--color-card) / <alpha-value>)',
+                            surface: 'rgb(var(--color-surface) / <alpha-value>)',
+                            accent: 'rgb(var(--color-accent) / <alpha-value>)',
+                            accentHover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
+                            accentGlow: 'rgb(var(--color-accent-glow) / <alpha-value>)',
+                            textMain: 'rgb(var(--color-text-main) / <alpha-value>)',
+                            textMuted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+                            border: 'rgb(var(--color-border) / <alpha-value>)'
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px -5px rgb(var(--color-accent-glow) / 0.5)',
+                        'soft': '0 10px 40px -10px var(--color-shadow)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased selection:bg-brand-accent/30 selection:text-brand-textMain relative pt-20 pb-12">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useId, useCallback, useEffect, useRef } = React;
+
+        const MAX_FILE_SIZE_MB = 50;
+
+        let occtEngine = null;
+        let isOcctLoading = false;
+        let initError = null;
+
+        const initOcct = async () => {
+            if (occtEngine) return occtEngine;
+            if (initError) throw initError;
+            if (isOcctLoading) {
+                while(!occtEngine && !initError) await new Promise(r => setTimeout(r, 100));
+                if (initError) throw initError;
+                return occtEngine;
+            }
+            isOcctLoading = true;
+            
+            return new Promise((resolve, reject) => {
+                if (typeof occtimportjs === 'undefined') {
+                    initError = new Error("Biblioteka CAD nie została załadowana. Sprawdź połączenie z internetem.");
+                    reject(initError);
+                    return;
+                }
+                
+                try {
+                    occtimportjs({
+                        locateFile: (name) => `https://cdn.jsdelivr.net/npm/occt-import-js@0.0.22/dist/${name}`
+                    }).then((occt) => {
+                        occtEngine = occt;
+                        resolve(occt);
+                    }).catch(err => {
+                        initError = new Error("Błąd podczas uruchamiania silnika CAD.");
+                        reject(initError);
+                    });
+                } catch(err) {
+                    initError = new Error("Nie udało się zainicjować biblioteki CAD.");
+                    reject(initError);
+                }
+            });
+        };
+
+        const useLocalStorage = (key, initialValue) => {
+            const [value, setValue] = useState(() => {
+                try {
+                    const item = window.localStorage.getItem(key);
+                    return item ? item : initialValue;
+                } catch (error) {
+                    return initialValue;
+                }
+            });
+
+            useEffect(() => {
+                try {
+                    window.localStorage.setItem(key, value);
+                } catch (error) {
+                    console.warn('LocalStorage error:', error);
+                }
+            }, [key, value]);
+
+            return [value, setValue];
+        };
+
+        const useLocalBoolean = (key, initialValue) => {
+            const [value, setValue] = useState(() => {
+                try {
+                    const item = window.localStorage.getItem(key);
+                    return item !== null ? item === 'true' : initialValue;
+                } catch (error) {
+                    return initialValue;
+                }
+            });
+
+            useEffect(() => {
+                try {
+                    window.localStorage.setItem(key, value.toString());
+                } catch (error) {
+                    console.warn('LocalStorage error:', error);
+                }
+            }, [key, value]);
+
+            return [value, setValue];
+        };
+
+        const Toggle = ({ enabled, onChange }) => (
+            <button
+                type="button"
+                className={`${enabled ? 'bg-brand-accent' : 'bg-brand-surface border border-brand-border'} relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
+                role="switch"
+                aria-checked={enabled}
+                onClick={() => onChange(!enabled)}
+            >
+                <span className={`${enabled ? 'translate-x-4 bg-white' : 'translate-x-0.5 bg-brand-textMuted'} mt-0.5 inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out`}></span>
+            </button>
+        );
+
+        const InputField = ({ label, value, onChange, unit, disabled = false, placeholder = "0", type = "number", min, step, onToggle, toggleState }) => {
+            const id = useId();
+            const isDisabled = disabled || (onToggle !== undefined && !toggleState);
+            return (
+                <div className="flex flex-col w-full">
+                    <div className="flex justify-between items-center mb-1.5 min-h-[20px]">
+                        {label && <label htmlFor={id} className={`text-xs font-medium transition-colors ${isDisabled ? 'text-brand-textMuted/40' : 'text-brand-textMuted'}`}>{label}</label>}
+                        {onToggle !== undefined && <Toggle enabled={toggleState} onChange={onToggle} />}
+                    </div>
+                    <div className="relative group">
+                        <input
+                            id={id}
+                            type={type}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            disabled={isDisabled}
+                            placeholder={placeholder}
+                            min={min}
+                            step={step}
+                            className={`w-full bg-brand-surface/50 border border-brand-border ${isDisabled ? 'opacity-40 cursor-not-allowed' : 'hover:border-brand-accent/50 focus:border-brand-accent focus:bg-brand-surface focus:ring-1 focus:ring-brand-accent'} text-brand-textMain rounded-xl py-3 px-4 outline-none transition-all duration-200 placeholder-brand-textMuted/40 min-h-[48px]`}
+                        />
+                        {unit && (
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <span className={`text-sm font-medium transition-colors ${isDisabled ? 'text-brand-textMuted/40' : 'text-brand-textMuted'}`}>{unit}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const SelectField = ({ label, value, onChange, options }) => {
+            const id = useId();
+            return (
+                <div className="flex flex-col w-full">
+                    {label && <label htmlFor={id} className="text-xs mb-1.5 font-medium text-brand-textMuted transition-colors">{label}</label>}
+                    <div className="relative group">
+                        <select
+                            id={id}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            className="w-full appearance-none bg-brand-surface/50 border border-brand-border hover:border-brand-accent/50 focus:border-brand-accent focus:bg-brand-surface focus:ring-1 focus:ring-brand-accent text-brand-textMain rounded-xl py-3 pl-4 pr-10 outline-none transition-all duration-200 cursor-pointer min-h-[48px]"
+                        >
+                            {options.map(opt => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-brand-textMuted">
+                            <i className="fa-solid fa-chevron-down text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const MATERIAL_DATA = {
+            'PLA': { power: 150, density: 1.24 },
+            'PETG': { power: 200, density: 1.27 },
+            'ABS': { power: 250, density: 1.04 },
+            'ASA': { power: 250, density: 1.07 },
+            'TPU': { power: 150, density: 1.21 }
+        };
+
+        const CalculatorCore = () => {
+            const [currency, setCurrency] = useLocalStorage('izd_currency', 'PLN');
+            
+            // Stawki biznesowe
+            const [filamentCostPerKg, setFilamentCostPerKg] = useLocalStorage('izd_filament', '40');
+            const [electricityRate, setElectricityRate] = useLocalStorage('izd_electricity', '1.3');
+            const [profitMargin, setProfitMargin] = useLocalStorage('izd_margin', '30');
+            const [failureMargin, setFailureMargin] = useLocalStorage('izd_failure_margin', '10');
+
+            // Przełączniki biznesowe
+            const [isFailureMarginEnabled, setIsFailureMarginEnabled] = useLocalBoolean('izd_enable_failure', true);
+            const [isProfitMarginEnabled, setIsProfitMarginEnabled] = useLocalBoolean('izd_enable_margin', true);
+            const [isVatEnabled, setIsVatEnabled] = useLocalBoolean('izd_enable_vat', false);
+
+            const HIDDEN_AMORTIZATION_RATE = 2.0;
+            const HIDDEN_SETUP_FEE = 15.0;
+
+            // Stan modelu i ustawień druku
+            const [modelWeight, setModelWeight] = useState(''); 
+            const [printTimeHours, setPrintTimeHours] = useState('');
+            const [printTimeMinutes, setPrintTimeMinutes] = useState('');
+            
+            const [isManualOverride, setIsManualOverride] = useState(true);
+            const [materialType, setMaterialType] = useState('PLA');
+            const [supportsComplexity, setSupportsComplexity] = useState('1.0');
+            const [quantity, setQuantity] = useState('1');
+            const [isCopied, setIsCopied] = useState(false);
+
+            const [dimError, setDimError] = useState('');
+            const [stlFile, setStlFile] = useState(null);
+            const [isProcessing, setIsProcessing] = useState(false);
+            const [processingMsg, setProcessingMsg] = useState('');
+            const [fileError, setFileError] = useState('');
+            const [modelStats, setModelStats] = useState(null); 
+            const [showAdvancedStl, setShowAdvancedStl] = useState(false);
+            const fileInputRef = useRef(null);
+
+            const [slicerParams, setSlicerParams] = useState({
+                wypelnienie: 15,
+                gruboscSciany: 1.2,
+                predkosc: 100,
+                wysokoscWarstwy: 0.2,
+                dysza: 0.4
+            });
+
+            const BUILD_VOLUME = { x: 250, y: 250, z: 250 };
+
+            const parsujSTLBinary = (buffer) => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        const view = new DataView(buffer);
+                        const ileTrojkatow = view.getUint32(80, true);
+                        
+                        let objetosc = 0;
+                        let powierzchnia = 0;
+                        let bbMin = [Infinity, Infinity, Infinity];
+                        let bbMax = [-Infinity, -Infinity, -Infinity];
+
+                        for (let i = 0; i < ileTrojkatow; i++) {
+                            const offset = 84 + (i * 50);
+                            const v1x = view.getFloat32(offset + 12, true);
+                            const v1y = view.getFloat32(offset + 16, true);
+                            const v1z = view.getFloat32(offset + 20, true);
+                            const v2x = view.getFloat32(offset + 24, true);
+                            const v2y = view.getFloat32(offset + 28, true);
+                            const v2z = view.getFloat32(offset + 32, true);
+                            const v3x = view.getFloat32(offset + 36, true);
+                            const v3y = view.getFloat32(offset + 40, true);
+                            const v3z = view.getFloat32(offset + 44, true);
+
+                            bbMin[0] = Math.min(bbMin[0], v1x, v2x, v3x);
+                            bbMin[1] = Math.min(bbMin[1], v1y, v2y, v3y);
+                            bbMin[2] = Math.min(bbMin[2], v1z, v2z, v3z);
+                            bbMax[0] = Math.max(bbMax[0], v1x, v2x, v3x);
+                            bbMax[1] = Math.max(bbMax[1], v1y, v2y, v3y);
+                            bbMax[2] = Math.max(bbMax[2], v1z, v2z, v3z);
+
+                            objetosc += (v1x*v2y*v3z - v1x*v3y*v2z - v2x*v1y*v3z + v2x*v3y*v1z + v3x*v1y*v2z - v3x*v2y*v1z) / 6.0;
+
+                            const abx = v2x - v1x, aby = v2y - v1y, abz = v2z - v1z;
+                            const acx = v3x - v1x, acy = v3y - v1y, acz = v3z - v1z;
+                            const crossx = aby * acz - abz * acy;
+                            const crossy = abz * acx - abx * acz;
+                            const crossz = abx * acy - aby * acx;
+                            powierzchnia += 0.5 * Math.sqrt(crossx*crossx + crossy*crossy + crossz*crossz);
+                        }
+                        const dims = [bbMax[0]-bbMin[0], bbMax[1]-bbMin[1], bbMax[2]-bbMin[2]];
+                        resolve({ objetosc: Math.abs(objetosc), powierzchnia, dims });
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            };
+
+            const parsuj3MF = async (file) => {
+                const zip = await JSZip.loadAsync(file);
+                let modelFile = zip.file("3D/3dmodel.model") || zip.file("3dmodel.model");
+                
+                if (!modelFile) {
+                    const files = Object.keys(zip.files).filter(name => name.endsWith('.model'));
+                    if(files.length > 0) modelFile = zip.file(files[0]);
+                }
+                
+                if(!modelFile) throw new Error("Nie znaleziono geometrii w pliku 3MF");
+                
+                const xmlText = await modelFile.async("string");
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                
+                let objetosc = 0;
+                let powierzchnia = 0;
+                let bbMin = [Infinity, Infinity, Infinity];
+                let bbMax = [-Infinity, -Infinity, -Infinity];
+                
+                const objects = xmlDoc.getElementsByTagName("object");
+                if (objects.length === 0) throw new Error("Plik 3MF nie zawiera obiektów 3D");
+
+                for(let i=0; i<objects.length; i++) {
+                    const mesh = objects[i].getElementsByTagName("mesh")[0];
+                    if(!mesh) continue;
+                    
+                    const vertices = [];
+                    const vertexNodes = mesh.getElementsByTagName("vertex");
+                    for(let j=0; j<vertexNodes.length; j++) {
+                        const vx = parseFloat(vertexNodes[j].getAttribute("x"));
+                        const vy = parseFloat(vertexNodes[j].getAttribute("y"));
+                        const vz = parseFloat(vertexNodes[j].getAttribute("z"));
+                        vertices.push({ x: vx, y: vy, z: vz });
+                        bbMin[0] = Math.min(bbMin[0], vx);
+                        bbMin[1] = Math.min(bbMin[1], vy);
+                        bbMin[2] = Math.min(bbMin[2], vz);
+                        bbMax[0] = Math.max(bbMax[0], vx);
+                        bbMax[1] = Math.max(bbMax[1], vy);
+                        bbMax[2] = Math.max(bbMax[2], vz);
+                    }
+                    
+                    const triangleNodes = mesh.getElementsByTagName("triangle");
+                    for(let j=0; j<triangleNodes.length; j++) {
+                        const v1 = vertices[parseInt(triangleNodes[j].getAttribute("v1"))];
+                        const v2 = vertices[parseInt(triangleNodes[j].getAttribute("v2"))];
+                        const v3 = vertices[parseInt(triangleNodes[j].getAttribute("v3"))];
+                        
+                        objetosc += (v1.x*v2.y*v3.z - v1.x*v3.y*v2.z - v2.x*v1.y*v3.z + v2.x*v3.y*v1.z + v3.x*v1.y*v2.z - v3.x*v2.y*v1.z) / 6.0;
+
+                        const abx = v2.x - v1.x, aby = v2.y - v1.y, abz = v2.z - v1.z;
+                        const acx = v3.x - v1.x, acy = v3.y - v1.y, acz = v3.z - v1.z;
+                        const crossx = aby * acz - abz * acy;
+                        const crossy = abz * acx - abx * acz;
+                        const crossz = abx * acy - aby * acx;
+                        powierzchnia += 0.5 * Math.sqrt(crossx*crossx + crossy*crossy + crossz*crossz);
+                    }
+                }
+                const dims = [bbMax[0]-bbMin[0], bbMax[1]-bbMin[1], bbMax[2]-bbMin[2]];
+                return { objetosc: Math.abs(objetosc), powierzchnia, dims };
+            };
+
+            const parsujSTEP = async (buffer) => {
+                const occt = await initOcct();
+                const fileData = new Uint8Array(buffer);
+                const result = occt.ReadStepFile(fileData, null);
+                
+                if (!result || !result.meshes || result.meshes.length === 0) {
+                    throw new Error("Plik STEP jest uszkodzony lub nie zawiera geometrii bryłowej.");
+                }
+
+                let objetosc = 0;
+                let powierzchnia = 0;
+                
+                let boundingBoxMin = [Infinity, Infinity, Infinity];
+                let boundingBoxMax = [-Infinity, -Infinity, -Infinity];
+
+                for (let mesh of result.meshes) {
+                    const positions = mesh.attributes.position.array;
+                    const indices = mesh.index.array;
+
+                    if (!indices) {
+                         console.warn("Siatka nie zawiera indeksów, pomijam analizę cząstkową.");
+                         continue;
+                    }
+
+                    for (let i = 0; i < indices.length; i += 3) {
+                        const i1 = indices[i] * 3;
+                        const i2 = indices[i + 1] * 3;
+                        const i3 = indices[i + 2] * 3;
+
+                        const v1x = positions[i1], v1y = positions[i1+1], v1z = positions[i1+2];
+                        const v2x = positions[i2], v2y = positions[i2+1], v2z = positions[i2+2];
+                        const v3x = positions[i3], v3y = positions[i3+1], v3z = positions[i3+2];
+                        
+                        boundingBoxMin[0] = Math.min(boundingBoxMin[0], v1x, v2x, v3x);
+                        boundingBoxMin[1] = Math.min(boundingBoxMin[1], v1y, v2y, v3y);
+                        boundingBoxMin[2] = Math.min(boundingBoxMin[2], v1z, v2z, v3z);
+                        boundingBoxMax[0] = Math.max(boundingBoxMax[0], v1x, v2x, v3x);
+                        boundingBoxMax[1] = Math.max(boundingBoxMax[1], v1y, v2y, v3y);
+                        boundingBoxMax[2] = Math.max(boundingBoxMax[2], v1z, v2z, v3z);
+
+                        objetosc += (v1x*v2y*v3z - v1x*v3y*v2z - v2x*v1y*v3z + v2x*v3y*v1z + v3x*v1y*v2z - v3x*v2y*v1z) / 6.0;
+
+                        const abx = v2x - v1x, aby = v2y - v1y, abz = v2z - v1z;
+                        const acx = v3x - v1x, acy = v3y - v1y, acz = v3z - v1z;
+                        const crossx = aby * acz - abz * acy;
+                        const crossy = abz * acx - abx * acz;
+                        const crossz = abx * acy - aby * acx;
+                        powierzchnia += 0.5 * Math.sqrt(crossx*crossx + crossy*crossy + crossz*crossz);
+                    }
+                }
+                
+                objetosc = Math.abs(objetosc);
+                
+                const sizeX = boundingBoxMax[0] - boundingBoxMin[0];
+                let scaleFactor = 1;
+                if (sizeX > 0 && sizeX < 1.0) {
+                     objetosc = objetosc * 1000000000; 
+                     powierzchnia = powierzchnia * 1000000;
+                     scaleFactor = 1000;
+                }
+                
+                if (objetosc === 0 || powierzchnia === 0) {
+                     throw new Error("Odczytano plik STEP, ale model wektorowy składa się z samych płaszczyzn (0 grubości) lub nie domyka bryły (jest 'Non-Manifold').");
+                }
+
+                const dims = [
+                    (boundingBoxMax[0] - boundingBoxMin[0]) * scaleFactor,
+                    (boundingBoxMax[1] - boundingBoxMin[1]) * scaleFactor,
+                    (boundingBoxMax[2] - boundingBoxMin[2]) * scaleFactor
+                ];
+                return { objetosc, powierzchnia, dims };
+            };
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+                    setFileError(`Plik jest za duży. Maksymalny rozmiar to ${MAX_FILE_SIZE_MB} MB.`);
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                    return;
+                }
+                
+                const extension = file.name.split('.').pop().toLowerCase();
+                const dozwolone = ['stl', '3mf', 'stp', 'step'];
+                
+                if (!dozwolone.includes(extension)) {
+                    setFileError('Obsługiwane formaty: .stl, .3mf, .stp, .step');
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                    return;
+                }
+
+                setFileError('');
+                setIsProcessing(true);
+                setProcessingMsg('Odczytywanie pliku...');
+                setStlFile(file);
+                setIsManualOverride(false);
+
+                setTimeout(async () => {
+                    try {
+                        let stats;
+                        if (extension === '3mf') {
+                            setProcessingMsg('Analizowanie struktury 3MF...');
+                            stats = await parsuj3MF(file);
+                        } else if (extension === 'stp' || extension === 'step') {
+                            setProcessingMsg('Ładowanie silnika CAD i konwersja (może chwilę potrwać)...');
+                            const buffer = await file.arrayBuffer();
+                            stats = await parsujSTEP(buffer);
+                        } else if (extension === 'stl') {
+                            setProcessingMsg('Przeliczanie siatki STL...');
+                            const buffer = await file.arrayBuffer();
+                            const view = new DataView(buffer);
+                            const ileTrojkatow = view.getUint32(80, true);
+                            const oczekiwanyRozmiar = 84 + (ileTrojkatow * 50);
+
+                            if (buffer.byteLength !== oczekiwanyRozmiar && buffer.byteLength > 1000) {
+                                throw new Error('Wykryto format ASCII STL. Narzędzie obsługuje tylko wydajniejszą wersję binarną.');
+                            }
+                            stats = await parsujSTLBinary(buffer);
+                        }
+
+                        if (stats && stats.dims) {
+                            const [dx, dy, dz] = stats.dims;
+                            const maxDim = BUILD_VOLUME;
+                            if (dx > maxDim.x || dy > maxDim.y || dz > maxDim.z) {
+                                const dimStr = `${dx.toFixed(1)}×${dy.toFixed(1)}×${dz.toFixed(1)}`;
+                                setDimError(`Model (${dimStr} mm) przekracza obszar roboczy ${maxDim.x}×${maxDim.y}×${maxDim.z} mm!`);
+                            } else {
+                                setDimError('');
+                            }
+                        }
+                        setModelStats(stats);
+                    } catch (err) {
+                        setFileError(err.message || 'Wystąpił błąd podczas analizy pliku.');
+                        setModelStats(null);
+                    } finally {
+                        setIsProcessing(false);
+                        setProcessingMsg('');
+                    }
+                }, 100);
+            };
+
+            const przeliczDaneZModelu = useCallback(() => {
+                if (!modelStats) return;
+
+                const gestosc = MATERIAL_DATA[materialType].density;
+                const lineWidth = slicerParams.dysza * 1.2;
+                const objetoscSciany = modelStats.powierzchnia * slicerParams.gruboscSciany;
+                const faktycznaObjetoscSciany = Math.min(objetoscSciany, modelStats.objetosc);
+                const objetoscWewnetrzna = Math.max(0, modelStats.objetosc - faktycznaObjetoscSciany);
+                
+                let calkowitaObjetoscMm3 = faktycznaObjetoscSciany + (objetoscWewnetrzna * (slicerParams.wypelnienie / 100));
+                const supMult = parseFloat(supportsComplexity) || 1.0;
+                calkowitaObjetoscMm3 *= supMult;
+                
+                const waga = (calkowitaObjetoscMm3 / 1000) * gestosc;
+
+                const flowRate = slicerParams.predkosc * slicerParams.wysokoscWarstwy * lineWidth;
+                const czasEkstruzjiSek = calkowitaObjetoscMm3 / flowRate;
+                const wspolczynnikEfektywnosci = 0.55; 
+                const wspolczynnikRuchowJalowych = 1.35; 
+                
+                const czasCalkowitySek = (czasEkstruzjiSek / wspolczynnikEfektywnosci) * wspolczynnikRuchowJalowych;
+                const minutyCalkowite = czasCalkowitySek / 60;
+
+                setModelWeight(waga.toFixed(1));
+                setPrintTimeHours(Math.floor(minutyCalkowite / 60).toString());
+                setPrintTimeMinutes(Math.round(minutyCalkowite % 60).toString());
+            }, [modelStats, slicerParams, materialType, supportsComplexity]);
+
+            useEffect(() => {
+                if (!isManualOverride) {
+                    przeliczDaneZModelu();
+                }
+            }, [przeliczDaneZModelu, isManualOverride]);
+
+            const updateSlicerParam = (key, val) => {
+                setSlicerParams(prev => ({ ...prev, [key]: parseFloat(val) || 0 }));
+            };
+
+            const clearStl = () => {
+                setStlFile(null);
+                setModelStats(null);
+                setFileError('');
+                setDimError('');
+                setIsManualOverride(true);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            };
+
+            const handleManualChange = (setter) => (val) => {
+                setIsManualOverride(true);
+                setter(val);
+            };
+
+            // ---- LOGIKA OBLICZENIOWA ----
+            const safeModelWeight = parseFloat(modelWeight) || 0;
+            const safePrintTimeHours = parseFloat(printTimeHours) || 0;
+            const safePrintTimeMinutes = parseFloat(printTimeMinutes) || 0;
+            
+            const safeFilamentCostPerKg = parseFloat(filamentCostPerKg) || 0;
+            const safeAmortization = HIDDEN_AMORTIZATION_RATE;
+            const safeElectricity = parseFloat(electricityRate) || 0;
+            
+            const safeMargin = isProfitMarginEnabled ? (parseFloat(profitMargin) || 0) : 0;
+            const safeSetupFee = HIDDEN_SETUP_FEE;
+            const safeFailureMargin = isFailureMarginEnabled ? (parseFloat(failureMargin) || 0) : 0;
+            
+            const safeQuantity = Math.max(1, parseInt(quantity) || 1);
+
+            const totalPrintHours = safePrintTimeHours + (safePrintTimeMinutes / 60);
+            
+            const totalOrderWeight = safeModelWeight * safeQuantity;
+            const totalOrderHours = totalPrintHours * safeQuantity;
+            
+            // Logika opłaty startowej: doliczana tylko gdy CAŁE zlecenie jest małe (< 50g i < 2h)
+            const isSmallOrder = totalOrderWeight < 50 && totalOrderHours < 2;
+            const finalSetupFee = isSmallOrder ? safeSetupFee : 0;
+            
+            // Margines błędu 
+            const failureMultiplier = 1 + (safeFailureMargin / 100);
+            
+            const filamentCost = ((safeModelWeight / 1000) * safeFilamentCostPerKg) * failureMultiplier;
+            const printerPower = MATERIAL_DATA[materialType].power;
+            const electricityCost = (totalPrintHours * (printerPower / 1000) * safeElectricity) * failureMultiplier;
+            const amortizationCost = (totalPrintHours * safeAmortization) * failureMultiplier;
+            
+            const baseTotalPer1 = filamentCost + electricityCost + amortizationCost;
+            const exactTotalPer1 = baseTotalPer1 * (1 + (safeMargin / 100));
+            const costPer1 = Math.ceil(exactTotalPer1); // Zaokrąglenie w górę dla wygody
+            
+            // Suma netto
+            const totalNetto = (costPer1 * safeQuantity) + finalSetupFee;
+            
+            // Suma z podatkiem VAT
+            const totalCost = isVatEnabled ? totalNetto * 1.23 : totalNetto;
+            // ---------------------------------------------
+
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+            };
+
+            const copyToClipboard = async (text, setCopiedState) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    setCopiedState(true);
+                    setTimeout(() => setCopiedState(false), 2000);
+                } catch (err) {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        setCopiedState(true);
+                        setTimeout(() => setCopiedState(false), 2000);
+                    } catch (err) {
+                        console.error('Błąd schowka', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+            };
+
+            return (
+                <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+                    
+                    <div className="lg:col-span-8 space-y-6">
+                        
+                        <div className="bg-brand-card rounded-2xl p-6 border border-brand-border shadow-soft">
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <h2 className="text-lg font-bold text-brand-textMain">1. Parametry druku</h2>
+                                    <p className="text-sm text-brand-textMuted mt-1">Wrzuć plik do wyliczeń automatycznych lub wpisz dane ręcznie.</p>
+                                </div>
+                            </div>
+                            
+                            {!stlFile ? (
+                                <div className={`border-2 border-dashed mb-5 ${isProcessing ? 'border-brand-accent bg-brand-accent/5' : 'border-brand-accent/40 bg-brand-surface/30'} rounded-xl p-8 text-center hover:bg-brand-surface/80 transition-colors relative group min-h-[160px] flex flex-col items-center justify-center`}>
+                                    <input 
+                                        type="file" 
+                                        accept=".stl,.3mf,.stp,.step" 
+                                        onChange={handleFileUpload}
+                                        ref={fileInputRef}
+                                        disabled={isProcessing}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                    <div className={`transition-colors ${isProcessing ? 'text-brand-accent animate-pulse' : 'text-brand-textMuted group-hover:text-brand-accent'}`}>
+                                        {isProcessing ? (
+                                            <i className="fa-solid fa-spinner fa-spin text-4xl mb-3"></i>
+                                        ) : (
+                                            <i className="fa-solid fa-cloud-arrow-up text-4xl mb-3"></i>
+                                        )}
+                                        <p className="font-medium mt-2">{isProcessing ? processingMsg : 'Kliknij lub upuść plik STL / STEP'}</p>
+                                    </div>
+                                    {fileError && <p className="text-red-500 text-sm mt-3 relative z-20">{fileError}</p>}
+                                </div>
+                            ) : (
+                                <div className="bg-brand-surface/50 border border-brand-border rounded-xl p-4 mb-5">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                        <div className="flex items-center gap-3 overflow-hidden w-full">
+                                            <div className="bg-brand-accent/20 text-brand-accent p-2 rounded-lg flex-shrink-0">
+                                                <i className="fa-solid fa-cube"></i>
+                                            </div>
+                                            <div className="truncate flex-grow">
+                                                <p className="font-medium text-brand-textMain truncate">{stlFile.name}</p>
+                                                {modelStats ? (
+                                                    <div>
+                                                        <p className="text-xs text-emerald-600 dark:text-emerald-400">Dane odczytane automatycznie</p>
+                                                        {modelStats.dims && (
+                                                            <p className="text-xs text-brand-textMuted mt-1 flex items-center gap-1">
+                                                                <i className="fa-solid fa-ruler text-brand-accent/70"></i> 
+                                                                Wymiary: {modelStats.dims[0].toFixed(1)} × {modelStats.dims[1].toFixed(1)} × {modelStats.dims[2].toFixed(1)} mm
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-xs text-red-500">Brak danych - wpisz ręcznie</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2 w-full sm:w-auto justify-end">
+                                            {modelStats && (
+                                                <button onClick={() => setShowAdvancedStl(!showAdvancedStl)} className="text-xs px-3 py-2 sm:py-1.5 bg-brand-card border border-brand-border rounded-lg text-brand-textMain hover:border-brand-accent transition-colors flex-grow sm:flex-grow-0">
+                                                    <i className="fa-solid fa-sliders mr-1"></i> Slicer
+                                                </button>
+                                            )}
+                                            <button onClick={clearStl} className="text-xs px-3 py-2 sm:py-1.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors flex-grow sm:flex-grow-0">
+                                                Usuń plik
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {dimError && (
+                                        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-700 dark:text-red-400">
+                                            <i className="fa-solid fa-triangle-exclamation mr-2"></i>
+                                            {dimError}
+                                        </div>
+                                    )}
+
+                                    {showAdvancedStl && modelStats && (
+                                        <div className="mt-4 pt-4 border-t border-brand-border grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                            <SelectField label="Wypełnienie" value={slicerParams.wypelnienie} onChange={(v) => { updateSlicerParam('wypelnienie', v); setIsManualOverride(false); }} options={[
+                                                { value: 15, label: 'Light (15%)' },
+                                                { value: 20, label: 'Standard (20%)' },
+                                                { value: 30, label: 'Medium (30%)' },
+                                                { value: 60, label: 'Solid (60%)' },
+                                                { value: 100, label: 'Full (100%)' }
+                                            ]} />
+                                            <SelectField label="Warstwa" value={slicerParams.wysokoscWarstwy} onChange={(v) => { updateSlicerParam('wysokoscWarstwy', v); setIsManualOverride(false); }} options={[
+                                                { value: 0.12, label: '0.12 mm' },
+                                                { value: 0.2, label: '0.20 mm' },
+                                                { value: 0.28, label: '0.28 mm' }
+                                            ]} />
+                                            <InputField label="Ściany" value={slicerParams.gruboscSciany} onChange={(v) => { updateSlicerParam('gruboscSciany', v); setIsManualOverride(false); }} unit="mm" step="0.1" />
+                                            
+                                            <SelectField label="Złożoność (Podpory)" value={supportsComplexity} onChange={(v) => { setSupportsComplexity(v); setIsManualOverride(false); }} options={[
+                                                { value: '1.0', label: 'Brak (1.0x)' },
+                                                { value: '1.2', label: 'Lekkie (1.2x)' },
+                                                { value: '1.4', label: 'Ciężkie (1.4x)' }
+                                            ]} />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 relative">
+                                {stlFile && !isManualOverride && (
+                                    <div className="absolute inset-0 bg-brand-bg/50 backdrop-blur-[1px] z-10 rounded-xl flex items-center justify-center border border-brand-border/50">
+                                        <button onClick={() => setIsManualOverride(true)} className="bg-brand-card text-brand-textMain border border-brand-border shadow-soft px-4 py-2 rounded-lg text-sm font-medium hover:text-brand-accent transition-colors">
+                                            <i className="fa-solid fa-pen-to-square mr-1"></i> Nadpisz ręcznie
+                                        </button>
+                                    </div>
+                                )}
+                                <InputField label="Waga detalu" value={modelWeight} onChange={handleManualChange(setModelWeight)} unit="g" step="1" />
+                                <InputField label="Czas (godziny)" value={printTimeHours} onChange={handleManualChange(setPrintTimeHours)} unit="h" step="1" />
+                                <InputField label="Czas (minuty)" value={printTimeMinutes} onChange={handleManualChange(setPrintTimeMinutes)} unit="min" step="1" />
+                            </div>
+                        </div>
+
+                        <div className="bg-brand-card rounded-2xl p-6 border border-brand-border shadow-soft space-y-8">
+                            <div>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-lg font-bold text-brand-textMain">2. Opcje zamówienia i praca</h2>
+                                    <div className="flex bg-brand-surface rounded-lg p-1 border border-brand-border">
+                                        {['PLN', 'USD', 'EUR'].map((curr) => (
+                                            <button
+                                                key={curr}
+                                                onClick={() => setCurrency(curr)}
+                                                className={`px-3 py-2 sm:py-1 rounded-md text-[10px] font-semibold transition-all ${currency === curr ? 'bg-brand-accent text-white shadow-md' : 'text-brand-textMuted hover:text-brand-textMain'}`}
+                                            >
+                                                {curr}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <SelectField 
+                                        label="Rodzaj materiału" 
+                                        value={materialType} 
+                                        onChange={(v) => {
+                                            setMaterialType(v);
+                                            if (!isManualOverride) przeliczDaneZModelu();
+                                        }} 
+                                        options={[
+                                            { value: 'PLA', label: 'PLA / PLA+' },
+                                            { value: 'PETG', label: 'PETG' },
+                                            { value: 'ABS', label: 'ABS' },
+                                            { value: 'ASA', label: 'ASA' },
+                                            { value: 'TPU', label: 'TPU (Flex)' }
+                                        ]}
+                                    />
+                                    <div className="flex flex-col w-full">
+                                        <label className="text-xs mb-1.5 font-medium text-brand-textMuted transition-colors">Liczba sztuk</label>
+                                        <div className="flex items-center bg-brand-surface/50 border border-brand-border rounded-xl h-[48px] focus-within:border-brand-accent focus-within:ring-1 focus-within:ring-brand-accent transition-all duration-200 group">
+                                            <button onClick={() => setQuantity(Math.max(1, parseInt(quantity) - 1).toString())} className="px-4 h-full text-brand-textMuted hover:text-brand-accent hover:bg-brand-surface rounded-l-xl transition-colors"><i className="fa-solid fa-minus"></i></button>
+                                            <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1).toString())} className="w-full bg-transparent text-center text-brand-textMain outline-none font-medium h-full" min="1" />
+                                            <button onClick={() => setQuantity((parseInt(quantity) + 1).toString())} className="px-4 h-full text-brand-textMuted hover:text-brand-accent hover:bg-brand-surface rounded-r-xl transition-colors"><i className="fa-solid fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-brand-card rounded-2xl p-6 border border-brand-border shadow-soft space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-lg font-bold text-brand-textMain">3. Twoje stawki biznesowe</h2>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold text-brand-textMuted">VAT (23%)</span>
+                                    <Toggle enabled={isVatEnabled} onChange={setIsVatEnabled} />
+                                </div>
+                            </div>
+                            <p className="text-xs text-brand-textMuted">Wartości zapisują się w pamięci i nie są widoczne na podsumowaniu dla klienta.</p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                                <InputField 
+                                    label="Margines błędu" 
+                                    value={failureMargin} 
+                                    onChange={setFailureMargin} 
+                                    unit="%" 
+                                    step="1" 
+                                    onToggle={setIsFailureMarginEnabled}
+                                    toggleState={isFailureMarginEnabled}
+                                />
+                                <InputField 
+                                    label="Marża zysku" 
+                                    value={profitMargin} 
+                                    onChange={setProfitMargin} 
+                                    unit="%" 
+                                    step="1" 
+                                    onToggle={setIsProfitMarginEnabled}
+                                    toggleState={isProfitMarginEnabled}
+                                />
+                                <InputField label="Cena filamentu" value={filamentCostPerKg} onChange={setFilamentCostPerKg} unit={`/kg`} step="1" />
+                                <InputField label="Koszt prądu" value={electricityRate} onChange={setElectricityRate} unit={`/kWh`} step="0.1" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div className="lg:col-span-4 relative">
+                        <div className="bg-brand-card rounded-3xl p-8 border border-brand-border shadow-soft sticky top-24 text-center">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xs uppercase tracking-widest text-brand-textMuted block font-semibold">Ostateczna wycena</span>
+                                {isVatEnabled && <span className="text-[10px] font-bold bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-md">BRUTTO</span>}
+                                {!isVatEnabled && <span className="text-[10px] font-bold bg-brand-surface text-brand-textMuted border border-brand-border px-2 py-1 rounded-md">NETTO</span>}
+                            </div>
+                            
+                            <div className="flex justify-center items-baseline gap-2 mb-4 bg-brand-surface/50 py-10 px-4 rounded-2xl border border-brand-border">
+                                <span className="text-5xl font-bold text-brand-textMain leading-none">{formatCurrency(totalCost)}</span>
+                                <span className="text-xl font-semibold text-brand-accent">{currency}</span>
+                            </div>
+                            
+                            <button 
+                                className={`w-full font-semibold py-4 rounded-xl transition-all shadow-glow flex items-center justify-center gap-2 active:scale-95 text-lg min-h-[60px] mb-6 ${isCopied ? 'bg-emerald-500 text-white shadow-none' : 'bg-brand-accent hover:bg-brand-accentHover text-white'}`}
+                                onClick={() => copyToClipboard(`${formatCurrency(totalCost)} ${currency}`, setIsCopied)}
+                            >
+                                {isCopied ? (
+                                    <><i className="fa-solid fa-check"></i> Skopiowano</>
+                                ) : (
+                                    <><i className="fa-regular fa-copy"></i> Skopiuj Kwotę</>
+                                )}
+                            </button>
+
+                            <div className="text-left border-t border-brand-border pt-4 text-sm space-y-2">
+                                <div className="flex justify-between text-brand-textMuted">
+                                    <span>Cena detalu ({safeQuantity} szt.):</span>
+                                    <span>{formatCurrency(costPer1 * safeQuantity)} {currency}</span>
+                                </div>
+                                {safeSetupFee > 0 && (
+                                    <div className="flex justify-between text-brand-textMuted items-center">
+                                        <span title="Doliczana dla zamówień poniżej 50g i 2h czasu druku">
+                                            Opłata startowa {isSmallOrder ? '' : <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-1.5 py-0.5 rounded ml-1 font-bold tracking-wide">GRATIS</span>}:
+                                        </span>
+                                        <span className={isSmallOrder ? '' : 'line-through opacity-50'}>{formatCurrency(safeSetupFee)} {currency}</span>
+                                    </div>
+                                )}
+                                {isVatEnabled && (
+                                    <div className="flex justify-between text-brand-textMuted pt-2">
+                                        <span>Kwota Netto:</span>
+                                        <span>{formatCurrency(totalNetto)} {currency}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between font-bold text-base text-brand-textMain pt-2 border-t border-brand-border/50">
+                                    <span>Razem:</span>
+                                    <span>{formatCurrency(totalCost)} {currency}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <div className="min-h-screen bg-brand-bg text-brand-textMain font-sans relative">
+                    <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand-accent/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+                    <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+
+                    <nav className="fixed top-0 w-full z-50 glass-nav border-b border-brand-border transition-all">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-accent to-indigo-600 flex items-center justify-center shadow-glow">
+                                        <i className="fa-solid fa-cube text-white text-sm"></i>
+                                    </div>
+                                    <span className="font-bold text-lg tracking-tight">IleZa<span className="text-brand-accent">Druk3D</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="pt-8">
+                        <CalculatorCore />
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

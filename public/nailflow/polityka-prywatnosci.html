@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Polityka prywatności | NailFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>💅</text></svg>">
+    <link rel="apple-touch-icon" href="logo.png">
+    <style>
+        :root {
+            --rose:        #d6325a;
+            --rose-hover:  #b8244a;
+            --rose-subtle: rgba(214,50,90,0.06);
+            --rose-border: rgba(214,50,90,0.14);
+            --white:       #ffffff;
+            --gray-100:    #f5f5f7;
+            --gray-200:    #e8e8ed;
+            --gray-300:    #d2d2d7;
+            --gray-500:    #8e8e93;
+            --gray-900:    #1d1d1f;
+            --blush:       #fff5f7;
+            --text:        #1d1d1f;
+            --text-muted:  #6e6e73;
+            --text-faint:  #aeaeb2;
+            --border:      #d2d2d7;
+            --border-light:#e8e8ed;
+            --sh-sm:       0 2px 8px rgba(0,0,0,0.06);
+            --sh:          0 4px 16px rgba(0,0,0,0.07);
+            --r:           16px;
+            --t-xs:        0.15s;
+            --t-sm:        0.25s;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: var(--gray-100);
+            color: var(--text);
+            line-height: 1.65;
+            overflow-x: hidden;
+            padding-top: 4rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            line-height: 1.1; letter-spacing: -0.025em; font-weight: 500;
+        }
+        p { line-height: 1.75; }
+        a { color: var(--rose); text-decoration: none; transition: color var(--t-xs); }
+        a:hover { color: var(--rose-hover); text-decoration: underline; }
+
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 4rem; z-index: 100;
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .nav-content {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;
+            font-weight: 600; color: var(--text); text-decoration: none; letter-spacing: -0.03em;
+        }
+        .logo:hover { color: var(--rose); text-decoration: none; }
+        .logo span { color: var(--rose); }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: var(--rose); background: var(--rose-subtle);
+            padding: 0.5rem 1.1rem; border-radius: 980px;
+            text-decoration: none; font-weight: 500; font-size: 0.82rem;
+            transition: background var(--t-xs);
+        }
+        .btn-back:hover { background: rgba(214,50,90,0.1); text-decoration: none; }
+
+        .page-hero {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-light);
+            padding: 4.5rem 2rem 3.5rem;
+            text-align: center;
+        }
+        .page-hero-inner { max-width: 640px; margin: 0 auto; }
+        .page-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--rose-subtle);
+            color: var(--rose); font-size: 0.68rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 0.35rem 0.85rem; border-radius: 50px; margin-bottom: 1.25rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .page-hero h1 { font-size: clamp(2rem, 4vw, 3rem); color: var(--text); margin-bottom: 0.6rem; font-weight: 400; }
+        .page-hero p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .content-wrap { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+        .update-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--white); border: 1px solid var(--border-light);
+            color: var(--text-muted); font-size: 0.74rem; font-weight: 500;
+            padding: 0.3rem 0.85rem; border-radius: 50px; margin-bottom: 2rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .section-block {
+            background: var(--white); border: 1px solid var(--border-light);
+            border-radius: var(--r); padding: 2rem 2.25rem;
+            margin-bottom: 1rem;
+            transition: box-shadow var(--t-sm);
+        }
+        .section-block:hover { box-shadow: var(--sh); }
+        .section-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 1.75rem; height: 1.75rem;
+            background: var(--gray-900); color: white; border-radius: 50%;
+            font-size: 0.7rem; font-weight: 700; margin-bottom: 0.85rem;
+        }
+        .section-block h2 {
+            font-size: 1.15rem; color: var(--text); margin-bottom: 0.85rem;
+            display: flex; align-items: center; gap: 0.65rem;
+            font-weight: 500;
+        }
+        .section-block p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.55rem; }
+        .section-block p:last-child { margin-bottom: 0; }
+        .section-block ul { margin-left: 1.25rem; color: var(--text-muted); font-size: 0.9rem; }
+        .section-block ul li { margin-bottom: 0.35rem; }
+
+        .footer { padding: 2rem 0; border-top: 1px solid var(--border-light); background: var(--white); }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+        .footer-links { display: flex; gap: 0.1rem; }
+        .footer-links a {
+            font-size: 0.78rem; color: var(--text-faint); text-decoration: none;
+            padding: 0.3rem 0.65rem; border-radius: 6px;
+            transition: color var(--t-xs), background var(--t-xs);
+        }
+        .footer-links a:hover { color: var(--rose); background: var(--rose-subtle); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .section-block { padding: 1.5rem 1.25rem; }
+            .page-hero { padding: 3rem 1.25rem 2.25rem; }
+            .content-wrap { padding: 2rem 1.25rem 5rem; }
+            .nav-content { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" aria-label="Nawigacja główna">
+    <div class="nav-content">
+        <a href="index.html" class="logo">Nail<span>Flow</span></a>
+        <a href="index.html" class="btn-back">← Strona główna</a>
+    </div>
+</nav>
+
+<main>
+
+<div class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-badge">Dokument prawny</div>
+        <h1>Polityka prywatności</h1>
+        <p>Jakie dane zbieramy, w jakim celu i jak je chronimy.</p>
+    </div>
+</div>
+
+<div class="content-wrap">
+
+    <div class="update-tag">📅 Ostatnia aktualizacja: 01.04.2026</div>
+
+    <div class="section-block">
+        <h2><span class="section-num">1</span>Wstęp</h2>
+        <p>Niniejsza polityka określa zasady ochrony danych osobowych przekazywanych przez użytkowników w związku z korzystaniem z serwisu NailFlow. Opisujemy tu pełny proces obsługi Twoich informacji.</p>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">2</span>Jakie dane zbieramy i w jakim celu?</h2>
+        <p>Poprzez formularz kontaktowy zbieramy:</p>
+        <ul>
+            <li>imię lub nazwę salonu,</li>
+            <li>adres e-mail,</li>
+            <li>numer telefonu,</li>
+            <li>link do strony z rezerwacjami / Instagram / ,</li>
+            <li>dane adresowe niezbędne do wysyłki.</li>
+        </ul>
+        <p style="margin-top:0.75rem;">Podane dane przetwarzamy w następujących celach:</p>
+        <ul>
+            <li>zawarcia i wykonania umowy sprzedaży oraz realizacji wysyłki zamówienia na podstawie art. 6 ust. 1 lit. b RODO,</li>
+            <li>udzielenia odpowiedzi na zapytanie ofertowe na podstawie art. 6 ust. 1 lit. b RODO,</li>
+            <li>rozpatrywania reklamacji oraz obrony przed roszczeniami na podstawie art. 6 ust. 1 lit. f RODO,</li>
+            <li>wykonywania obowiązków księgowych i podatkowych na podstawie art. 6 ust. 1 lit. c RODO.</li>
+        </ul>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">3</span>Komu udostępniamy dane?</h2>
+        <p>Dostęp do danych ma wyłącznie administrator serwisu. Nie handlujemy Twoimi informacjami. Udostępniamy je wyłącznie podmiotom trzecim niezbędnym do realizacji zamówienia, w tym firmom kurierskim (np. InPost) oraz dostawcom hostingu.</p>
+        <p>Formularz obsługiwany jest przez Formspree (formspree.io), który operuje danymi zgodnie z własną <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noopener">polityką prywatności</a>.</p>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">4</span>Jak długo przechowujemy dane?</h2>
+        <p>Przechowujemy Twoje dane przez czas niezbędny do obsługi zamówienia. Po jego realizacji dane przechowujemy do momentu przedawnienia roszczeń cywilnoprawnych (zazwyczaj 3 lub 6 lat) oraz przez okres 5 lat od końca roku kalendarzowego ze względu na powszechne przepisy podatkowe i rachunkowe.</p>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">5</span>Twoje prawa</h2>
+        <p>Przysługują Ci następujące uprawnienia względem danych:</p>
+        <ul>
+            <li>prawo dostępu do informacji,</li>
+            <li>prawo do ich sprostowania,</li>
+            <li>prawo do całkowitego usunięcia,</li>
+            <li>prawo do ograniczenia ich wykorzystania,</li>
+            <li>prawo do wniesienia sprzeciwu wobec działań serwisu,</li>
+            <li>prawo do wniesienia skargi do organu nadzorczego (PUODO, ul. Stawki 2, Warszawa).</li>
+        </ul>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">6</span>Pliki cookies</h2>
+        <p>Serwis używa wyłącznie technicznych plików cookies (sesyjnych) niezbędnych do prawidłowego działania strony. Nie korzystamy z narzędzi śledzących, analitycznych ani remarketingowych.</p>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">7</span>Administrator danych i kontakt</h2>
+        <p>Administratorem danych osobowych zbieranych za pośrednictwem serwisu jest Damian Barszcz, zamieszkały w Padwi Narodowej przy ul. Ludwiki Uzar-Krysiakowej 116, prowadzący działalność nierejestrowaną. W sprawach związanych z RODO, prywatnością oraz w celu realizacji swoich praw możesz skontaktować się bezpośrednio pod adresem e-mail: <a href="mailto:kontakt@nailflow.pl">kontakt@nailflow.pl</a>.</p>
+    </div>
+
+</div>
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span class="footer-copy">© 2026 NailFlow. Wszystkie prawa zastrzeżone.</span>
+        <nav class="footer-links" aria-label="Linki prawne">
+            <a href="regulamin.html">Regulamin</a>
+        </nav>
+    </div>
+</footer>
+
+</body>
+</html>

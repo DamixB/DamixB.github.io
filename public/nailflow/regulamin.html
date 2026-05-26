@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <title>Regulamin | NailFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>💅</text></svg>">
+    <link rel="apple-touch-icon" href="logo.png">
+    <style>
+        :root {
+            --rose:        #d6325a;
+            --rose-hover:  #b8244a;
+            --rose-subtle: rgba(214,50,90,0.06);
+            --rose-border: rgba(214,50,90,0.14);
+            --white:       #ffffff;
+            --gray-100:    #f5f5f7;
+            --gray-900:    #1d1d1f;
+            --text:        #1d1d1f;
+            --text-muted:  #6e6e73;
+            --text-faint:  #aeaeb2;
+            --border-light:#e8e8ed;
+            --sh:          0 4px 16px rgba(0,0,0,0.07);
+            --r:           16px;
+            --t-xs:        0.15s;
+            --t-sm:        0.25s;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: var(--gray-100);
+            color: var(--text);
+            line-height: 1.65;
+            overflow-x: hidden;
+            padding-top: 4rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            line-height: 1.1; letter-spacing: -0.025em; font-weight: 500;
+        }
+        p { line-height: 1.75; }
+        a { color: var(--rose); text-decoration: none; transition: color var(--t-xs); }
+        a:hover { color: var(--rose-hover); text-decoration: underline; }
+
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 4rem; z-index: 100;
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .nav-content {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;
+            font-weight: 600; color: var(--text); text-decoration: none; letter-spacing: -0.03em;
+        }
+        .logo:hover { color: var(--rose); text-decoration: none; }
+        .logo span { color: var(--rose); }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: var(--rose); background: var(--rose-subtle);
+            padding: 0.5rem 1.1rem; border-radius: 980px;
+            text-decoration: none; font-weight: 500; font-size: 0.82rem;
+            transition: background var(--t-xs);
+        }
+        .btn-back:hover { background: rgba(214,50,90,0.1); text-decoration: none; }
+
+        .page-hero {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-light);
+            padding: 4.5rem 2rem 3.5rem;
+            text-align: center;
+        }
+        .page-hero-inner { max-width: 640px; margin: 0 auto; }
+        .page-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--rose-subtle);
+            color: var(--rose); font-size: 0.68rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 0.35rem 0.85rem; border-radius: 50px; margin-bottom: 1.25rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .page-hero h1 { font-size: clamp(2rem, 4vw, 3rem); color: var(--text); margin-bottom: 0.6rem; font-weight: 400; }
+        .page-hero p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .content-wrap { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+        .update-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--white); border: 1px solid var(--border-light);
+            color: var(--text-muted); font-size: 0.74rem; font-weight: 500;
+            padding: 0.3rem 0.85rem; border-radius: 50px; margin-bottom: 2rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .section-block {
+            background: var(--white); border: 1px solid var(--border-light);
+            border-radius: var(--r); padding: 2rem 2.25rem;
+            margin-bottom: 1rem;
+            transition: box-shadow var(--t-sm);
+        }
+        .section-block:hover { box-shadow: var(--sh); }
+        .section-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 1.75rem; height: 1.75rem;
+            background: var(--gray-900); color: white; border-radius: 50%;
+            font-size: 0.7rem; font-weight: 700; margin-bottom: 0.85rem;
+            flex-shrink: 0;
+        }
+        .section-block h2 {
+            font-size: 1.15rem; color: var(--text); margin-bottom: 0.85rem;
+            display: flex; align-items: center; gap: 0.65rem; font-weight: 500;
+        }
+        .section-block p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.55rem; }
+        .section-block p:last-child { margin-bottom: 0; }
+        .section-block ol { margin-left: 1.25rem; color: var(--text-muted); font-size: 0.9rem; }
+        .section-block ol li { margin-bottom: 0.5rem; line-height: 1.7; }
+
+        .footer { padding: 2rem 0; border-top: 1px solid var(--border-light); background: var(--white); }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+        .footer-links { display: flex; gap: 0.1rem; }
+        .footer-links a {
+            font-size: 0.78rem; color: var(--text-faint); text-decoration: none;
+            padding: 0.3rem 0.65rem; border-radius: 6px;
+            transition: color var(--t-xs), background var(--t-xs);
+        }
+        .footer-links a:hover { color: var(--rose); background: var(--rose-subtle); text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .section-block { padding: 1.5rem 1.25rem; }
+            .page-hero { padding: 3rem 1.25rem 2.25rem; }
+            .content-wrap { padding: 2rem 1.25rem 5rem; }
+            .nav-content { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" aria-label="Nawigacja główna">
+    <div class="nav-content">
+        <a href="index.html" class="logo">Nail<span>Flow</span></a>
+        <a href="index.html" class="btn-back">← Strona główna</a>
+    </div>
+</nav>
+
+<main>
+
+<div class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-badge">Dokument prawny</div>
+        <h1>Regulamin serwisu NailFlow</h1>
+        <p>Zasady korzystania z serwisu, zamawiania i specyfikacja produktu.</p>
+    </div>
+</div>
+
+<div class="content-wrap">
+
+    <div class="update-tag">📅 Ostatnia aktualizacja: 01.04.2026</div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§1</span>Postanowienia ogólne</h2>
+        <p>Niniejszy regulamin określa zasady korzystania ze strony internetowej nailflow.pl. Oferta serwisu skierowana jest zarówno do konsumentów w rozumieniu przepisów prawa, jak i do przedsiębiorców. Właścicielem serwisu i sprzedawcą jest Damian Barszcz, zamieszkały w 39-340 Padwi Narodowej przy ul. Ludwiki Uzar-Krysiakowej 116, prowadzący działalność nierejestrowaną. Wszelki kontakt ze sprzedawcą oraz składanie zapytań możliwe jest pod adresem poczty elektronicznej <a href="mailto:kontakt@nailflow.pl">kontakt@nailflow.pl</a>.</p>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§2</span>Usługi i produkty</h2>
+        <ol>
+            <li>Sprzedawca oferuje spersonalizowane breloki NFC zaprogramowane pod wskazany przez kupującego adres URL.</li>
+            <li>Informacje na stronie stanowią zaproszenie do zawarcia umowy w rozumieniu art. 71 Kodeksu cywilnego. Nie są one ofertą handlową w świetle art. 66 KC.</li>
+        </ol>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§3</span>Płatności i dostawa</h2>
+        <ol>
+            <li>Płatność za zamówienie realizowana jest z góry przelewem tradycyjnym na wskazany przez sprzedawcę rachunek bankowy lub poprzez system BLIK po uprzednim uzgodnieniu projektu.</li>
+            <li>Dostawa produktów realizowana jest na terytorium Polski za pośrednictwem paczkomatów InPost lub firm kurierskich.</li>
+            <li>Koszty dostawy pokrywa kupujący. Dokładny koszt podawany jest podczas wyceny zamówienia.</li>
+<li>Sprzedawca korzystuje ze zwolnienia podmiotowego z podatku VAT. Podane ceny są ostateczne. Na żądanie kupującego sprzedawca wystawia fakturę bez VAT. Chęć otrzymania takiego dokumentu należy zgłosić podczas składania zamówienia, podając odpowiednie dane firmy.</li>
+        </ol>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§4</span>Specyfikacja techniczna</h2>
+        <ol>
+            <li>Produkty powstają przy użyciu technologii druku 3D z tworzyw sztucznych takich jak PLA, PLA+ lub PETG.</li>
+            <li>Z powodu specyfiki technologii druku na powierzchni widoczne są warstwy nakładanego materiału oraz drobne niedoskonałości wizualne. Cechy te wynikają z samego procesu produkcyjnego i nie stanowią wady fizycznej.</li>
+            <li>Zastosowane materiały źle znoszą wysokie temperatury. Pozostawienie produktu w temperaturze powyżej 50°C może spowodować trwałe odkształcenie lub zniszczenie układu NFC.</li>
+            <li>Sprzedawca odrzuca odpowiedzialność za uszkodzenia mechaniczne wynikające z niewłaściwego korzystania z przedmiotu.</li>
+        </ol>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§5</span>Zamówienia i realizacja</h2>
+        <ol>
+            <li>Złożenie zamówienia inicjuje wypełnienie formularza kontaktowego. Szczegóły ustalamy drogą elektroniczną.</li>
+            <li>Szacunkowy czas to od 7 do 14 dni roboczych. Dokładny termin potwierdzamy każdorazowo przed zapłatą. Dostępna kolorystyka zależy od stanu magazynowego.</li>
+            <li>Opłacenie zamówienia oznacza akceptację projektu. Umowa sprzedaży zostaje zawarta z chwilą zaksięgowania środków. Po tym momencie modyfikacja parametrów projektu bez dopłat jest niemożliwa.</li>
+            <li>Zgodnie z art. 38 pkt 3 ustawy o prawach konsumenta prawo odstąpienia od umowy nie przysługuje konsumentowi przy zakupie rzeczy wyprodukowanej według jego specyfikacji. Każdy produkt powstaje na indywidualne zamówienie. Kupujący traci prawo zwrotu towaru.</li>
+        </ol>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§6</span>Reklamacje</h2>
+        <ol>
+            <li>Sprzedawca jest zobowiązany dostarczyć towar zgodny z zawartą umową.</li>
+            <li>W przypadku braku zgodności towaru z umową konsumentowi przysługują uprawnienia określone w rozdziale 5a Ustawy o prawach konsumenta. Konsument może żądać naprawy lub wymiany. W określonych przypadkach może domagać się obniżenia ceny lub odstąpić od umowy.</li>
+            <li>Zgłoszenia reklamacyjne należy kierować pod adres: <a href="mailto:kontakt@nailflow.pl">kontakt@nailflow.pl</a>. Zgłoszenie musi opisywać wadę i zawierać dokumentację fotograficzną.</li>
+            <li>Sprzedawca odpowie na reklamację w ciągu 14 dni od jej otrzymania.</li>
+            <li>Dla kupujących będących przedsiębiorcami odpowiedzialność sprzedawcy z tytułu rękojmi zostaje całkowicie wyłączona zgodnie z art. 558 § 1 KC.</li>
+        </ol>
+    </div>
+    
+    <div class="section-block">
+        <h2><span class="section-num">§7</span>Prawa autorskie</h2>
+        <ol>
+            <li>Projekty 3D, układ wizualny breloków oraz treści na stronie są własnością sprzedawcy i podlegają ochronie prawnej.</li>
+            <li>Kupujący nie nabywa autorskich praw majątkowych do stworzonego projektu fizycznego, a jedynie własność konkretnego egzemplarza przedmiotu. Kopiowanie i powielanie produktów w celach komercyjnych jest zabronione.</li>
+        </ol>
+    </div>
+
+    <div class="section-block">
+        <h2><span class="section-num">§8</span>Postanowienia końcowe</h2>
+        <ol>
+            <li>Sprzedawca zastrzega sobie możliwość zmiany regulaminu. Zamówienia złożone przed aktualizacją obsługujemy na starych zasadach.</li>
+            <li>Konsument ma prawo skorzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń. Szczegółowe informacje znajdują się na platformie internetowego systemu rozstrzygania sporów ODR dostępnej pod adresem <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>.</li>
+            <li>Sprawy nieuregulowane podlegają przepisom prawa polskiego. Rozstrzyganie ewentualnych sporów z przedsiębiorcami zostaje poddane sądowi właściwemu dla siedziby sprzedawcy.</li>
+        </ol>
+    </div>
+
+</div>
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span class="footer-copy">© 2026 NailFlow. Wszystkie prawa zastrzeżone.</span>
+        <nav class="footer-links" aria-label="Linki prawne">
+            <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+        </nav>
+    </div>
+</footer>
+
+</body>
+</html>

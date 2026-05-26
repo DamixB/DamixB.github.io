@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <title>Dziękujemy za zamówienie | Magia Wspomnień</title>
+    <meta name="description" content="Twoje zamówienie zostało przyjęte. Sprawdź instrukcję, jak przesłać zdjęcia do renowacji.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#FDFBF7">
+    
+    <link rel="icon" href="logo.png" type="image/png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js" defer></script>
+    
+    <script src="script.js" defer></script>
+</head>
+<body class="lenis-scrolling">
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="site-branding">Magia Wspomnień</a>
+            <div class="nav-status">
+                <span class="status-dot">●</span> Dostępni online
+            </div>
+        </div>
+    </nav>
+
+    <main class="centered-content container">
+        
+        <div class="central-card gs-reveal">
+            <div class="success-icon" aria-hidden="true">✓</div>
+            
+            <h1 class="highlight" style="font-size: 2.8rem; margin-bottom: 0.5rem;">Dziękujemy!</h1>
+            <p style="font-size: 1.2rem; color: var(--primary); font-weight: 700;">
+                Twoja płatność została przyjęta pomyślnie.
+            </p>
+
+            <hr style="border: 0; border-top: 2px solid rgba(26, 54, 38, 0.05); margin: 2.5rem 0;">
+
+            <h2 style="font-size: 1.8rem; margin-bottom: 2rem;">Co teraz? To bardzo proste:</h2>
+            
+            <div class="steps-grid" style="margin-top: 0; gap: 20px;">
+                <div class="step-card" style="padding: 2rem 1.5rem; text-align: center; border-top: 3px solid var(--primary);">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">📧</div>
+                    <h3 style="font-size: 1.2rem;">1. Sprawdź e-mail</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 0;">Otrzymasz potwierdzenie wpłaty od operatora.</p>
+                </div>
+
+                <div class="step-card" style="padding: 2rem 1.5rem; text-align: center; border-top: 4px solid var(--accent); background: rgba(210, 129, 64, 0.03);">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">📸</div>
+                    <h3 style="font-size: 1.2rem;">2. Wyślij zdjęcia</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 0;">Prześlij pliki na nasz adres e-mail (przycisk poniżej).</p>
+                </div>
+
+                <div class="step-card" style="padding: 2rem 1.5rem; text-align: center; border-top: 3px solid var(--primary);">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">⏳</div>
+                    <h3 style="font-size: 1.2rem;">3. Czekaj na efekt</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 0;">Gotowe prace otrzymasz w ciągu 24-48h.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3.5rem;">
+                <p style="font-weight: 700; font-size: 1.1rem; color: var(--primary); margin-bottom: 1.5rem;">👇 Kliknij poniżej, aby wysłać zdjęcia teraz 👇</p>
+                
+                <a href="mailto:magia.wspomnien@protonmail.com?subject=Op%C5%82acone%20Zam%C3%B3wienie&body=Dzie%C5%84%20dobry%2C%0A%0APrzesy%C5%82am%20zdj%C4%99cia%20do%20op%C5%82aconego%20zam%C3%B3wienia." 
+                   class="btn btn-primary btn-full"
+                   style="max-width: 350px; margin: 0 auto; font-size: 1.2rem;">
+                   📤 Wyślij zdjęcia
+                </a>
+
+                <div style="margin-top: 2.5rem; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid rgba(26, 54, 38, 0.05);">
+                    <p style="font-size: 0.95rem; margin-bottom: 10px; color: var(--text-muted);">lub skopiuj adres e-mail i wyślij je ręcznie:</p>
+                    <div class="email-copy-box">
+                        <strong id="emailText" style="color: var(--primary);">magia.wspomnien@protonmail.com</strong>
+                        <button id="copyBtn" class="btn-copy">Kopiuj</button>
+                    </div>
+                    <p id="copySuccess" class="copy-feedback">Skopiowano! ✅</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <a href="index.html" class="link-primary">← Wróć na stronę główną</a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content container" style="justify-content: center; text-align: center;">
+            <div style="margin-bottom: 15px;">&copy; 2026 Magia Wspomnień. Dziękujemy za zaufanie.</div>
+            <div class="footer-links">
+                <a href="prawo.html">Regulamin i Polityka Prywatności</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

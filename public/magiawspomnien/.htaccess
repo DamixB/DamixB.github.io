@@ -1,0 +1,260 @@
+# ========================================
+# MAGIA WSPOMNIEŃ - .htaccess
+# Konfiguracja Apache dla bezpieczeństwa i wydajności
+# ========================================
+
+# Włącz RewriteEngine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # ========================================
+    # BEZPIECZEŃSTWO
+    # ========================================
+
+    # Wymuszenie HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Wymuszenie wersji BEZ WWW
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+    # Ochrona przed hotlinkingiem obrazów
+    RewriteCond %{HTTP_REFERER} !^$
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?magiawspomnien\.xyz [NC]
+    RewriteRule \.(jpg|jpeg|png|gif|webp|svg|mp4)$ - [NC,F,L]
+
+    # Blokowanie dostępu do wrażliwych plików
+    RewriteRule ^(.*/)?\.git/ - [F,L]
+    RewriteRule ^(.*/)?\.env - [F,L]
+    RewriteRule ^(.*/)?composer\.(json|lock) - [F,L]
+    RewriteRule ^(.*/)?package(-lock)?\.json - [F,L]
+</IfModule>
+
+# ========================================
+# NAGŁÓWKI BEZPIECZEŃSTWA
+# ========================================
+
+<IfModule mod_headers.c>
+    # Zapobieganie clickjackingowi
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Zapobieganie MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection (legacy, ale wciąż pomocny)
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy (nowy standard)
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+    
+    # Content Security Policy (CSP) - dostosuj według potrzeb
+    # Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://formsubmit.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://formsubmit.co https://platnosc.hotpay.pl; frame-ancestors 'self';"
+    
+    # HSTS - Wymuszenie HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Usuń informacje o serwerze
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# ========================================
+# KOMPRESJA GZIP/BROTLI
+# ========================================
+
+<IfModule mod_deflate.c>
+    # Kompresja tekstowych plików
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    
+    # Wyłączenia dla starszych przeglądarek
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# ========================================
+# CACHE CONTROL - WYDAJNOŚĆ
+# ========================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    
+    # HTML - krótki cache (odświeżanie treści)
+    ExpiresByType text/html "access plus 1 hour"
+    
+    # CSS i JavaScript - 1 rok (zmieniaj nazwy przy aktualizacji)
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+    
+    # Obrazy - 1 rok
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # Wideo
+    ExpiresByType video/mp4 "access plus 1 year"
+    ExpiresByType video/webm "access plus 1 year"
+    
+    # Fonty
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # Favicon
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
+
+# Cache-Control headers dla lepszej kontroli
+<IfModule mod_headers.c>
+    # Cache dla statycznych zasobów
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|css|js|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Bez cache dla HTML
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+    
+    # Bez cache dla dynamicznych stron
+    <FilesMatch "\.(php)$">
+        Header set Cache-Control "private, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# ========================================
+# MIME TYPES
+# ========================================
+
+<IfModule mod_mime.c>
+    # JavaScript
+    AddType application/javascript js
+    AddType application/json json
+    
+    # Wideo
+    AddType video/mp4 mp4
+    AddType video/webm webm
+    
+    # Fonty
+    AddType font/woff woff
+    AddType font/woff2 woff2
+    AddType application/font-woff woff
+    AddType application/font-woff2 woff2
+    
+    # SVG
+    AddType image/svg+xml svg svgz
+    AddEncoding gzip svgz
+    
+    # WebP
+    AddType image/webp webp
+</IfModule>
+
+# ========================================
+# OCHRONA PLIKÓW
+# ========================================
+
+# Zablokuj dostęp do .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Zablokuj dostęp do plików konfiguracyjnych
+<FilesMatch "\.(env|git|gitignore|log|bak|config|conf|ini)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ========================================
+# INDEKSOWANIE KATALOGÓW
+# ========================================
+
+# Wyłącz listowanie katalogów
+Options -Indexes
+
+# Domyślne pliki indeksowe
+DirectoryIndex index.html index.htm
+
+# ========================================
+# PRZEKIEROWANIA 404
+# ========================================
+
+# Własna strona błędu 404 (stwórz plik 404.html jeśli chcesz)
+ErrorDocument 404 /index.html
+
+# ========================================
+# PHP SETTINGS (jeśli używasz PHP)
+# ========================================
+
+<IfModule mod_php7.c>
+    # Wyłącz wyświetlanie błędów na produkcji
+    php_flag display_errors Off
+    php_flag display_startup_errors Off
+    
+    # Zwiększ limity (dostosuj do potrzeb)
+    php_value max_execution_time 30
+    php_value max_input_time 60
+    php_value memory_limit 128M
+    php_value post_max_size 20M
+    php_value upload_max_filesize 20M
+</IfModule>
+
+# ========================================
+# OPTYMALIZACJA
+# ========================================
+
+# Włącz KeepAlive dla lepszej wydajności
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+
+# ETag - dla lepszego cachowania
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# ========================================
+# BLOKOWANIE BOTÓW I SKANERÓW
+# ========================================
+
+<IfModule mod_rewrite.c>
+    # Blokowanie złośliwych botów (opcjonalnie)
+    # RewriteCond %{HTTP_USER_AGENT} ^.*(bot|spider|crawl|scraper).* [NC]
+    # RewriteRule ^(.*)$ - [F,L]
+    
+    # Blokowanie pustych User-Agent
+    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^(-|java|curl|wget|python|libwww) [NC]
+    RewriteRule ^(.*)$ - [F,L]
+</IfModule>
+
+# ========================================
+# KONIEC KONFIGURACJI
+# ========================================

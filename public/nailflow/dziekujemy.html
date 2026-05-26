@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dziękujemy za zamówienie! | NailFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>💅</text></svg>">
+    <link rel="apple-touch-icon" href="logo.png">
+    <style>
+        :root {
+            --rose:        #d6325a;
+            --rose-hover:  #b8244a;
+            --rose-subtle: rgba(214,50,90,0.06);
+            --rose-border: rgba(214,50,90,0.14);
+            --white:       #ffffff;
+            --gray-100:    #f5f5f7;
+            --gray-200:    #e8e8ed;
+            --gray-900:    #1d1d1f;
+            --blush:       #fff5f7;
+            --text:        #1d1d1f;
+            --text-muted:  #6e6e73;
+            --text-faint:  #aeaeb2;
+            --border-light:#e8e8ed;
+            --green:       #1d8348;
+            --green-bg:    rgba(29,131,72,0.07);
+            --green-border:rgba(29,131,72,0.18);
+            --sh:          0 4px 16px rgba(0,0,0,0.07);
+            --sh-lg:       0 16px 48px rgba(0,0,0,0.09);
+            --r:           16px;
+            --ease:        cubic-bezier(0.4,0,0.2,1);
+            --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: var(--gray-100);
+            color: var(--text);
+            line-height: 1.65;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-top: 4rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            line-height: 1.1; letter-spacing: -0.025em; font-weight: 500;
+        }
+        p { line-height: 1.75; }
+        a { color: var(--rose); text-decoration: none; transition: color 0.15s; }
+        a:hover { color: var(--rose-hover); text-decoration: underline; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 4rem; z-index: 100;
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .nav-content {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;
+            font-weight: 600; color: var(--text); text-decoration: none; letter-spacing: -0.03em;
+        }
+        .logo:hover { color: var(--rose); }
+        .logo span { color: var(--rose); }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: var(--text-muted); font-size: 0.82rem; font-weight: 500;
+            text-decoration: none; transition: color 0.15s;
+        }
+        .btn-back:hover { color: var(--rose); text-decoration: none; }
+
+        /* Background */
+        .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.25;
+        }
+        .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, #fde8ee, transparent); top: -100px; right: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #fff0f4, transparent); bottom: 0; left: -80px; }
+
+        /* Canvas */
+        #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+        /* Page wrap */
+        .page-wrap {
+            position: relative; z-index: 1;
+            max-width: 640px; margin: 0 auto;
+            padding: 3.5rem 1.5rem 6rem;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Success icon */
+        .success-icon-wrap {
+            margin-bottom: 2rem;
+            opacity: 0; transform: scale(0.5);
+            animation: pop-in 0.6s var(--ease-spring) 0.2s forwards;
+        }
+        @keyframes pop-in { to { opacity: 1; transform: scale(1); } }
+        .success-ring {
+            width: 88px; height: 88px; border-radius: 50%;
+            background: var(--green);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(29,131,72,0.25);
+            position: relative;
+        }
+        .success-ring::before {
+            content: ''; position: absolute; inset: -6px; border-radius: 50%;
+            border: 1.5px solid rgba(29,131,72,0.2);
+            animation: ring-pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes ring-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0; }
+        }
+        .success-ring svg { width: 40px; height: 40px; }
+        .check-path {
+            stroke-dasharray: 60; stroke-dashoffset: 60;
+            animation: draw-check 0.5s ease 0.7s forwards;
+        }
+        @keyframes draw-check { to { stroke-dashoffset: 0; } }
+
+        /* Hero text */
+        .hero-text {
+            text-align: center; margin-bottom: 2.5rem;
+            opacity: 0; transform: translateY(20px);
+            animation: slide-up 0.5s var(--ease) 0.5s forwards;
+        }
+        @keyframes slide-up { to { opacity: 1; transform: translateY(0); } }
+        .badge-tag {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            background: var(--green-bg); border: 1px solid var(--green-border);
+            color: var(--green); font-size: 0.68rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 0.35rem 0.9rem; border-radius: 50px; margin-bottom: 1.25rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .hero-text h1 {
+            font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 0.6rem; font-weight: 400;
+        }
+        .hero-text h1 span { color: var(--rose); font-style: italic; }
+        .hero-text p { color: var(--text-muted); font-size: 0.97rem; max-width: 460px; margin: 0 auto; }
+
+        /* Cards */
+        .order-card, .timeline-card {
+            width: 100%; background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r); overflow: hidden;
+            margin-bottom: 1rem;
+            opacity: 0; transform: translateY(20px);
+        }
+        .order-card { animation: slide-up 0.5s var(--ease) 0.75s forwards; }
+        .timeline-card { animation: slide-up 0.5s var(--ease) 1s forwards; border-radius: var(--r); overflow: visible; }
+
+        .order-card-header {
+            background: var(--gray-900);
+            padding: 1.25rem 1.75rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .order-card-header .icon { font-size: 1.5rem; }
+        .order-card-header h2 {
+            font-size: 1.1rem; color: white; font-weight: 500; letter-spacing: -0.015em;
+        }
+        .order-card-header p { color: rgba(255,255,255,0.45); font-size: 0.82rem; }
+        .order-body { padding: 0 1.75rem; }
+
+        .order-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.85rem 0; border-bottom: 1px solid var(--border-light);
+            gap: 1rem;
+        }
+        .order-row:last-child { border-bottom: none; }
+        .order-label {
+            font-size: 0.85rem; color: var(--text-muted); font-weight: 400;
+            display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
+        }
+        .order-label .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--rose); flex-shrink: 0; }
+        .order-value { font-size: 0.88rem; color: var(--text); font-weight: 500; text-align: right; }
+        .order-value.highlight { color: var(--rose); }
+        .order-value.green { color: var(--green); }
+
+        /* Timeline */
+        .timeline-card { padding: 1.75rem }
+        .timeline-card h3 {
+            font-size: 1rem; color: var(--text); margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.01em;
+        }
+        .steps { display: flex; flex-direction: column; }
+        .step { display: flex; gap: 1.1rem; align-items: flex-start; position: relative; padding-bottom: 1.4rem; }
+        .step:last-child { padding-bottom: 0; }
+        .step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .step-num {
+            width: 2rem; height: 2rem; border-radius: 50%;
+            background: var(--rose); color: white;
+            font-size: 0.75rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 1; flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(214,50,90,0.25);
+        }
+        .step-num.done { background: var(--green); box-shadow: 0 2px 8px rgba(29,131,72,0.25); }
+        .step-line {
+            width: 1.5px; flex: 1; min-height: 1.2rem;
+            background: var(--border-light); margin-top: 4px;
+        }
+        .step:last-child .step-line { display: none; }
+        .step-body { padding-top: 0.15rem; }
+        .step-body h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 0.2rem; font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.01em; }
+        .step-body p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+        .step-time {
+            display: inline-block; margin-top: 0.4rem;
+            background: var(--gray-100); border: 1px solid var(--border-light);
+            color: var(--text-muted); font-size: 0.7rem; font-weight: 500;
+            padding: 0.2rem 0.65rem; border-radius: 50px;
+        }
+
+        /* Contact box */
+        .contact-box {
+            width: 100%; background: var(--white);
+            border: 1px solid var(--rose-border);
+            border-radius: var(--r); padding: 1.5rem 1.75rem;
+            margin-bottom: 1rem;
+            display: flex; align-items: flex-start; gap: 1rem;
+            opacity: 0; transform: translateY(20px);
+            animation: slide-up 0.5s var(--ease) 1.2s forwards;
+        }
+        .contact-box .contact-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .contact-box h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 0.3rem; font-family: 'DM Sans', sans-serif; font-weight: 600; letter-spacing: -0.01em; }
+        .contact-box p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* CTA */
+        .cta-wrap {
+            text-align: center; margin-top: 0.5rem;
+            opacity: 0; transform: translateY(16px);
+            animation: slide-up 0.5s var(--ease) 1.4s forwards;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--rose); color: white;
+            padding: 0.85rem 2rem; border-radius: 980px;
+            text-decoration: none; font-weight: 500; font-size: 0.95rem;
+            transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 16px rgba(214,50,90,0.25);
+        }
+        .btn-primary:hover { background: var(--rose-hover); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(214,50,90,0.32); text-decoration: none; color: white; }
+        .cta-note { margin-top: 1rem; font-size: 0.78rem; color: var(--text-faint); }
+
+        /* Footer */
+        .footer { border-top: 1px solid var(--border-light); background: var(--white); padding: 2rem 0; position: relative; z-index: 1; }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+        .footer-links { display: flex; gap: 0.1rem; }
+        .footer-links a {
+            font-size: 0.78rem; color: var(--text-faint); padding: 0.3rem 0.65rem;
+            border-radius: 6px; transition: color 0.15s, background 0.15s; text-decoration: none;
+        }
+        .footer-links a:hover { color: var(--rose); background: var(--rose-subtle); }
+
+        @media (max-width: 600px) {
+            .page-wrap { padding: 2.5rem 1rem 4rem; }
+            .order-body, .timeline-card, .contact-box { padding: 1.25rem; }
+            .order-card-header { padding: 1.1rem 1.25rem; }
+            .order-row { flex-direction: column; gap: 0.2rem; }
+            .order-value { text-align: left; }
+            .nav-content { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+<nav class="navbar" aria-label="Nawigacja główna">
+    <div class="nav-content">
+        <a href="index.html" class="logo">Nail<span>Flow</span></a>
+        <a href="index.html" class="btn-back">← Strona główna</a>
+    </div>
+</nav>
+
+<div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<main class="page-wrap">
+
+    <div class="success-icon-wrap" aria-hidden="true">
+        <div class="success-ring">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="check-path" d="M10 22L18 31L34 13" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="hero-text">
+        <div class="badge-tag">Zamówienie potwierdzone</div>
+        <h1>Dziękujemy za <span>zaufanie.</span></h1>
+        <p>Płatność została potwierdzona — Twoje zamówienie trafia właśnie do realizacji. Będziemy Cię informować o kolejnych krokach na bieżąco.</p>
+    </div>
+
+    <div class="order-card">
+        <div class="order-card-header">
+            <div class="icon">📦</div>
+            <div>
+                <h2>Podsumowanie zamówienia</h2>
+                <p>Szczegóły wyślemy również na Twój e-mail</p>
+            </div>
+        </div>
+        <div class="order-body">
+            <div class="order-row">
+                <span class="order-label"><span class="dot"></span>Produkt</span>
+                <span class="order-value">Spersonalizowane breloki NFC</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label"><span class="dot"></span>Konfiguracja NFC</span>
+                <span class="order-value green">✓ W cenie zamówienia</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label"><span class="dot"></span>Czas realizacji</span>
+                <span class="order-value">7–14 dni roboczych</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label"><span class="dot"></span>Dostawa</span>
+                <span class="order-value">Paczkomat InPost / Kurier InPost</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label"><span class="dot"></span>Status</span>
+                <span class="order-value green">✓ W realizacji</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="timeline-card">
+        <h3>Co dzieje się teraz?</h3>
+        <div class="steps">
+            <div class="step">
+                <div class="step-left">
+                    <div class="step-num done">✓</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-body">
+                    <h4>Zgłoszenie i ustalenie szczegółów</h4>
+                    <p>Wspólnie ustaliliśmy link, kolorystykę i sposób personalizacji Twojego breloka.</p>
+                    <span class="step-time">✓ Gotowe</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-left">
+                    <div class="step-num done">✓</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-body">
+                    <h4>Akceptacja projektu i płatność</h4>
+                    <p>Projekt został zaakceptowany, a płatność zaksięgowana. Wszystko gotowe do produkcji!</p>
+                    <span class="step-time">✓ Opłacone</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-left">
+                    <div class="step-num">3</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-body">
+                    <h4>Produkcja i programowanie NFC</h4>
+                    <p>Drukujemy breloki, programujemy każdy chip pod Twój link i pakujemy zamówienie.</p>
+                    <span class="step-time">⏱ 7–14 dni roboczych</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-left">
+                    <div class="step-num">4</div>
+                    <div class="step-line"></div>
+                </div>
+                <div class="step-body">
+                    <h4>Wysyłka kurierem</h4>
+                    <p>Paczka leci do Ciebie. Otrzymasz numer śledzenia na e-mail. Breloki gotowe do użycia od razu.</p>
+                    <span class="step-time">⏱ Po zakończeniu produkcji</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-box">
+        <div class="contact-icon">💌</div>
+        <div>
+            <h4>Masz pytanie do zamówienia?</h4>
+            <p>Napisz śmiało - odpowiadamy szybko.<br>
+               <a href="mailto:kontakt@nailflow.pl">kontakt@nailflow.pl</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="cta-wrap">
+        <a href="index.html" class="btn-primary">← Wróć na stronę główną</a>
+        <p class="cta-note">Dziękujemy, że wybrałaś NailFlow. Twoje breloki są już w drodze do produkcji! 💅</p>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span class="footer-copy">© 2026 NailFlow. Wszystkie prawa zastrzeżone.</span>
+        <nav class="footer-links" aria-label="Linki prawne">
+            <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+            <a href="regulamin.html">Regulamin</a>
+        </nav>
+    </div>
+</footer>
+
+<script>
+/* Confetti */
+(function() {
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const COLORS = ['#d6325a','#fde8ee','#b8244a','#f9b4c4','#fff0f4','#e8e8ed'];
+
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function createParticle() {
+        return {
+            x: rand(0, W), y: rand(-80, -10),
+            r: rand(3, 7), color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            rot: rand(0, Math.PI * 2),
+            vx: rand(-1.2, 1.2), vy: rand(2, 4.5), vr: rand(-0.05, 0.05),
+            shape: Math.random() > 0.5 ? 'rect' : 'circle',
+            w: rand(5, 12), h: rand(3, 7), opacity: 1
+        };
+    }
+    for (let i = 0; i < 100; i++) {
+        const p = createParticle();
+        p.y = rand(-H, 0);
+        particles.push(p);
+    }
+    let frame = 0;
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            ctx.save();
+            ctx.globalAlpha = p.opacity;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            if (p.shape === 'rect') { ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h); }
+            else { ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill(); }
+            ctx.restore();
+            p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y > H + 20) { Object.assign(p, createParticle()); p.y = -20; }
+            if (frame > 220) p.opacity = Math.max(0, p.opacity - 0.004);
+        });
+        frame++;
+        if (frame < 380) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

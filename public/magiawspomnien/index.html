@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Renowacja Starych Zdjęć | Magia Wspomnień</title>
+    <meta name="description" content="Profesjonalna renowacja i koloryzacja zdjęć. Zobacz ich twarze tak wyraźnie, jak dawniej. Usunięcie rys, zagnieceń i przywrócenie ostrości. Gwarancja satysfakcji.">
+    <meta name="keywords" content="renowacja zdjęć, naprawa starych fotografii, koloryzacja zdjęć, usuwanie zagnieceń, retusz starych zdjęć, renowacja online, odnawianie zdjęć">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://magiawspomnien.xyz/">
+    
+    <meta property="og:title" content="Magia Wspomnień - Zobacz ich twarze tak wyraźnie, jak dawniej">
+    <meta property="og:description" content="Twoje wspomnienia znów pełne kolorów i szczegółów. Profesjonalna renowacja zdjęć w 24 godziny.">
+    <meta property="og:image" content="https://magiawspomnien.xyz/logo.png"> 
+    <meta property="og:url" content="https://magiawspomnien.xyz/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pl_PL">
+
+    <link rel="icon" href="logo.png" type="image/png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js" defer></script>
+    
+    <script src="script.js" defer></script>
+
+   <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Magia Wspomnień - Renowacja i Koloryzacja Zdjęć",
+      "image": "https://magiawspomnien.xyz/logo.png",
+      "@id": "https://magiawspomnien.xyz",
+      "url": "https://magiawspomnien.xyz",
+      "email": "magia.wspomnien@protonmail.com",
+      "telephone": "",
+      "priceRange": "29 PLN - 99 PLN",
+      "paymentAccepted": "BLIK, Przelew online (HotPay)",
+      "description": "Profesjonalna cyfrowa renowacja, naprawa zniszczeń, koloryzacja i ożywianie starych zdjęć (animacja wideo). Usługi online z 24-godzinnym czasem realizacji i gwarancją zwrotu pieniędzy.",
+      "areaServed": "PL",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "24"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Pakiety Renowacji Zdjęć",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Pojedynczy Projekt",
+              "description": "Pełna renowacja, usunięcie zniszczeń, poprawa ostrości i koloryzacja 1 zdjęcia."
+            },
+            "price": "29.00",
+            "priceCurrency": "PLN"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Pakiet Dziedzictwo z Animacją",
+              "description": "Renowacja 5 zdjęć oraz gratisowe ożywienie wideo jednego ze zdjęć (animacja MP4 postaci)."
+            },
+            "price": "99.00",
+            "priceCurrency": "PLN"
+          }
+        ]
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Gdzie naprawić stare, zniszczone zdjęcia online?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Serwis Magia Wspomnień oferuje profesjonalną cyfrową renowację zdjęć online. Usługa obejmuje usuwanie pęknięć, rys, poprawę ostrości oraz koloryzację."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Ile kosztuje renowacja i koloryzacja starego zdjęcia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "W Magii Wspomnień podstawowa renowacja i koloryzacja jednego zdjęcia kosztuje 29 PLN. Dostępny jest również Pakiet Dziedzictwo za 99 PLN obejmujący 5 zdjęć oraz darmową animację wideo ożywiającą postać na zdjęciu."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Czy odzyskacie zdjęcie, które jest podarte na części?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tak. Wystarczy ułożyć wszystkie kawałki fizycznie jak najbliżej siebie i zrobić im wyraźne zdjęcie. Cyfrowo zszyjemy elementy i usuniemy ślady pęknięć."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Co to jest wideo-ożywienie zdjęcia (animacja)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "W Pakiecie Dziedzictwo oferujemy animację MP4 odrestaurowanego zdjęcia. Twarz osoby na fotografii ożywa – postać uśmiecha się, mruga i porusza głową."
+        }
+      }]
+    }
+    </script>
+</head>
+<body class="lenis-scrolling">
+
+    <button id="backToTop" title="Wróć na górę" aria-label="Wróć na górę strony">↑</button>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="site-branding">Magia Wspomnień</a>
+            <div class="nav-status">
+                <span class="status-dot">●</span> Dostępni online
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-bg-glow"></div>
+        <div class="hero-bg-glow glow-2"></div>
+        
+        <div class="hero-content">
+            <div class="hero-text-wrapper gs-reveal">
+                <h1>Zobacz ich twarze <br>tak wyraźnie, <span class="highlight">jak dawniej.</span></h1>
+            </div>
+            
+            <p class="hero-subtitle gs-reveal">
+                Uratuj cenne rodzinne pamiątki przed zniszczeniem. Twoje wspomnienia znów będą pełne ciepłych kolorów i ostrych szczegółów. Profesjonalna renowacja w 24 godziny.
+            </p>
+            
+            <div class="hero-cta gs-reveal">
+                <a href="#wizualizacje" class="btn btn-primary">Odzyskaj wspomnienia ↓</a>
+                <a href="#cennik" class="btn btn-secondary">Zobacz cennik</a>
+            </div>
+            
+            <div class="trust-badges gs-reveal">
+                <span class="trust-badge">🛡️ 100% Gwarancji Satysfakcji</span>
+                <span class="trust-badge">⏱️ Średni czas odpowiedzi: 45 min</span>
+            </div>
+        </div>
+    </header>
+
+    <section id="wizualizacje" class="section-padding section-white">
+        <div class="container text-center">
+            <p class="section-subtitle gs-reveal">ZOBACZ MAGIĘ W AKCJI</p>
+            
+            <div class="comparison-wrapper main-comparison gs-reveal">
+                <div class="comparison-slider" id="mainSlider" style="--position: 50%;">
+                    <img src="po.jpg" alt="Zrekonstruowane zdjęcie portretowe o wysokiej ostrości" class="img-after" loading="eager">
+                    <div class="img-before">
+                        <img src="przed.jpg" alt="Stare uszkodzone zdjęcie przed cyfrową renowacją" loading="eager">
+                    </div>
+                    <span class="label-badge label-before">PRZED</span>
+                    <span class="label-badge label-after">PO</span>
+                    <div class="slider-handle" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+            <p class="slider-instruction gs-reveal">Przesuń suwak, aby zobaczyć różnicę.</p>
+
+            <div class="video-container gs-reveal">
+                <p class="section-subtitle">🎥 MAGIA, KTÓRA WYWOŁUJE UŚMIECH</p>
+                <p class="video-description">
+                    Wystarczy jedno zdjęcie, by ożywić spojrzenie i zobaczyć ten beztroski uśmiech ponownie. Stworzymy dla Ciebie pamiątkę, która poruszy serce.<br>
+                    <span class="gift-highlight">✨ Bezpłatny prezent w Pakiecie Dziedzictwo ✨</span>
+                </p>
+                <video controls loop muted playsinline preload="none" poster="poster.jpg">
+                    <source src="wideo.mp4" type="video/mp4">
+                    Twoja przeglądarka nie obsługuje wideo.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding section-gray">
+        <div class="container text-center gs-reveal">
+            <div class="author-avatar">
+                <img src="ja.jpg" alt="Damian Barszcz - Magia Wspomnień" loading="lazy">
+            </div>
+            <h2>Technologia w rękach człowieka.</h2>
+            <p>Łączę precyzję sztucznej inteligencji z wrażliwością artysty. Każde zdjęcie traktuję jak osobistą historię, której trzeba przywrócić blask, zachowując jej autentyczny charakter.</p>
+        </div>
+    </section>
+
+    <section class="section-padding section-white">
+        <div class="container gs-gallery-trigger">
+            <h2 class="text-center gs-reveal">Ratujemy nawet "beznadziejne" przypadki</h2>
+            <p class="text-center section-intro gs-reveal">Podarcia, plamy, poplamione twarze? Zobacz, co jest możliwe.</p>
+            
+            <div class="examples-grid">
+                
+                <div class="comparison-wrapper gs-stagger-gallery">
+                    <div class="comparison-slider" style="--position: 50%;">
+                        <img src="po2.jpg" class="img-after" alt="Zdjęcie z koniem po profesjonalnej koloryzacji i renowacji" loading="lazy">
+                        <div class="img-before">
+                            <img src="przed2.jpg" alt="Zniszczone zdjęcie z koniem z ubytkami emulsji" loading="lazy">
+                        </div>
+                        <span class="label-badge label-before">PRZED</span>
+                        <span class="label-badge label-after">PO</span>
+                        <div class="slider-handle" aria-hidden="true">↔</div>
+                    </div>
+                    <p class="example-desc text-center"><strong>Problem:</strong> Głębokie ubytki emulsji i zatarte detale.</p>
+                </div>
+
+                <div class="comparison-wrapper gs-stagger-gallery">
+                    <div class="comparison-slider" style="--position: 50%;">
+                        <img src="po3.jpg" class="img-after" alt="Odrestaurowane zdjęcie szkolne ze zredukowanym ziarnem" loading="lazy">
+                        <div class="img-before">
+                            <img src="przed3.jpg" alt="Stara fotografia szkolna o słabej ostrości" loading="lazy">
+                        </div>
+                        <span class="label-badge label-before">PRZED</span>
+                        <span class="label-badge label-after">PO</span>
+                        <div class="slider-handle" aria-hidden="true">↔</div>
+                    </div>
+                    <p class="example-desc text-center"><strong>Problem:</strong> Nierozpoznawalne twarze i silne ziarno.</p>
+                </div>
+
+                <div class="comparison-wrapper gs-stagger-gallery">
+                    <div class="comparison-slider" style="--position: 50%;">
+                        <img src="po4.jpg" class="img-after" alt="Naprawione pęknięcia na starym zdjęciu" loading="lazy">
+                        <div class="img-before">
+                            <img src="przed4.jpg" alt="Rozdarte i pęknięte zdjęcie rodzinne" loading="lazy">
+                        </div>
+                        <span class="label-badge label-before">PRZED</span>
+                        <span class="label-badge label-after">PO</span>
+                        <div class="slider-handle" aria-hidden="true">↔</div>
+                    </div>
+                    <p class="example-desc text-center"><strong>Problem:</strong> Głębokie pęknięcia, brak ostrości.</p>
+                </div>
+
+                <div class="comparison-wrapper gs-stagger-gallery">
+                    <div class="comparison-slider" style="--position: 50%;">
+                        <img src="po5.jpg" class="img-after" alt="Usunięte ślady długopisu ze zdjęcia" loading="lazy">
+                        <div class="img-before">
+                            <img src="przed5.jpg" alt="Zdjęcie zamazane flamastrem przez dziecko" loading="lazy">
+                        </div>
+                        <span class="label-badge label-before">PRZED</span>
+                        <span class="label-badge label-after">PO</span>
+                        <div class="slider-handle" aria-hidden="true">↔</div>
+                    </div>
+                    <p class="example-desc text-center"><strong>Problem:</strong> Twarz zamazana długopisem przez dziecko.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding section-gray">
+        <div class="container">
+            <h2 class="text-center gs-reveal">Zaufali nam</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card gs-reveal">
+                    <div class="stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+                    <p class="testimonial-text">„Myślałam, że to zdjęcie dziadka jest nie do odratowania. Było podarte na pół. Efekt końcowy doprowadził moją mamę do łez wzruszenia.”</p>
+                    <div class="client-name">Anna K., Kraków</div>
+                </div>
+                <div class="testimonial-card gs-reveal">
+                    <div class="stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+                    <p class="testimonial-text">„Szybko, konkretnie i uczciwie. Opłaciłam, wysłałam plik i następnego dnia miałam gotowe zdjęcia.”</p>
+                    <div class="client-name">Tomasz W., Warszawa</div>
+                </div>
+                <div class="testimonial-card gs-reveal">
+                    <div class="stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+                    <p class="testimonial-text">„Instrukcja wysyłki była bardzo jasna. Mimo że wysyłałam zdjęcia z telefonu, jakość jest super.”</p>
+                    <div class="client-name">Magdalena R., Gdańsk</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cennik" class="section-padding section-white">
+        <div class="container text-center gs-pricing-trigger">
+            <p class="section-subtitle gs-reveal">OFERTA</p>
+            <h2 class="gs-reveal">Wybierz pakiet dla siebie</h2>
+            <p class="section-intro gs-reveal">
+                Proste zasady. Stała cena. Gwarancja jakości.
+            </p>
+
+            <div class="pricing-grid">
+                
+                <div class="pricing-card gs-stagger-pricing">
+                    <h3>Pojedynczy Projekt</h3>
+                    <div class="pricing-icon" aria-hidden="true">🖼️</div>
+                    <p class="pricing-count"><strong>1 Zdjęcie</strong></p>
+                    <p class="pricing-desc">Pełna renowacja, usunięcie zniszczeń, poprawa ostrości i koloryzacja.</p>
+                    <div class="pricing-price">29 PLN</div>
+                    
+                    <div class="ai-consent-wrapper">
+                        <input type="checkbox" id="consent-1">
+                        <label for="consent-1">Akceptuję <a href="prawo.html" target="_blank" class="link-primary">Regulamin</a></label>
+                    </div>
+
+                    <a href="https://platnosc.hotpay.pl/?SEKRET=QkpaMlZoTmxrbUNaempoSm5hNkt1d3VBQkZ4bUJyMTJMNm1kTkJIZmpvOD0%2C&KWOTA=29&NAZWA_USLUGI=Renowacja%20zdj%C4%99cia%20-%20Pakiet%20Pojedynczy&ADRES_WWW=https%3A%2F%2Fmagiawspomnien.xyz%2Fpodziekowanie.html&ID_ZAMOWIENIA=&EMAIL=&DANE_OSOBOWE=" 
+                       class="btn btn-full disabled" id="btn-1">Zamawiam renowację</a>
+                    
+                    <p class="guarantee-text">
+                        <strong>🛡️ 100% Gwarancji Satysfakcji.</strong><br>
+                        Poprawiamy do skutku lub zwracamy pieniądze.
+                    </p>
+                    <p class="payment-info">Bezpieczna płatność BLIK / Przelew</p>
+                </div>
+
+                <div class="pricing-card gs-stagger-pricing">
+                    <h3>Pakiet Trio</h3>
+                    <div class="pricing-icon" aria-hidden="true">📂</div>
+                    <p class="pricing-count"><strong>3 Zdjęcia</strong></p>
+                    <p class="pricing-desc">Kompleksowa naprawa trzech wybranych przez Ciebie fotografii.</p>
+                    <div class="pricing-price">85 PLN</div>
+                    
+                    <div class="ai-consent-wrapper">
+                        <input type="checkbox" id="consent-3">
+                        <label for="consent-3">Akceptuję <a href="prawo.html" target="_blank" class="link-primary">Regulamin</a></label>
+                    </div>
+
+                    <a href="https://platnosc.hotpay.pl/?SEKRET=QkpaMlZoTmxrbUNaempoSm5hNkt1d3VBQkZ4bUJyMTJMNm1kTkJIZmpvOD0%2C&KWOTA=85&NAZWA_USLUGI=Renowacja%20zdj%C4%99%C4%87%20-%20Pakiet%20Trio&ADRES_WWW=https%3A%2F%2Fmagiawspomnien.xyz%2Fpodziekowanie.html&ID_ZAMOWIENIA=&EMAIL=&DANE_OSOBOWE=" 
+                       class="btn btn-full disabled" id="btn-3">Zamawiam renowację</a>
+                    
+                    <p class="guarantee-text">
+                        <strong>🛡️ 100% Gwarancji Satysfakcji.</strong><br>
+                        Poprawiamy do skutku lub zwracamy pieniądze.
+                    </p>
+                    <p class="payment-info">Bezpieczna płatność BLIK / Przelew</p>
+                </div>
+
+                <div class="pricing-card best-value gs-stagger-pricing">
+                    <div class="bestseller-badge">BESTSELLER</div>
+                    <h3>Pakiet Dziedzictwo</h3>
+                    <div class="pricing-icon" aria-hidden="true">💎</div>
+                    <p class="pricing-count"><strong>5 Zdjęć</strong></p>
+                    <p class="pricing-desc">Idealny pakiet do odświeżenia małego albumu rodzinnego.</p>
+                    
+                    <p class="gift-badge">
+                        🎁 GRATIS: Wideo-ożywienie zdjęcia
+                    </p>
+
+                    <div class="pricing-price">99 PLN</div>
+                    <p class="price-per-photo">(Tylko 19,80 zł za zdjęcie)</p>
+                    
+                    <div class="ai-consent-wrapper">
+                        <input type="checkbox" id="consent-2">
+                        <label for="consent-2">Akceptuję <a href="prawo.html" target="_blank" class="link-primary">Regulamin</a></label>
+                    </div>
+
+                    <a href="https://platnosc.hotpay.pl/?SEKRET=QkpaMlZoTmxrbUNaempoSm5hNkt1d3VBQkZ4bUJyMTJMNm1kTkJIZmpvOD0%2C&KWOTA=99&NAZWA_USLUGI=Renowacja%20zdj%C4%99%C4%87%20-%20Pakiet%20Dziedzictwo&ADRES_WWW=https%3A%2F%2Fmagiawspomnien.xyz%2Fpodziekowanie.html&ID_ZAMOWIENIA=&EMAIL=&DANE_OSOBOWE=" 
+                       class="btn btn-primary btn-full disabled" id="btn-2">Zamawiam renowację</a>
+                    
+                    <p class="guarantee-text">
+                        <strong>🛡️ 100% Gwarancji Satysfakcji.</strong><br>
+                        Poprawiamy do skutku lub zwracamy pieniądze.
+                    </p>
+                </div>
+
+            </div>
+            
+            <p class="pricing-footer gs-reveal" style="margin-top: 3rem;">Masz pytania co do pakietów? Sprawdź nasze <a href="#faq" class="link-primary">Q&A ↓</a></p>
+        </div>
+    </section>
+
+    <section class="section-padding section-gray">
+        <div class="container">
+            <h2 class="text-center gs-reveal">Jak to działa?</h2>
+            <div class="steps-grid">
+                <div class="step-card gs-reveal">
+                    <span class="step-number" aria-hidden="true">01</span>
+                    <div class="step-content">
+                        <h3>Bezpieczne zamówienie</h3>
+                        <p>Wybierz pakiet i opłać usługę. <strong>Gwarancja:</strong> Jeśli Twojego zdjęcia nie da się uratować, zwrócimy Ci 100% wpłaconej kwoty tego samego dnia.</p>
+                    </div>
+                </div>
+                <div class="step-card gs-reveal">
+                    <span class="step-number" aria-hidden="true">02</span>
+                    <div class="step-content">
+                        <h3>Prześlij zdjęcia</h3>
+                        <p>Po wpłacie zostaniesz automatycznie przekierowany do strony, gdzie wyślesz nam pliki.</p>
+                    </div>
+                </div>
+                <div class="step-card gs-reveal">
+                    <span class="step-number" aria-hidden="true">03</span>
+                    <div class="step-content">
+                        <h3>Odbierz gotowy plik</h3>
+                        <p>Odrestaurowane zdjęcia w pełnej jakości wyślemy zwrotnie na Twojego maila w 24-48h.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="section-padding section-white">
+        <div class="container">
+            <p class="section-subtitle text-center gs-reveal">ROZWIEWAMY WĄTPLIWOŚCI</p>
+            <h2 class="text-center gs-reveal">Często zadawane pytania</h2>
+            
+            <div class="faq-container gs-faq-trigger">
+                
+                <div class="faq-item gs-stagger-faq">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq1">
+                        <span>Jak wysłać zdjęcia, żeby zachować najlepszą jakość?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-answer-wrapper" id="faq1">
+                        <div class="faq-answer">
+                            <p>Najlepszy efekt uzyskamy, jeśli zeskanujesz zdjęcie w rozdzielczości minimum 300 DPI (optymalnie 600 DPI). Jeżeli nie masz skanera, możesz zrobić wyraźne zdjęcie smartfonem. Upewnij się tylko, że robisz je w świetle dziennym, bez użycia lampy błyskowej (aby uniknąć odblasków) i trzymasz telefon idealnie równolegle do fotografii.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item gs-stagger-faq">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq2">
+                        <span>Czy odzyskacie zdjęcie, które jest podarte na części?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-answer-wrapper" id="faq2">
+                        <div class="faq-answer">
+                            <p>Tak! Wystarczy, że ułożysz wszystkie kawałki fizycznie jak najbliżej siebie (jak puzzle) i zrobisz im wyraźne zdjęcie z góry. My cyfrowo "zszyjemy" wszystkie elementy, uzupełnimy pęknięcia i usuniemy ślady złączeń, tworząc idealną całość.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item gs-stagger-faq">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq3">
+                        <span>Co jeśli efekt końcowy nie będzie mi się podobał?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-answer-wrapper" id="faq3">
+                        <div class="faq-answer">
+                            <p>Działamy na zasadzie 100% Gwarancji Satysfakcji. Jeśli odesłane zdjęcie nie spełni Twoich oczekiwań, wysłuchamy Twoich uwag i wprowadzimy poprawki (np. zmienimy odcień kolorów). Pracujemy do skutku, a jeśli to się nie uda – po prostu zwrócimy Ci całą kwotę bez zadawania pytań.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item gs-stagger-faq">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq4">
+                        <span>Dostałem darmowe zdjęcie wideo. Jak to działa?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-answer-wrapper" id="faq4">
+                        <div class="faq-answer">
+                            <p>Jeśli wybrałeś Pakiet Dziedzictwo, oprócz standardowych plików ze zregenerowanymi zdjęciami, otrzymasz jeden plik wideo (MP4). Jedna z wybranych przez Ciebie twarzy na zdjęciu ożyje – postać uśmiechnie się, mrugnie i delikatnie poruszy głową. To wspaniały i bardzo wzruszający prezent, szczególnie dla dziadków.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="kontakt" class="form-section">
+        <div class="container">
+            <h2 class="text-center section-title-white gs-reveal">Nadal masz pytania?</h2>
+            <p class="text-center section-subtitle-white gs-reveal">
+                Nie wiesz, czy Twoje zdjęcie da się uratować? Wypełnij formularz – odpowiemy w ciągu 45 minut.
+            </p>
+            
+            <div class="contact-wrapper gs-reveal">
+                <form action="https://formsubmit.co/magia.wspomnien@protonmail.com" method="POST">
+                    <input type="hidden" name="_subject" value="Nowe zapytanie - Magia Wspomnień">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_next" value="https://magiawspomnien.xyz/wiadomosc-wyslana.html">
+                    
+                    <div class="form-group">
+                        <label for="name">Imię</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Twoje imię" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Adres email</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Twój email (do odpowiedzi)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Treść wiadomości</label>
+                        <textarea id="message" name="message" class="form-control" placeholder="Opisz swój problem lub zadaj pytanie..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" style="border: none;">Wyślij wiadomość 🚀</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content container">
+            <div>&copy; 2026 Magia Wspomnień. Wszelkie prawa zastrzeżone.</div>
+            
+            <div class="footer-socials">
+                <a href="https://www.tiktok.com/@magia.wspomnie" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Odwiedź nasz TikTok">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/magiawspomnien" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Odwiedź nasz Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/magiawspomnien.xyz" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Odwiedź nasz Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8-26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+                </a>
+            </div>
+
+            <div class="footer-links">
+                <a href="prawo.html">Regulamin i Polityka Prywatności</a>
+            </div>
+        </div>
+
+        <div id="cookie-banner" class="cookie-banner" aria-live="polite">
+            <div class="cookie-content">
+                <p>Ta strona używa plików cookies, aby zapewnić najlepszą jakość usług. Korzystając ze strony, zgadzasz się na naszą politykę prywatności.</p>
+                <div class="cookie-buttons">
+                    <a href="prawo.html" class="cookie-link">Więcej informacji</a>
+                    <button id="acceptCookies" class="btn-cookie">Akceptuję</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#cennik" id="mobileStickyCta" class="mobile-sticky-cta">Zamów renowację</a>
+
+</body>
+</html>
