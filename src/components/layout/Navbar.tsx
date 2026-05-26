@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { navLinks } from "@/lib/data";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
+  const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,16 +39,28 @@ export default function Navbar() {
       window.removeEventListener("scroll", handleScroll);
       sections.forEach((section) => observer.unobserve(section));
     };
-  }, []);
+  }, [pathname]);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
     setMobileMenuOpen(false);
-    const targetId = href.replace("#", "");
-    const elem = document.getElementById(targetId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: "smooth" });
+    
+    // Smooth scrolling only if we are on the same page and it's a hash link
+    if (href.startsWith("/#") && pathname === "/") {
+      e.preventDefault();
+      const targetId = href.replace("/#", "");
+      const elem = document.getElementById(targetId);
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth" });
+        // Update URL without reload
+        window.history.pushState(null, "", href);
+      }
     }
+  };
+
+  const isActiveLink = (href: string) => {
+    if (href === "/cv" && pathname === "/cv") return true;
+    if (pathname === "/" && href.startsWith("/#") && activeSection === href.replace("/#", "")) return true;
+    return false;
   };
 
   return (
@@ -55,33 +70,32 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <a
-          href="#hero"
-          onClick={(e) => handleLinkClick(e, "#hero")}
+        <Link
+          href="/"
           className="text-2xl font-extrabold tracking-tighter transition-opacity hover:opacity-80"
           style={{ color: "var(--text-primary)" }}
         >
           damixb<span style={{ color: "var(--text-muted)" }}>.pl</span>
-        </a>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
               className="group relative text-sm font-medium transition-colors"
-              style={{ color: activeSection === link.href.replace("#", "") ? "var(--text-primary)" : "var(--text-secondary)" }}
+              style={{ color: isActiveLink(link.href) ? "var(--text-primary)" : "var(--text-secondary)" }}
             >
               {link.label}
               <span
                 className={`absolute -bottom-1 left-0 h-0.5 w-full origin-left transition-transform duration-300 ${
-                  activeSection === link.href.replace("#", "") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  isActiveLink(link.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                 }`}
                 style={{ background: "var(--text-primary)" }}
               />
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -109,15 +123,15 @@ export default function Navbar() {
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className="text-2xl font-semibold"
-                  style={{ color: activeSection === link.href.replace("#", "") ? "var(--text-primary)" : "var(--text-secondary)" }}
+                  style={{ color: isActiveLink(link.href) ? "var(--text-primary)" : "var(--text-secondary)" }}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </motion.div>

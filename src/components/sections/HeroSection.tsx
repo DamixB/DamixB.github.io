@@ -1,75 +1,77 @@
 "use client";
 
 import { motion } from "motion/react";
-import { TypewriterText } from "@/components/ui/AnimatedText";
-import NeonButton from "@/components/ui/NeonButton";
+import Link from "next/link";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
 export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden"
+      className="relative flex min-h-[90vh] flex-col justify-center"
     >
-      <div className="mx-auto w-full max-w-6xl px-6 relative z-10 pt-20">
+      <div className="mx-auto w-full max-w-5xl px-6 pt-20">
         <motion.div
-          className="max-w-3xl"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
         >
-          <motion.div variants={fadeInUp} className="mb-4">
+          <motion.div variants={fadeInUp} className="mb-6">
             <span
-              className="inline-block rounded-full px-3 py-1 text-sm font-medium"
-              style={{
-                background: "var(--bg-surface)",
-                color: "var(--text-secondary)",
-                border: "1px solid var(--border-subtle)",
-              }}
+              className="text-sm font-medium uppercase tracking-widest"
+              style={{ color: "var(--text-muted)" }}
             >
-              Cześć, nazywam się
+              Portfolio & Wizytówka
             </span>
           </motion.div>
 
           <motion.h1
-            className="mb-4 text-5xl font-extrabold tracking-tight sm:text-7xl md:text-8xl"
+            className="mb-6 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
             style={{ color: "var(--text-primary)" }}
             variants={fadeInUp}
           >
             Damian Barszcz.
           </motion.h1>
 
-          <motion.div
-            className="mb-8 flex h-[80px] sm:h-[60px] items-center"
+          <motion.h2
+            className="mb-8 text-2xl font-medium sm:text-3xl md:text-4xl"
+            style={{ color: "var(--text-secondary)" }}
             variants={fadeInUp}
           >
-            <h2
-              className="text-2xl font-bold sm:text-4xl md:text-5xl"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Jestem{" "}
-              <TypewriterText
-                texts={["Technologiem.", "Twórcą Projektów Webowych.", "Optymalizatorem Procesów."]}
-                speed={80}
-              />
-            </h2>
-          </motion.div>
+            Technolog & Twórca Projektów Webowych.
+          </motion.h2>
 
           <motion.p
-            className="mb-10 max-w-xl text-lg leading-relaxed sm:text-xl"
+            className="mb-12 max-w-2xl text-lg leading-relaxed sm:text-xl"
             style={{ color: "var(--text-muted)" }}
             variants={fadeInUp}
           >
-            Buduję nowoczesne, zoptymalizowane rozwiązania cyfrowe oraz zarządzam procesami produkcyjnymi z dbałością o każdy detal.
+            Łączę wiedzę inżynieryjną z nowoczesnymi technologiami. Optymalizuję procesy produkcyjne i buduję czyste, funkcjonalne rozwiązania cyfrowe.
           </motion.p>
 
-          <motion.div className="flex flex-wrap items-center gap-4" variants={fadeInUp}>
-            <NeonButton href="#projects" variant="primary" size="lg">
+          <motion.div className="flex flex-wrap gap-4" variants={fadeInUp}>
+            <Link
+              href="/#projects"
+              className="inline-flex h-12 items-center justify-center rounded-full px-8 font-medium transition-transform hover:-translate-y-0.5"
+              style={{
+                backgroundColor: "var(--text-primary)",
+                color: "var(--bg-primary)",
+                boxShadow: "var(--shadow-card)",
+              }}
+            >
               Zobacz projekty
-            </NeonButton>
-            <NeonButton href="#contact" variant="outline" size="lg">
-              Skontaktuj się
-            </NeonButton>
+            </Link>
+            <Link
+              href="/cv"
+              className="inline-flex h-12 items-center justify-center rounded-full px-8 font-medium transition-colors"
+              style={{
+                backgroundColor: "transparent",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border-strong)",
+              }}
+            >
+              Szczegółowe CV
+            </Link>
           </motion.div>
         </motion.div>
       </div>

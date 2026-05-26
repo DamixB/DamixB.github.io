@@ -107,11 +107,10 @@ export const projects = [
 ];
 
 export const navLinks = [
-  { label: "O mnie", href: "#about" },
-  { label: "Doświadczenie", href: "#experience" },
-  { label: "Umiejętności", href: "#skills" },
-  { label: "Projekty", href: "#projects" },
-  { label: "Kontakt", href: "#contact" },
+  { label: "O mnie", href: "/#about" },
+  { label: "CV", href: "/cv" },
+  { label: "Projekty", href: "/#projects" },
+  { label: "Kontakt", href: "/#contact" },
 ];
 
 export const achievements = [
