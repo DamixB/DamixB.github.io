@@ -23,7 +23,7 @@ export const projects = [
     title: "Scadia",
     description: "Narzędzie AI do generowania parametrycznych modeli 3D w OpenSCAD z podglądem w Three.js — stwórz model słowami, obejrzyj w przeglądarce i pobierz STL na drukarkę.",
     technologies: ["Three.js", "Gemini API", "OpenSCAD", "WebGL"],
-    link: "/scadia.html",
+    link: "/scadia",
     category: "Narzędzie AI",
   },
   {
@@ -32,7 +32,7 @@ export const projects = [
     title: "Dom Piękna",
     description: "Strona internetowa i wizytówka dla salonu manicure/pedicure z integracją tagów NFC (NailFlow) umożliwiającą automatyczne przekierowanie klientek na stronę rezerwacji.",
     technologies: ["HTML5", "CSS3", "JavaScript", "NFC Tags"],
-    link: "/dompiekna.html",
+    link: "/dompiekna",
     category: "Strona www",
   },
   {
@@ -41,7 +41,7 @@ export const projects = [
     title: "NailFlow",
     description: "System zarządzania dla salonów kosmetycznych — landing page, formularz kontaktowy, regulamin i integracja z tagami NFC do przekierowania klientów.",
     technologies: ["HTML5", "CSS3", "JavaScript", "Responsive"],
-    link: "/nailflow/index.html",
+    link: "/nailflow",
     category: "Aplikacja webowa",
   },
   {
@@ -50,7 +50,7 @@ export const projects = [
     title: "Magia Wspomnień",
     description: "Usługa renowacji starych zdjęć z wykorzystaniem AI — odnawianie, kolorowanie i retusz fotografii. Landing page z galerią efektów przed/po i formularzem zamówienia.",
     technologies: ["HTML5", "CSS3", "AI Image Restoration", "Responsive"],
-    link: "/magiawspomnien/index.html",
+    link: "/magiawspomnien",
     category: "Strona www",
   },
   {
@@ -59,7 +59,7 @@ export const projects = [
     title: "IleZaDruk3D",
     description: "Kalkulator kosztów druku 3D — intuicyjne narzędzie do szybkiej i precyzyjnej wyceny wydruku na podstawie parametrów materiału, czasu i rozmiaru.",
     technologies: ["HTML5", "CSS3", "JavaScript", "Algorytmy wycen"],
-    link: "/ilezadruk3d.html",
+    link: "/ilezadruk3d",
     category: "Narzędzie",
   },
 ];
