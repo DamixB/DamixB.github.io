@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,27 +15,25 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Damian B. — Technolog PMP | Developer | Creator | damixb.github.io",
+  title: "DamixB — Developer & Creator | Portfolio",
   description:
-    "Osobista strona wizytówkowa Damiana B. — technologa PMP, developera i twórcy innowacyjnych rozwiązań. Portfolio, doświadczenie, projekty i narzędzia.",
+    "Portfolio projektów webowych, narzędzi AI i rozwiązań cyfrowych. Sprawdź moje realizacje i skontaktuj się ze mną.",
   keywords: [
-    "Damian B.",
     "damixb",
     "portfolio",
     "developer",
-    "technolog PMP",
     "druk 3D",
     "React",
     "Next.js",
     "web developer",
-    "mechatronika",
+    "AI tools",
   ],
-  authors: [{ name: "Damian B.", url: "https://damixb.github.io" }],
-  creator: "Damian B.",
+  authors: [{ name: "DamixB", url: "https://damixb.github.io" }],
+  creator: "DamixB",
   openGraph: {
-    title: "Damian B. — Technolog PMP | Developer | Creator",
+    title: "DamixB — Developer & Creator",
     description:
-      "Osobista strona wizytówkowa Damiana B. — technologa PMP, developera i twórcy innowacyjnych rozwiązań.",
+      "Portfolio projektów webowych, narzędzi AI i rozwiązań cyfrowych.",
     url: "https://damixb.github.io",
     siteName: "damixb.github.io",
     locale: "pl_PL",
@@ -43,9 +41,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Damian B. — Technolog PMP | Developer | Creator",
+    title: "DamixB — Developer & Creator",
     description:
-      "Osobista strona wizytówkowa Damiana B. — technologa PMP, developera i twórcy innowacyjnych rozwiązań.",
+      "Portfolio projektów webowych, narzędzi AI i rozwiązań cyfrowych.",
   },
   robots: {
     index: true,

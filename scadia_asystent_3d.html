@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scadia - Twój Asystent OpenSCAD i Bambu Lab</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Three.js do obsługi sceny 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Zmienne CSS - Nowoczesna paleta i styl Linear/Vercel */
+        :root {
+            --bg-color: #fafafa;
+            --text-main: #171717;
+            --text-muted: #737373;
+            --accent-1: #2563eb;
+            --accent-2: #7c3aed;
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --nav-bg: rgba(250, 250, 250, 0.8);
+            --card-bg: #ffffff;
+            --card-border: #e5e5e5;
+            --code-bg: #0a0a0a;
+            --code-text: #e5e5e5;
+            --grid-line: rgba(0, 0, 0, 0.03);
+            --msg-user: var(--accent-1);
+            --msg-ai: #ffffff;
+            --workspace-bg: #f5f5f5;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0a0a0a;
+                --text-main: #ededed;
+                --text-muted: #a3a3a3;
+                --accent-1: #3b82f6;
+                --accent-2: #8b5cf6;
+                --accent-glow: rgba(59, 130, 246, 0.15);
+                --nav-bg: rgba(10, 10, 10, 0.8);
+                --card-bg: #171717;
+                --card-border: #262626;
+                --code-bg: #000000;
+                --code-text: #ededed;
+                --grid-line: rgba(255, 255, 255, 0.03);
+                --msg-user: var(--accent-1);
+                --msg-ai: #171717;
+                --workspace-bg: #000000;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .text-gradient { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        #bg-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* UI Components */
+        nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); padding: 16px 0; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: none; gap: 8px; }
+        .btn-primary { background: var(--text-main); color: var(--bg-color); }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary.blue { background: var(--accent-1); color: #fff; }
+        .btn-primary.blue:hover { background: #1d4ed8; }
+        
+        .btn-secondary { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--workspace-bg); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .btn-icon { padding: 10px; background: transparent; border: 1px solid transparent; color: var(--text-muted); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { background: var(--card-bg); border-color: var(--card-border); color: var(--text-main); }
+        .btn-small { padding: 6px 12px; font-size: 0.85rem; }
+
+        section { padding: 96px 0; }
+        .hero { min-height: calc(100vh - 70px); display: flex; align-items: center; position: relative; overflow: hidden; padding-top: 48px; }
+        .hero-grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
+        .hero-content h1 { font-size: 4rem; margin-bottom: 24px; letter-spacing: -0.03em; }
+        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 32px; max-width: 540px; }
+        .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+        
+        /* --- Pełnoekranowe IDE (Workspace) --- */
+        .app-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--workspace-bg);
+            z-index: 1000; display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        .app-modal.active { opacity: 1; pointer-events: auto; }
+
+        .modal-header {
+            padding: 12px 24px; background: var(--card-bg); border-bottom: 1px solid var(--card-border);
+            display: flex; justify-content: space-between; align-items: center; height: 56px; flex-shrink: 0;
+        }
+
+        .modal-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .modal-status { font-size: 0.85rem; color: #10b981; display: flex; align-items: center; gap: 6px; font-weight: 500; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 99px; }
+        .status-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+
+        /* Workspace Layout */
+        .workspace-body { display: flex; flex-grow: 1; overflow: hidden; }
+
+        /* Left: Chat */
+        .workspace-left {
+            width: 400px; min-width: 350px; max-width: 500px;
+            display: flex; flex-direction: column; border-right: 1px solid var(--card-border);
+            background: var(--card-bg); position: relative; z-index: 10;
+        }
+
+        .modal-chat-area { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
+        
+        .message { display: flex; gap: 16px; max-width: 95%; animation: msgFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes msgFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        
+        .avatar { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 0.85rem; }
+        .message.ai .avatar { background: var(--text-main); color: var(--bg-color); }
+        .message.user .avatar { background: var(--accent-1); }
+
+        .bubble { background: var(--msg-ai); padding: 12px 16px; border-radius: var(--radius-lg); font-size: 0.95rem; border: 1px solid var(--card-border); line-height: 1.6; word-wrap: break-word; overflow-x: hidden; box-shadow: var(--shadow-sm); }
+        .message.user .bubble { background: var(--msg-user); color: #fff; border: none; box-shadow: none; border-radius: var(--radius-lg); }
+        .bubble img { max-width: 100%; border-radius: var(--radius-md); margin-top: 8px; border: 1px solid var(--card-border); }
+
+        .chat-code-snippet {
+            margin-top: 12px; background: var(--workspace-bg); border: 1px solid var(--card-border);
+            padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; font-family: 'Space Grotesk', monospace;
+            display: flex; justify-content: space-between; align-items: center; color: var(--text-main);
+        }
+
+        .modal-input-container { padding: 16px 24px 24px 24px; background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 8px; }
+        .image-preview-area { display: flex; gap: 8px; flex-wrap: wrap; }
+        .img-preview-chip { position: relative; width: 48px; height: 48px; border-radius: var(--radius-md); border: 1px solid var(--card-border); overflow: hidden; background: var(--workspace-bg); }
+        .img-preview-chip img { width: 100%; height: 100%; object-fit: cover; }
+        .img-preview-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: white; border: none; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .img-preview-remove:hover { background: #ef4444; }
+        
+        .modal-input-row { display: flex; gap: 8px; align-items: flex-end; background: var(--workspace-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 6px; transition: border-color 0.2s; }
+        .modal-input-row:focus-within { border-color: var(--accent-1); }
+        .modal-input-row textarea { flex-grow: 1; padding: 8px 12px; background: transparent; border: none; color: var(--text-main); font-size: 0.95rem; font-family: inherit; outline: none; resize: none; min-height: 40px; max-height: 150px; overflow-y: auto; }
+        #file-upload { display: none; }
+        
+        .typing-indicator { display: none; gap: 4px; padding: 10px 14px; background: var(--card-bg); border-radius: var(--radius-lg); width: fit-content; border: 1px solid var(--card-border); align-self: flex-start; margin-left: 24px; margin-bottom: 16px; }
+        .typing-indicator.active { display: flex; }
+        .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Right: Editor & 3D */
+        .workspace-right { flex-grow: 1; display: flex; flex-direction: column; background: var(--workspace-bg); position: relative; }
+        
+        .workspace-tabs { display: flex; background: var(--card-bg); border-bottom: 1px solid var(--card-border); padding: 0 24px; gap: 32px; height: 48px; align-items: flex-end; flex-shrink: 0; }
+        .tab-btn { padding: 12px 0; background: transparent; border: none; font-family: 'Inter', sans-serif; font-weight: 500; color: var(--text-muted); cursor: pointer; position: relative; font-size: 0.9rem; transition: color 0.2s; }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { color: var(--text-main); font-weight: 600; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--text-main); border-radius: 2px 2px 0 0; }
+
+        .tab-content { flex-grow: 1; display: none; flex-direction: column; position: relative; }
+        .tab-content.active { display: flex; }
+
+        /* Edytor kodu (Textarea) */
+        .editor-container { flex-grow: 1; background: var(--code-bg); display: flex; flex-direction: column; }
+        #code-editor-textarea { flex-grow: 1; width: 100%; padding: 32px; background: transparent; color: var(--code-text); font-family: 'Consolas', 'Menlo', monospace; font-size: 0.95rem; line-height: 1.6; border: none; resize: none; outline: none; white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+        
+        .editor-toolbar { height: 48px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 12px; }
+        .toolbar-title { color: var(--text-muted); font-size: 0.85rem; margin-right: auto; font-family: monospace; }
+
+        /* 3D View */
+        #render-container { flex-grow: 1; background: #111111; position: relative; overflow: hidden; }
+        .view-overlay { position: absolute; top: 24px; left: 24px; pointer-events: none; color: rgba(255,255,255,0.5); font-family: 'Consolas', monospace; font-size: 0.85rem; line-height: 1.5; }
+        
+        /* Pływające menu pobierania w 3D */
+        .floating-toolbar { position: absolute; bottom: 32px; right: 32px; display: flex; gap: 12px; z-index: 10; background: rgba(23, 23, 23, 0.8); backdrop-filter: blur(8px); padding: 8px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.1); }
+        .floating-toolbar .btn { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .floating-toolbar .btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        .floating-toolbar .btn-primary.blue { background: var(--accent-1); border-color: var(--accent-1); }
+        .floating-toolbar .btn-primary.blue:hover { background: #1d4ed8; }
+
+    </style>
+</head>
+<body>
+
+    <div id="bg-canvas-container"></div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                Scadia
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1>Szybka droga do <span class="text-gradient">gotowych modeli</span>.</h1>
+                    <p>Scadia to wirtualne środowisko pracy łączące OpenSCAD i asystenta AI. Optymalizuje geometrię pod druk FDM (np. Bambu Lab). Opisz pomysł, a my wygenerujemy kod.</p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary open-app-trigger">Zacznij nowy projekt</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pełnoekranowe IDE Scadia -->
+    <div id="app-modal" class="app-modal">
+        
+        <div class="modal-header">
+            <div class="modal-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                </svg>
+                Scadia Workspace
+            </div>
+            
+            <div class="header-actions">
+                <div class="modal-status">
+                    <div class="status-dot"></div> Gemini 2.5 Flash
+                </div>
+                <button class="btn btn-secondary btn-small" id="new-project-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Nowy projekt
+                </button>
+                <button class="btn-icon" id="close-modal-btn" title="Zamknij przestrzeń roboczą" style="margin-left: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="workspace-body">
+            
+            <!-- Lewa: Czat (Vibecoding) -->
+            <div class="workspace-left">
+                <div class="modal-chat-area" id="chat-container">
+                    <div class="message ai">
+                        <div class="avatar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12V2a10 10 0 0 1 10 10H12z"/></svg>
+                        </div>
+                        <div class="bubble">
+                            Cześć! Jestem Scadia. Zbudowałam to środowisko tak, żeby oszczędzić Ci czasu. Ty dajesz wizję – ja zajmuję się kodem i weryfikuję geometrię pod kątem FDM.<br><br>
+                            Co dzisiaj robimy? Opisz projekt lub wrzuć szkic.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                </div>
+
+                <div class="modal-input-container">
+                    <div class="image-preview-area" id="image-preview-area"></div>
+                    <div class="modal-input-row">
+                        <input type="file" id="file-upload" accept="image/png, image/jpeg, image/webp">
+                        <button class="btn-icon" id="attach-btn" title="Załącz zdjęcie" style="padding: 6px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                        </button>
+                        <textarea id="chat-input" placeholder="Wpisz polecenie..." rows="1"></textarea>
+                        <button class="btn-icon" id="send-btn" style="padding: 6px; background: var(--text-main); color: var(--bg-color); border-radius: var(--radius-md);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prawa: IDE & Renderer -->
+            <div class="workspace-right">
+                <div class="workspace-tabs">
+                    <button class="tab-btn active" data-target="tab-code">Kod OpenSCAD</button>
+                    <button class="tab-btn" data-target="tab-3d">Podgląd 3D (Render)</button>
+                </div>
+
+                <!-- Tab: Kod -->
+                <div class="tab-content active" id="tab-code">
+                    <div class="editor-container">
+                        <textarea id="code-editor-textarea" spellcheck="false" placeholder="// Przestrzeń robocza OpenSCAD&#10;// Wygeneruj pierwszy model przez czat lub wklej własny kod."></textarea>
+                    </div>
+                    <div class="editor-toolbar">
+                        <span class="toolbar-title">model.scad</span>
+                        <div id="editor-actions" style="display: none; align-items: center; gap: 12px; margin-right: auto; margin-left: 16px;">
+                            <span style="color: #ef4444; font-size: 0.8rem;">• Kod zmieniony ręcznie</span>
+                            <button class="btn btn-secondary btn-small" id="re-render-btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">Odśwież render 3D</button>
+                        </div>
+                        <button class="btn btn-secondary btn-small" id="copy-code-btn" disabled style="background: rgba(255,255,255,0.1); color: #fff; border: none;">Skopiuj kod</button>
+                        <button class="btn btn-primary btn-small blue" id="compile-btn" disabled>Renderuj widok 3D</button>
+                    </div>
+                </div>
+
+                <!-- Tab: 3D Render -->
+                <div class="tab-content" id="tab-3d">
+                    <div id="render-container">
+                        <div class="view-overlay">
+                            Profil: Bambu Lab A1 (256x256x256)<br>
+                            Render: WebGL (Fast Preview)<br>
+                            <span id="render-status" style="color: #10b981;">Brak obiektu na stole.</span>
+                        </div>
+                        
+                        <div class="floating-toolbar">
+                            <button class="btn btn-primary blue btn-small" id="download-scad-btn" disabled title="Pobierz plik gotowy do cięcia/edycji w OpenSCAD">Zapisz .scad</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURACJA API GEMINI ---
+        const apiKey = ""; 
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        const ticks = "\x60\x60\x60";
+
+        const systemPrompt = `Masz na imię Scadia. Jesteś inżynierem druku 3D (specjalizacja Bambu Lab) i ekspertem OpenSCAD.
+Jesteś świetnym doradcą, myślisz krytycznie. Mówisz wprost, jeśli coś nie zadziała z punktu widzenia FDM. Używasz krótkich zdań, zero korpomowy. Używaj polskich cudzysłowów „”.
+
+KLUCZOWE ZADANIE:
+Kiedy generujesz model, musisz wygenerować DWA bloki kodu w jednej odpowiedzi:
+1. Blok ${ticks}openscad zawierający w pełni parametryczny kod do wydruku.
+2. Blok ${ticks}javascript zawierający kod Three.js, który wizualizuje ten sam model.
+
+WAŻNE ZASADY DLA OBU KODÓW:
+- ZAWSZE pozycjonuj i obracaj (używając rotate) model tak, aby leżał płasko na stole roboczym (płaszczyzna XY), w sposób zoptymalizowany pod druk FDM (największą płaską powierzchnią do dołu, by uniknąć zbędnych podpór). Nie generuj pionowych modeli, jeśli da się je położyć płasko!
+
+Zasady bloku openscad:
+- Zawsze uwzględniaj prośby o otwory i wycięcia (korzystaj z difference). Odwzorowuj wymiary poproszone przez użytkownika.
+
+Zasady bloku javascript (podgląd wizualny):
+- Zwracaj TYLKO sam kod (ciało funkcji), który tworzy THREE.Group lub THREE.Mesh i kończy się instrukcją "return mesh;".
+- NIE używaj importów. Zmienna THREE jest globalna.
+- NIE dodawaj kamery, sceny ani świateł.
+- Ponieważ w JS nie ma operacji wycinania CSG, po prostu zbuduj ogólny kształt zewnętrzny z prostych brył. Otwory mogą nie być tu widoczne, to tylko podgląd zarysu.
+- NIE używaj THREE.CapsuleGeometry.
+- Używaj materiału: new THREE.MeshStandardMaterial({color: 0x2563eb, roughness: 0.4}).`;
+
+        let chatHistory = [];
+        let currentImage = null; 
+        let latestGeneratedScad = "";
+        let latestGeneratedJs = "";
+
+        // --- DOM Elements ---
+        const appModal = document.getElementById('app-modal');
+        const openTriggers = document.querySelectorAll('.open-app-trigger');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const newProjectBtn = document.getElementById('new-project-btn');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachBtn = document.getElementById('attach-btn');
+        const fileUpload = document.getElementById('file-upload');
+        const imagePreviewArea = document.getElementById('image-preview-area');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        const codeEditorTextarea = document.getElementById('code-editor-textarea');
+        const editorActions = document.getElementById('editor-actions');
+        const reRenderBtn = document.getElementById('re-render-btn');
+        const copyCodeBtn = document.getElementById('copy-code-btn');
+        const downloadScadBtn = document.getElementById('download-scad-btn');
+        const compileBtn = document.getElementById('compile-btn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const renderStatus = document.getElementById('render-status');
+
+        // --- LOGIKA ZAKŁADEK ---
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+                if (btn.dataset.target === 'tab-3d' && renderer) setTimeout(() => onWindowResize(), 50); 
+            });
+        });
+
+        // --- ŚLEDZENIE ZMIAN W EDYTORZE ---
+        codeEditorTextarea.addEventListener('input', (e) => {
+            latestGeneratedScad = e.target.value;
+            if (latestGeneratedScad && latestGeneratedJs) {
+                editorActions.style.display = 'flex';
+            }
+        });
+
+        // --- NOWY PROJEKT (Reset Workspace) ---
+        newProjectBtn.addEventListener('click', () => {
+            chatHistory = [];
+            latestGeneratedScad = "";
+            latestGeneratedJs = "";
+            currentImage = null;
+            imagePreviewArea.innerHTML = '';
+            
+            while (chatContainer.children.length > 1) {
+                chatContainer.removeChild(chatContainer.lastChild);
+            }
+            
+            codeEditorTextarea.value = "";
+            editorActions.style.display = 'none';
+            
+            copyCodeBtn.disabled = true;
+            compileBtn.disabled = true;
+            downloadScadBtn.disabled = true;
+            
+            if(currentModelGroup) {
+                while(currentModelGroup.children.length > 0){ 
+                    currentModelGroup.remove(currentModelGroup.children[0]); 
+                }
+            }
+            
+            renderStatus.textContent = "Brak obiektu na stole.";
+            renderStatus.style.color = "#10b981";
+            
+            document.querySelector('[data-target="tab-code"]').click();
+        });
+
+        // --- RE-RENDER ZMODYFIKOWANEGO KODU ---
+        reRenderBtn.addEventListener('click', async () => {
+            const code = codeEditorTextarea.value.trim();
+            if (!code) return;
+
+            const originalText = reRenderBtn.textContent;
+            reRenderBtn.textContent = 'Przeliczanie...';
+            reRenderBtn.disabled = true;
+
+            document.querySelector('[data-target="tab-3d"]').click();
+            renderStatus.textContent = "Asystent przetwarza zmianę kodu na model 3D...";
+            renderStatus.style.color = "#2563eb";
+
+            const prompt = `Użytkownik ręcznie zmodyfikował kod OpenSCAD w edytorze na następujący:\n\n${ticks}openscad\n${code}\n${ticks}\n\nWygeneruj TYLKO ZAKTUALIZOWANY blok ${ticks}javascript ... ${ticks} dla Three.js, który odzwierciedla ten nowy model. Pamiętaj, aby ułożyć model w sposób płaski do druku. Nie zwracaj ponownie kodu OpenSCAD.`;
+
+            const aiText = await fetchGeminiResponse(prompt, null);
+
+            reRenderBtn.textContent = originalText;
+            reRenderBtn.disabled = false;
+            editorActions.style.display = 'none';
+
+            const jsRegexMatch = new RegExp('\\x60\\x60\\x60(?:javascript|js)\\r?\\n([\\s\\S]*?)\\x60\\x60\\x60', 'i');
+            const jsMatch = aiText.match(jsRegexMatch);
+
+            if (jsMatch) {
+                latestGeneratedJs = jsMatch[1];
+                renderModelFromCode(latestGeneratedJs);
+            } else {
+                renderStatus.textContent = "Błąd: Asystent nie potrafił wygenerować podglądu dla zmienionego kodu.";
+                renderStatus.style.color = "#ef4444";
+            }
+        });
+
+        // --- SILNIK 3D (Three.js) ---
+        if (typeof THREE !== 'undefined' && !THREE.CapsuleGeometry) {
+            THREE.CapsuleGeometry = class extends THREE.CylinderGeometry {
+                constructor(radius = 1, length = 1, capSegments = 4, radialSegments = 8) {
+                    super(radius, radius, length, radialSegments);
+                }
+            };
+        }
+
+        // --- TŁO 3D STRONY GŁÓWNEJ ---
+        let bgScene, bgCamera, bgRenderer, bgObjects = [];
+        
+        function initBgScene() {
+            const container = document.getElementById('bg-canvas-container');
+            if (!container) return;
+
+            bgScene = new THREE.Scene();
+            bgCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            bgCamera.position.set(0, 50, 150);
+            bgCamera.lookAt(0, 10, 0);
+
+            bgRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(bgRenderer.domElement);
+
+            const gridHelper = new THREE.GridHelper(600, 60, 0x3b82f6, 0x8b5cf6);
+            gridHelper.material.opacity = 0.15;
+            gridHelper.material.transparent = true;
+            gridHelper.position.y = -20;
+            bgScene.add(gridHelper);
+
+            bgScene.add(new THREE.AmbientLight(0xffffff, 0.4));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            dirLight.position.set(50, 100, 50);
+            bgScene.add(dirLight);
+
+            const matWire = new THREE.MeshStandardMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.25 });
+            const matSolid = new THREE.MeshStandardMaterial({ color: 0x7c3aed, roughness: 0.3, transparent: true, opacity: 0.35 });
+
+            const geo1 = new THREE.TorusKnotGeometry(15, 3.5, 64, 8);
+            const obj1 = new THREE.Mesh(geo1, matWire);
+            obj1.position.set(-70, 15, -40);
+            bgScene.add(obj1);
+            bgObjects.push(obj1);
+
+            const geo2 = new THREE.IcosahedronGeometry(20, 0);
+            const obj2 = new THREE.Mesh(geo2, matSolid);
+            obj2.position.set(80, 20, -70);
+            bgScene.add(obj2);
+            bgObjects.push(obj2);
+
+            const geo3 = new THREE.CylinderGeometry(10, 10, 30, 16);
+            const obj3 = new THREE.Mesh(geo3, matWire);
+            obj3.position.set(10, 25, -120);
+            bgScene.add(obj3);
+            bgObjects.push(obj3);
+
+            animateBg();
+        }
+
+        function animateBg() {
+            requestAnimationFrame(animateBg);
+            bgObjects.forEach((obj, i) => {
+                obj.rotation.x += 0.001 * (i + 1);
+                obj.rotation.y += 0.002 * (i + 1);
+            });
+            bgRenderer.render(bgScene, bgCamera);
+        }
+
+        window.addEventListener('DOMContentLoaded', initBgScene);
+
+        // --- WORKSPACE IDE 3D ---
+        let scene, camera, renderer, controls, currentModelGroup;
+
+        function init3DScene() {
+            const container = document.getElementById('render-container');
+            if (renderer) return;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 2000);
+            camera.position.set(150, 150, 200);
+
+            const bedGeo = new THREE.PlaneGeometry(256, 256);
+            const bedMat = new THREE.MeshStandardMaterial({ color: 0x262626, roughness: 0.8, side: THREE.DoubleSide });
+            const bed = new THREE.Mesh(bedGeo, bedMat);
+            bed.rotation.x = -Math.PI / 2;
+            scene.add(bed);
+
+            const gridHelper = new THREE.GridHelper(256, 25, 0x404040, 0x262626);
+            gridHelper.position.y = 0.1;
+            scene.add(gridHelper);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(100, 200, 50);
+            scene.add(dirLight);
+            
+            const fillLight = new THREE.DirectionalLight(0x7c3aed, 0.3);
+            fillLight.position.set(-100, 50, -100);
+            scene.add(fillLight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.1; 
+
+            currentModelGroup = new THREE.Group();
+            scene.add(currentModelGroup);
+
+            animate();
+        }
+
+        function onWindowResize() {
+            if (bgRenderer && bgCamera) {
+                bgCamera.aspect = window.innerWidth / window.innerHeight;
+                bgCamera.updateProjectionMatrix();
+                bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            if (renderer && camera) {
+                const container = document.getElementById('render-container');
+                if (container && container.clientWidth > 0) {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                }
+            }
+        }
+        
+        window.addEventListener('resize', onWindowResize, false);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (controls) controls.update();
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+
+        // --- OBSŁUGA WIZUALIZACJI ---
+        function renderModelFromCode(jsCode) {
+            try {
+                while(currentModelGroup.children.length > 0){ 
+                    currentModelGroup.remove(currentModelGroup.children[0]); 
+                }
+
+                let cleanCode = jsCode
+                    .replace(/import.*?from.*?;?/gi, '') 
+                    .replace(/export\s+default\s+/gi, ''); 
+
+                const dummyScene = new THREE.Scene();
+
+                const createModel = new Function('THREE', 'scene', cleanCode);
+                const returnedModel = createModel(THREE, dummyScene);
+                
+                let model = returnedModel;
+                if (!model && dummyScene.children.length > 0) {
+                    model = dummyScene.children[0];
+                }
+
+                if (model && (model.isMesh || model.isGroup || model.isObject3D)) {
+                    
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    
+                    model.position.y += -box.min.y;
+                    model.position.x += -center.x;
+                    model.position.z += -center.z;
+
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            const edges = new THREE.EdgesGeometry(child.geometry);
+                            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.3, transparent: true }));
+                            child.add(line);
+                        }
+                    });
+
+                    currentModelGroup.add(model);
+                    renderStatus.textContent = "Kompilacja udana. Obiekt ułożony płasko na stole.";
+                    renderStatus.style.color = "#10b981";
+
+                } else {
+                    throw new Error("Skrypt nie wygenerował obiektu 3D.");
+                }
+            } catch (error) {
+                console.error("Szczegóły błędu:", error);
+                renderStatus.textContent = "Błąd wizualizacji: " + error.message; 
+                renderStatus.style.color = "#ef4444";
+            }
+        }
+
+        // --- UI MODAL ACTIONS ---
+        openTriggers.forEach(btn => {
+            btn.addEventListener('click', () => {
+                appModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => { chatInput.focus(); init3DScene(); }, 150);
+            });
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            appModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        attachBtn.addEventListener('click', () => fileUpload.click());
+
+        fileUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const dataUrl = event.target.result;
+                currentImage = { base64: dataUrl.split(',')[1], mimeType: file.type, dataUrl: dataUrl };
+                imagePreviewArea.innerHTML = `<div class="img-preview-chip"><img src="${dataUrl}"><button class="img-preview-remove" onclick="removeImage()">✕</button></div>`;
+            };
+            reader.readAsDataURL(file);
+            this.value = '';
+        });
+
+        window.removeImage = function() {
+            currentImage = null;
+            imagePreviewArea.innerHTML = '';
+        };
+
+        // --- LOGIKA CZATU I LLM ---
+        async function fetchGeminiResponse(userText, imageObj) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+            
+            let parts = [];
+            if (userText) parts.push({ text: userText });
+            if (imageObj) parts.push({ inlineData: { mimeType: imageObj.mimeType, data: imageObj.base64 } });
+            chatHistory.push({ role: "user", parts: parts });
+
+            const payload = {
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: chatHistory,
+                generationConfig: { temperature: 0.3 } 
+            };
+
+            const maxRetries = 3;
+            const delays = [1000, 2000, 4000];
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API HTTP Error: ${response.status}`);
+                    const data = await response.json();
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Brak odpowiedzi.";
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                    return aiText;
+                } catch (error) {
+                    if (i === maxRetries - 1) return `Błąd połączenia. Próby wyczerpane.`;
+                    await new Promise(r => setTimeout(r, delays[i]));
+                }
+            }
+        }
+
+        function appendMessage(role, text, imageUrl = null) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            
+            let avatarHtml = role === 'user' ? `<div class="avatar">U</div>` : `<div class="avatar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12V2a10 10 0 0 1 10 10H12z"/></svg></div>`;
+            let contentHtml = imageUrl ? `<img src="${imageUrl}">` : '';
+
+            let displayTxt = text;
+            latestGeneratedJs = ""; 
+            editorActions.style.display = 'none'; 
+            
+            const scadRegexMatch = new RegExp('\\x60\\x60\\x60(?:openscad)?\\r?\\n([\\s\\S]*?)\\x60\\x60\\x60', 'i');
+            const scadRegexReplace = new RegExp('\\x60\\x60\\x60(?:openscad)?\\r?\\n([\\s\\S]*?)\\x60\\x60\\x60', 'gi');
+            
+            const jsRegexMatch = new RegExp('\\x60\\x60\\x60(?:javascript|js)\\r?\\n([\\s\\S]*?)\\x60\\x60\\x60', 'i');
+            const jsRegexReplace = new RegExp('\\x60\\x60\\x60(?:javascript|js)\\r?\\n([\\s\\S]*?)\\x60\\x60\\x60', 'gi');
+
+            const scadMatch = displayTxt.match(scadRegexMatch);
+            if (scadMatch && role === 'ai') {
+                latestGeneratedScad = scadMatch[1];
+                codeEditorTextarea.value = latestGeneratedScad;
+                
+                compileBtn.disabled = false;
+                copyCodeBtn.disabled = false;
+                downloadScadBtn.disabled = false;
+
+                displayTxt = displayTxt.replace(scadRegexReplace, 
+                    `<div class="chat-code-snippet">
+                        <span>Wygenerowano kod: model.scad</span>
+                    </div>`
+                );
+            }
+
+            const jsMatch = displayTxt.match(jsRegexMatch);
+            if (jsMatch && role === 'ai') {
+                latestGeneratedJs = jsMatch[1];
+                displayTxt = displayTxt.replace(jsRegexReplace, '');
+                
+                setTimeout(() => {
+                    if (latestGeneratedJs && !compileBtn.disabled) {
+                        compileBtn.click();
+                    }
+                }, 800);
+            }
+
+            displayTxt = displayTxt.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            displayTxt = displayTxt.replace(/\n/g, '<br>');
+
+            div.innerHTML = `${avatarHtml}<div class="bubble">${contentHtml}${displayTxt}</div>`;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        // --- AKCJE EDYTORA I POBIERANIA ---
+        copyCodeBtn.addEventListener('click', () => {
+            if(!latestGeneratedScad) return;
+            navigator.clipboard.writeText(latestGeneratedScad).then(() => {
+                const originalText = copyCodeBtn.textContent;
+                copyCodeBtn.textContent = 'Skopiowano!';
+                setTimeout(() => copyCodeBtn.textContent = originalText, 2000);
+            });
+        });
+
+        downloadScadBtn.addEventListener('click', () => {
+            if(!latestGeneratedScad) return;
+            const blob = new Blob([latestGeneratedScad], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "model.scad";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        compileBtn.addEventListener('click', () => {
+            if(!latestGeneratedJs) {
+                alert("Brak danych wizualizacji. Model nie wygenerował podglądu 3D.");
+                return;
+            }
+            
+            const originalText = compileBtn.textContent;
+            compileBtn.textContent = 'Renderowanie...';
+            compileBtn.disabled = true;
+
+            setTimeout(() => {
+                compileBtn.textContent = originalText;
+                compileBtn.disabled = false;
+                
+                document.querySelector('[data-target="tab-3d"]').click();
+                renderModelFromCode(latestGeneratedJs);
+            }, 100); 
+        });
+
+        async function handleSend() {
+            const text = chatInput.value.trim();
+            if (!text && !currentImage) return;
+
+            const imgToPass = currentImage;
+            const imgUrlToShow = currentImage ? currentImage.dataUrl : null;
+            
+            appendMessage('user', text, imgUrlToShow);
+            
+            chatInput.value = '';
+            chatInput.style.height = '40px';
+            removeImage();
+            
+            typingIndicator.classList.add('active');
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+
+            const responseText = await fetchGeminiResponse(text, imgToPass);
+            
+            typingIndicator.classList.remove('active');
+            appendMessage('ai', responseText);
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        chatInput.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let index in items) {
+                const item = items[index];
+                if (item.kind === 'file') {
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const dataUrl = event.target.result;
+                        currentImage = { base64: dataUrl.split(',')[1], mimeType: blob.type, dataUrl: dataUrl };
+                        imagePreviewArea.innerHTML = `<div class="img-preview-chip"><img src="${dataUrl}"><button class="img-preview-remove" onclick="removeImage()">✕</button></div>`;
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

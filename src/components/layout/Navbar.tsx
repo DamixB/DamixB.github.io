@@ -43,22 +43,18 @@ export default function Navbar() {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setMobileMenuOpen(false);
-    
-    // Smooth scrolling only if we are on the same page and it's a hash link
     if (href.startsWith("/#") && pathname === "/") {
       e.preventDefault();
       const targetId = href.replace("/#", "");
       const elem = document.getElementById(targetId);
       if (elem) {
         elem.scrollIntoView({ behavior: "smooth" });
-        // Update URL without reload
         window.history.pushState(null, "", href);
       }
     }
   };
 
   const isActiveLink = (href: string) => {
-    if (href === "/cv" && pathname === "/cv") return true;
     if (pathname === "/" && href.startsWith("/#") && activeSection === href.replace("/#", "")) return true;
     return false;
   };
@@ -66,16 +62,22 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled ? "bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-800" : "bg-transparent"
+        scrolled
+          ? "border-b backdrop-blur-xl"
+          : "bg-transparent"
       }`}
+      style={{
+        backgroundColor: scrolled ? "rgba(10, 10, 15, 0.85)" : "transparent",
+        borderColor: scrolled ? "var(--border-subtle)" : "transparent",
+      }}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         <Link
           href="/"
           className="text-2xl font-extrabold tracking-tighter transition-opacity hover:opacity-80"
-          style={{ color: "var(--text-primary)" }}
         >
-          damixb<span style={{ color: "var(--text-muted)" }}>.github.io</span>
+          <span className="text-neon-gradient">damixb</span>
+          <span style={{ color: "var(--text-muted)" }}>.github.io</span>
         </Link>
 
         {/* Desktop Menu */}
@@ -86,14 +88,20 @@ export default function Navbar() {
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
               className="group relative text-sm font-medium transition-colors"
-              style={{ color: isActiveLink(link.href) ? "var(--text-primary)" : "var(--text-secondary)" }}
+              style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
+              onMouseEnter={(e) => {
+                if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-primary)";
+              }}
+              onMouseLeave={(e) => {
+                if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-secondary)";
+              }}
             >
               {link.label}
               <span
                 className={`absolute -bottom-1 left-0 h-0.5 w-full origin-left transition-transform duration-300 ${
                   isActiveLink(link.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                 }`}
-                style={{ background: "var(--text-primary)" }}
+                style={{ background: "var(--accent-neon)" }}
               />
             </Link>
           ))}
@@ -119,7 +127,8 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-20 z-40 bg-white dark:bg-[#0a0a0a] px-6 py-8 md:hidden"
+            className="fixed inset-0 top-20 z-40 px-6 py-8 md:hidden"
+            style={{ background: "var(--bg-primary)" }}
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -128,7 +137,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className="text-2xl font-semibold"
-                  style={{ color: isActiveLink(link.href) ? "var(--text-primary)" : "var(--text-secondary)" }}
+                  style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
                 >
                   {link.label}
                 </Link>

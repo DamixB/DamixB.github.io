@@ -3,63 +3,122 @@
 import { motion } from "motion/react";
 import { projects } from "@/lib/data";
 import SectionHeading from "@/components/ui/SectionHeading";
-import GlowCard from "@/components/ui/GlowCard";
 import { fadeInUp, staggerContainer, viewportConfig } from "@/lib/animations";
 
 export default function ProjectsSection() {
   return (
-    <section id="projects" className="section-padding relative" style={{ background: "var(--bg-surface)" }}>
+    <section id="projects" className="section-padding relative">
       <div className="mx-auto max-w-6xl px-6 relative z-10">
-        <SectionHeading title="Projekty" subtitle="Moje wybrane realizacje" />
+        <SectionHeading title="Projekty" subtitle="Moje realizacje i narzędzia" />
 
         <motion.div
-          className="mt-16 grid gap-8 lg:grid-cols-2"
+          className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           variants={staggerContainer}
           initial="initial"
           whileInView="animate"
           viewport={viewportConfig}
         >
-          {projects.map((project, i) => (
+          {projects.map((project) => (
             <motion.div key={project.id} variants={fadeInUp}>
-              <GlowCard className="h-full flex flex-col">
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl font-bold text-xl"
-                       style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border-subtle)" }}>
-                    {project.title.charAt(0)}
+              <div
+                className="card-glow group relative flex h-full flex-col rounded-2xl p-6 transition-all duration-400 ease-out"
+                style={{
+                  background: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
+                  boxShadow: "var(--shadow-card)",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = "rgba(0, 210, 255, 0.2)";
+                  el.style.boxShadow = "var(--shadow-hover)";
+                  el.style.transform = "translateY(-4px)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = "var(--border-subtle)";
+                  el.style.boxShadow = "var(--shadow-card)";
+                  el.style.transform = "translateY(0)";
+                }}
+              >
+                {/* Header: Emoji + Category */}
+                <div className="mb-5 flex items-center justify-between">
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+                    style={{
+                      background: "rgba(0, 210, 255, 0.06)",
+                      border: "1px solid rgba(0, 210, 255, 0.1)",
+                    }}
+                  >
+                    {project.emoji}
                   </div>
-                  <span className="rounded-full px-3 py-1 text-xs font-medium"
-                        style={{ background: "var(--bg-primary)", color: "var(--text-secondary)", border: "1px solid var(--border-subtle)" }}>
+                  <span
+                    className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
+                    style={{
+                      background: "rgba(130, 80, 255, 0.08)",
+                      color: "var(--accent-purple)",
+                      border: "1px solid rgba(130, 80, 255, 0.12)",
+                    }}
+                  >
                     {project.category}
                   </span>
                 </div>
 
-                <h3 className="mb-3 text-xl font-bold" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
-                <p className="mb-6 flex-grow text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                {/* Title */}
+                <h3
+                  className="mb-3 text-xl font-bold transition-colors duration-300 group-hover:text-[var(--accent-neon)]"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {project.title}
+                </h3>
+
+                {/* Description */}
+                <p
+                  className="mb-6 flex-grow text-sm leading-relaxed"
+                  style={{ color: "var(--text-secondary)" }}
+                >
                   {project.description}
                 </p>
 
-                <div className="mb-6 flex flex-wrap gap-2">
+                {/* Tech badges */}
+                <div className="mb-5 flex flex-wrap gap-2">
                   {project.technologies.map((tech) => (
-                    <span key={tech} className="rounded-md px-2 py-1 text-xs font-medium"
-                          style={{ background: "var(--bg-primary)", color: "var(--text-muted)", border: "1px solid var(--border-subtle)" }}>
+                    <span
+                      key={tech}
+                      className="rounded-md px-2.5 py-1 text-[11px] font-medium"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "var(--text-muted)",
+                        border: "1px solid var(--border-subtle)",
+                      }}
+                    >
                       {tech}
                     </span>
                   ))}
                 </div>
 
+                {/* CTA */}
                 {project.link && (
-                  <div className="mt-auto pt-4" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                  <div
+                    className="mt-auto pt-4"
+                    style={{ borderTop: "1px solid var(--border-subtle)" }}
+                  >
                     <a
                       href={project.link}
-                      className="group inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
-                      style={{ color: "var(--text-primary)" }}
+                      className="group/link inline-flex items-center gap-2 text-sm font-medium transition-all duration-300"
+                      style={{ color: "var(--accent-neon)" }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.textShadow = "0 0 12px rgba(0, 210, 255, 0.4)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.textShadow = "none";
+                      }}
                     >
-                      Zobacz projekt
-                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                      Otwórz projekt
+                      <span className="transition-transform group-hover/link:translate-x-1">→</span>
                     </a>
                   </div>
                 )}
-              </GlowCard>
+              </div>
             </motion.div>
           ))}
         </motion.div>

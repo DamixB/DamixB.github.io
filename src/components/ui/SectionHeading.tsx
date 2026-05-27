@@ -16,40 +16,23 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <motion.div
-      className={`mb-16 text-center ${className}`}
+      className={`mb-4 text-center ${className}`}
+      variants={fadeInUp}
       initial="initial"
       whileInView="animate"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={{
-        initial: {},
-        animate: { transition: { staggerChildren: 0.15 } },
-      }}
+      viewport={{ once: true, amount: 0.3 }}
     >
-      {/* Title */}
-      <motion.h2
-        className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+      <h2
+        className="text-3xl font-bold tracking-tight sm:text-4xl"
         style={{ color: "var(--text-primary)" }}
-        variants={fadeInUp}
       >
         {title}
-      </motion.h2>
-
-      {/* Elegant minimal line */}
-      <motion.div
-        className="mx-auto mt-6 h-px w-12"
-        style={{ background: "var(--border-strong)" }}
-        variants={fadeInUp}
-      />
-
-      {/* Subtitle */}
+        <span style={{ color: "var(--accent-neon)" }}>.</span>
+      </h2>
       {subtitle && (
-        <motion.p
-          className="mx-auto mt-6 max-w-2xl text-base sm:text-lg"
-          style={{ color: "var(--text-secondary)" }}
-          variants={fadeInUp}
-        >
+        <p className="mt-3 text-base" style={{ color: "var(--text-muted)" }}>
           {subtitle}
-        </motion.p>
+        </p>
       )}
     </motion.div>
   );

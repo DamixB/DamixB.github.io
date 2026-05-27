@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function RegulaminPage() {
         <Link
           href="/"
           className="mb-12 inline-flex items-center gap-2 font-mono text-sm transition-opacity hover:opacity-80"
-          style={{ color: "var(--neon-cyan)" }}
+          style={{ color: "var(--accent-neon)" }}
         >
           <span>←</span> Powrót do strony głównej
         </Link>
@@ -27,8 +27,8 @@ export default function RegulaminPage() {
         <h1
           className="mb-4 font-mono text-3xl font-bold sm:text-4xl md:text-5xl"
           style={{
-            color: "var(--neon-cyan)",
-            textShadow: "0 0 20px rgba(0,245,255,0.3)",
+            color: "var(--accent-neon)",
+            textShadow: "0 0 20px rgba(0,210,255,0.3)",
           }}
         >
           Regulamin
@@ -48,7 +48,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §1. Postanowienia ogólne
             </h2>
@@ -62,7 +62,7 @@ export default function RegulaminPage() {
                 (dalej: &bdquo;Serwis&rdquo;).
               </li>
               <li>
-                Właścicielem i administratorem Serwisu jest Damian B., prowadzący
+                Właścicielem i administratorem Serwisu jest Administrator, prowadzący
                 działalność na terenie Rzeczypospolitej Polskiej.
               </li>
               <li>
@@ -80,7 +80,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §2. Definicje
             </h2>
@@ -114,7 +114,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §3. Warunki korzystania
             </h2>
@@ -144,7 +144,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §4. Prawa autorskie
             </h2>
@@ -171,7 +171,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §5. Odpowiedzialność
             </h2>
@@ -201,7 +201,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §6. Ochrona danych osobowych
             </h2>
@@ -221,7 +221,7 @@ export default function RegulaminPage() {
                 <Link
                   href="/polityka-prywatnosci"
                   className="underline underline-offset-2"
-                  style={{ color: "var(--neon-cyan)" }}
+                  style={{ color: "var(--accent-neon)" }}
                 >
                   Polityce Prywatności
                 </Link>
@@ -234,7 +234,7 @@ export default function RegulaminPage() {
           <section>
             <h2
               className="mb-4 font-mono text-xl font-semibold"
-              style={{ color: "var(--neon-cyan)" }}
+              style={{ color: "var(--accent-neon)" }}
             >
               §7. Postanowienia końcowe
             </h2>
@@ -256,11 +256,11 @@ export default function RegulaminPage() {
                 W razie pytań dotyczących Regulaminu prosimy o kontakt pod
                 adresem:{" "}
                 <a
-                  href="mailto:kontakt@damixb.github.io"
+                  href="mailto:damian.barszcz99@gmail.com"
                   className="underline underline-offset-2"
-                  style={{ color: "var(--neon-cyan)" }}
+                  style={{ color: "var(--accent-neon)" }}
                 >
-                  kontakt@damixb.github.io
+                  damian.barszcz99@gmail.com
                 </a>
                 .
               </li>
@@ -273,7 +273,7 @@ export default function RegulaminPage() {
           className="mt-16 h-px w-full"
           style={{
             background:
-              "linear-gradient(90deg, transparent, rgba(0,245,255,0.3), rgba(180,0,255,0.3), transparent)",
+              "linear-gradient(90deg, transparent, rgba(0,210,255,0.4), rgba(130,80,255,0.4), transparent)",
           }}
         />
         <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>
