@@ -13,6 +13,11 @@ export const personalInfo = {
       url: "https://github.com/DamixB",
       icon: "github",
     },
+    {
+      platform: "Instagram",
+      url: "https://instagram.com/damixb",
+      icon: "instagram",
+    },
   ],
 };
 
