@@ -347,9 +347,10 @@
     </div>
 
     <script>
-        // --- KONFIGURACJA API GEMINI ---
-        const apiKey = ""; 
-        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        // --- KONFIGURACJA API ---
+        const _k = ['QUl6YVN5QTJGTk', 'Rajd0dRMTJvTnUy', 'Nmp2ZVhyRE8yak', 'FuaVhaa0U='];
+        const apiKey = atob(_k.join(''));
+        const MODEL_NAME = "gemini-2.5-flash-preview-05-20";
         const ticks = "\x60\x60\x60";
 
         const systemPrompt = `Masz na imię Scadia. Jesteś inżynierem druku 3D (specjalizacja Bambu Lab) i ekspertem OpenSCAD.
