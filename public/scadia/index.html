@@ -649,8 +649,23 @@ Zasady bloku javascript (podgląd wizualny):
                 const returnedModel = createModel(THREE, dummyScene);
                 
                 let model = returnedModel;
+                
+                if (Array.isArray(model)) {
+                    const group = new THREE.Group();
+                    model.forEach(m => { if(m && m.isObject3D) group.add(m); });
+                    model = group;
+                }
+
                 if (!model && dummyScene.children.length > 0) {
-                    model = dummyScene.children[0];
+                    if (dummyScene.children.length === 1) {
+                        model = dummyScene.children[0];
+                    } else {
+                        const group = new THREE.Group();
+                        while(dummyScene.children.length > 0) {
+                            group.add(dummyScene.children[0]);
+                        }
+                        model = group;
+                    }
                 }
 
                 if (model && (model.isMesh || model.isGroup || model.isObject3D)) {
