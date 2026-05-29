@@ -7,11 +7,9 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { fadeInUp, fadeInLeft, fadeInRight, viewportConfig } from "@/lib/animations";
 
 // ════════════════════════════════════════════════════════════════
-// FORMSPREE — Formularz kontaktowy (bezserwerowy)
-// Aby formularz działał, załóż darmowe konto na https://formspree.io
-// i utwórz nowy formularz. Następnie wklej poniżej swój endpoint:
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/TWOJ_ID";
-// Zamień "TWOJ_ID" na swój faktyczny identyfikator z Formspree.
+// FORMSUBMIT — Formularz kontaktowy (bezserwerowy)
+// Pierwsza wiadomość poprosi Cię o aktywację formularza na e-mailu.
+const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/damian.barszcz99@gmail.com";
 // ════════════════════════════════════════════════════════════════
 
 export default function ContactSection() {
@@ -23,10 +21,13 @@ export default function ContactSection() {
     setStatus("sending");
 
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
+      const res = await fetch(FORMSUBMIT_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          _subject: "Nowa wiadomość z portfolio!"
+        }),
       });
 
       if (res.ok) {
