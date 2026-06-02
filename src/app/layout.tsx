@@ -64,21 +64,6 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "DamixB",
-  url: "https://damixb.github.io",
-  sameAs: [
-    "https://github.com/DamixB",
-    "https://linkedin.com/in/damixb",
-    "https://instagram.com/damixb",
-  ],
-  jobTitle: "Developer & Creator",
-  description:
-    "Portfolio projektów webowych, narzędzi AI i rozwiązań cyfrowych.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -89,12 +74,6 @@ export default function RootLayout({
       lang="pl"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-[#0a0a0f] text-[#e8e8f0] font-[family-name:var(--font-inter)]">
         {/* Skip-to-content — accessibility */}
         <a

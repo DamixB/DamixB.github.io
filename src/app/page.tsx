@@ -6,9 +6,30 @@ import AboutSection from '@/components/sections/AboutSection';
 import ProjectsSection from '@/components/sections/ProjectsSection';
 import ContactSection from '@/components/sections/ContactSection';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "DamixB",
+  url: "https://damixb.github.io",
+  sameAs: [
+    "https://github.com/DamixB",
+    "https://linkedin.com/in/damixb",
+    "https://instagram.com/damixb",
+  ],
+  jobTitle: "Developer & Creator",
+  description:
+    "Portfolio projektów webowych, narzędzi AI i rozwiązań cyfrowych.",
+};
+
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
       <ScrollProgress />
       <Navbar />
       <main className="flex-1" id="main-content">
