@@ -4,11 +4,13 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { fadeInUp, fadeInLeft, fadeInRight, viewportConfig } from "@/lib/animations";
+import { fadeInUp, viewportConfig } from "@/lib/animations";
 
 // ════════════════════════════════════════════════════════════════
 // FORMSUBMIT — Formularz kontaktowy (bezserwerowy)
 // Pierwsza wiadomość poprosi Cię o aktywację formularza na e-mailu.
+// WAŻNE: Zamień poniższy hash na swój unikalny alias z FormSubmit
+// (otrzymasz go po pierwszej aktywacji), aby nie ujawniać adresu email.
 const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/damian.barszcz99@gmail.com";
 // ════════════════════════════════════════════════════════════════
 
@@ -85,7 +87,7 @@ export default function ContactSection() {
                     border: "1px solid rgba(0, 210, 255, 0.2)",
                   }}
                 >
-                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="var(--accent-neon)" strokeWidth={2}>
+                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="var(--accent-neon)" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
                 </div>
@@ -105,7 +107,11 @@ export default function ContactSection() {
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-6"
+                aria-describedby={status === "error" ? "form-error" : undefined}
+              >
                 <h3 className="text-xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
                   Napisz do mnie
                 </h3>
@@ -164,7 +170,7 @@ export default function ContactSection() {
                 </div>
 
                 {status === "error" && (
-                  <p className="text-sm font-medium" style={{ color: "#ef4444" }}>
+                  <p id="form-error" role="alert" className="text-sm font-medium" style={{ color: "#ef4444" }}>
                     Wystąpił błąd. Spróbuj ponownie lub napisz bezpośrednio na email.
                   </p>
                 )}

@@ -82,29 +82,61 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              onClick={(e) => handleLinkClick(e, link.href)}
-              className="group relative text-sm font-medium transition-colors"
-              style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
-              onMouseEnter={(e) => {
-                if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-primary)";
-              }}
-              onMouseLeave={(e) => {
-                if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-secondary)";
-              }}
-            >
-              {link.label}
-              <span
-                className={`absolute -bottom-1 left-0 h-0.5 w-full origin-left transition-transform duration-300 ${
-                  isActiveLink(link.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                }`}
-                style={{ background: "var(--accent-neon)" }}
-              />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isContact = link.href === "/#contact";
+
+            if (isContact) {
+              // CTA button for "Kontakt" — highlighted for conversion
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => handleLinkClick(e, link.href)}
+                  className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
+                  style={{
+                    background: "var(--accent-gradient)",
+                    color: "#0a0a0f",
+                    boxShadow: isActiveLink(link.href) ? "var(--shadow-neon)" : "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "var(--shadow-neon)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActiveLink(link.href)) {
+                      e.currentTarget.style.boxShadow = "none";
+                    }
+                  }}
+                >
+                  {link.label}
+                  <span className="text-xs">→</span>
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={(e) => handleLinkClick(e, link.href)}
+                className="group relative text-sm font-medium transition-colors"
+                style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
+                onMouseEnter={(e) => {
+                  if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-primary)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-secondary)";
+                }}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-0.5 w-full origin-left transition-transform duration-300 ${
+                    isActiveLink(link.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                  style={{ background: "var(--accent-neon)" }}
+                />
+              </Link>
+            );
+          })}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -113,6 +145,7 @@ export default function Navbar() {
           className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={mobileMenuOpen}
         >
           <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${mobileMenuOpen ? "translate-y-2 rotate-45" : ""}`} style={{ background: "var(--text-primary)" }} />
           <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : "opacity-100"}`} style={{ background: "var(--text-primary)" }} />

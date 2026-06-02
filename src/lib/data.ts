@@ -67,6 +67,15 @@ export const projects = [
     link: "/ilezadruk3d",
     category: "Narzędzie",
   },
+  {
+    id: "przelicznik-anodowanie",
+    emoji: "📏",
+    title: "Przelicznik Anodowanie",
+    description: "Przelicznik wymiarów do anodowania twardego — narzędzie do szybkiego obliczania naddatków i wymiarów końcowych detali przed i po procesie anodowania twardego.",
+    technologies: ["HTML5", "CSS3", "JavaScript", "Kalkulator"],
+    link: "/przelicznik-anodowanie",
+    category: "Narzędzie",
+  },
 ];
 
 export const navLinks = [

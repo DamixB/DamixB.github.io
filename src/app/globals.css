@@ -23,22 +23,25 @@
 
 /* ═══════════════════════════════════════
    NEON DARK MODE — Design System
+   Uses Tailwind @theme tokens above as source of truth.
+   Custom properties below alias them for inline style usage.
    ═══════════════════════════════════════ */
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-surface: #12121a;
-  --bg-surface-hover: #1a1a28;
+  --bg-primary: var(--color-bg-primary);
+  --bg-surface: var(--color-bg-surface);
+  --bg-surface-hover: var(--color-bg-surface-hover);
 
-  --text-primary: #e8e8f0;
-  --text-secondary: #9898b0;
-  --text-muted: #5a5a78;
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
 
-  --accent-neon: #00d2ff;
-  --accent-purple: #8250ff;
-  --accent-gradient: linear-gradient(135deg, #00d2ff, #8250ff);
+  --accent-neon: var(--color-accent-primary);
+  --accent-purple: var(--color-accent-secondary);
+  --accent-hover: var(--color-accent-hover);
+  --accent-gradient: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-subtle: var(--color-border-subtle);
+  --border-strong: var(--color-border-strong);
   --border-glow: rgba(0, 210, 255, 0.15);
 
   --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 210, 255, 0.05);
@@ -76,6 +79,12 @@ body::before {
   background-size: 60px 60px;
   pointer-events: none;
   z-index: 0;
+}
+
+/* ═══ Accessibility — Focus Styles ═══ */
+:focus-visible {
+  outline: 2px solid var(--accent-neon);
+  outline-offset: 2px;
 }
 
 /* Scrollbar */

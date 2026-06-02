@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przelicznik wymiarów do anodowania twardego | Kalkulator CNC</title>
+    
+    <!-- SEO & Meta Tags -->
+    <meta name="description" content="Precyzyjny przelicznik wymiarów detali przed procesem anodowania twardego. Oblicz wymiary surowe dla wałków i otworów z uwzględnieniem tolerancji ISO.">
+    <meta name="keywords" content="anodowanie twarde, kalkulator anodowania, wymiary surowe, tolerancje ISO, obróbka CNC, powłoki galwaniczne">
+    <meta name="author" content="Technolog CNC">
+    <link rel="canonical" href="https://twojadomena.pl/kalkulator-anodowania">
+    
+    <!-- Open Graph (Social Media Share) -->
+    <meta property="og:title" content="Przelicznik wymiarów do anodowania twardego">
+    <meta property="og:description" content="Szybko i bezbłędnie oblicz wymiar surowy detalu przed twardym anodowaniem.">
+    <meta property="og:type" content="website">
+
+    <!-- Preconnect dla potencjalnych fontów (jeśli dodasz zewnętrzne, to poprawia wydajność) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <style>
+        :root {
+            /* Jasny motyw (Domyślny) */
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --bg-hover: #e2e8f0;
+            --bg-disabled: rgba(15, 23, 42, 0.04);
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-glow: rgba(37, 99, 235, 0.12);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-strong: #1e293b;
+            --border-color: #e2e8f0;
+            --border-focus: #3b82f6;
+            --border-light: rgba(15, 23, 42, 0.08);
+            --error: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --transition-speed: 0.3s;
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 10px rgba(0,0,0,0.02);
+            --shadow-input: inset 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-btn: 0 8px 16px -4px rgba(37, 99, 235, 0.25);
+            --shadow-btn-hover: 0 12px 20px -4px rgba(37, 99, 235, 0.35);
+            --step-hover-bg: rgba(15, 23, 42, 0.05);
+            --step-active-bg: rgba(15, 23, 42, 0.1);
+        }
+
+        /* Ciemny motyw (Autodetekcja) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-main: #0f172a;
+                --bg-card: #1e293b;
+                --bg-input: #0b1120;
+                --bg-hover: #334155;
+                --bg-disabled: rgba(0, 0, 0, 0.3);
+                --accent: #3b82f6;
+                --accent-hover: #60a5fa;
+                --accent-glow: rgba(59, 130, 246, 0.15);
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --text-strong: #e2e8f0;
+                --border-color: #334155;
+                --border-focus: #60a5fa;
+                --border-light: rgba(255, 255, 255, 0.05);
+                --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                --shadow-input: inset 0 2px 4px rgba(0,0,0,0.2);
+                --shadow-btn: 0 8px 16px -4px rgba(59, 130, 246, 0.25);
+                --shadow-btn-hover: 0 12px 20px -4px rgba(59, 130, 246, 0.35);
+                --step-hover-bg: rgba(255, 255, 255, 0.08);
+                --step-active-bg: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            padding: clamp(20px, 5vw, 40px) 20px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        @keyframes containerEnter {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .container {
+            background-color: var(--bg-card);
+            max-width: 540px;
+            width: 100%;
+            border-radius: var(--radius-lg);
+            padding: clamp(20px, 5vw, 32px);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            animation: containerEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        /* Header & Logo */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .header-logo {
+            width: 48px;
+            height: 48px;
+            color: var(--accent);
+            filter: drop-shadow(0 4px 12px var(--accent-glow));
+            transition: transform var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .header-container:hover .header-logo {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        h1 {
+            font-size: clamp(18px, 4vw, 22px);
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+            margin-bottom: 0;
+            line-height: 1.3;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-strong);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Type Selection Buttons */
+        .type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .type-btn {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .type-btn span.icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .type-btn span.desc {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .type-btn:hover {
+            border-color: var(--text-muted);
+            background-color: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+        
+        .type-btn:hover span.icon {
+            transform: scale(1.1);
+        }
+
+        .type-btn[aria-pressed="true"] {
+            border-color: var(--accent);
+            background-color: var(--accent-glow);
+            color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+            transform: translateY(0);
+        }
+
+        .type-btn[aria-pressed="true"] span.desc {
+            color: var(--text-strong);
+        }
+
+        /* Input Wrappers & Steppers */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-input);
+            transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
+            height: 52px;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-wrapper.readonly-wrapper {
+            background-color: var(--bg-disabled);
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        .step-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            flex: 0 0 44px;
+            font-size: 24px;
+            font-weight: 300;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color var(--transition-speed), background-color var(--transition-speed);
+            user-select: none;
+        }
+
+        .step-btn:hover:not(:disabled) {
+            color: var(--text-main);
+            background-color: var(--step-hover-bg);
+        }
+
+        .step-btn:active:not(:disabled) {
+            background-color: var(--step-active-bg);
+        }
+
+        .step-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        input[type="number"].stepper-input {
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 16px;
+            font-family: inherit;
+            text-align: center;
+            flex-grow: 1;
+            width: 100%; 
+            padding: 0;
+            box-shadow: none;
+        }
+
+        input[type="number"].stepper-input:focus {
+            outline: none;
+        }
+        
+        input[type="number"].stepper-input:read-only {
+            cursor: not-allowed;
+            color: var(--text-muted);
+        }
+
+        .unit {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            padding-right: 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        select.input-select {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0 40px 0 16px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            box-shadow: var(--shadow-input);
+            height: 52px;
+        }
+
+        select.input-select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Main CTA */
+        .calc-btn {
+            width: 100%;
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 8px;
+            box-shadow: var(--shadow-btn);
+        }
+
+        .calc-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: var(--shadow-btn-hover);
+        }
+
+        .calc-btn:active {
+            transform: translateY(0) scale(0.99);
+            box-shadow: var(--shadow-btn);
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: var(--error);
+            font-size: 14px;
+            padding: 12px 16px;
+            background-color: var(--error-bg);
+            border-left: 4px solid var(--error);
+            border-radius: 4px;
+            display: none;
+            font-weight: 500;
+            animation: shake 0.4s ease-in-out;
+            margin-bottom: 8px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        /* Results Section */
+        @keyframes slideDownPop {
+            0% { opacity: 0; transform: translateY(-15px) scale(0.98); }
+            60% { transform: translateY(2px) scale(1.01); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        #results-section {
+            display: none;
+            animation: slideDownPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+            margin-top: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-light);
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-val {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .calc-steps {
+            margin: 16px 0;
+            padding: 16px;
+            background-color: var(--bg-input);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .calc-steps strong {
+            color: var(--text-main);
+        }
+
+        .final-result {
+            background: linear-gradient(145deg, var(--accent-glow) 0%, transparent 100%);
+            border: 1px solid var(--border-focus);
+            padding: 24px 16px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: inset 0 0 30px var(--accent-glow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .final-result p {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .final-result .value {
+            font-size: clamp(24px, 6vw, 32px);
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            word-break: break-word;
+            text-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        .final-result .value span {
+            color: var(--accent);
+        }
+
+        /* Utility for hiding arrows in number input - Cross browser */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        @media (max-width: 480px) {
+            .form-group[style] {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        
+        <header class="header-container">
+            <!-- Dodane aria-hidden, ponieważ SVG jest wyłącznie dekoracyjne -->
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-logo">
+                <circle cx="12" cy="12" r="7"></circle>
+                <circle cx="12" cy="12" r="10" stroke-dasharray="2 4" stroke="var(--accent)"></circle>
+                <path d="M12 2V1"></path>
+                <path d="M12 23v-1"></path>
+                <path d="M2 12H1"></path>
+                <path d="M23 12h-1"></path>
+            </svg>
+            <h1>Przelicznik wymiarów<br>do anodowania twardego</h1>
+        </header>
+
+        <!-- Dodano role="alert" do natychmiastowego odczytu przez czytniki ekranu -->
+        <div id="error-box" class="error-msg" role="alert" aria-live="assertive">Wybierz typ wymiaru.</div>
+
+        <form id="calc-form" onsubmit="event.preventDefault(); calculate();" novalidate>
+            <div class="form-group">
+                <span id="type-label" style="font-weight: 600; font-size: 13px; color: var(--text-strong); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Typ wymiaru docelowego</span>
+                <!-- Użycie aria-pressed dla lepszej semantyki przycisków toggle -->
+                <div class="type-selector" role="group" aria-labelledby="type-label">
+                    <button type="button" class="type-btn" id="btn-ext" aria-pressed="false" onclick="selectType('external')">
+                        <span class="icon" aria-hidden="true">📦</span>
+                        ZEWNĘTRZNY
+                        <span class="desc">Wałek, kostka, wymiar zewnętrzny</span>
+                    </button>
+                    <button type="button" class="type-btn" id="btn-int" aria-pressed="false" onclick="selectType('internal')">
+                        <span class="icon" aria-hidden="true">🔩</span>
+                        WEWNĘTRZNY
+                        <span class="desc">Otwór, gniazdo, wymiar wewnętrzny</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="target-dim">Wymiar docelowy (wg rysunku)</label>
+                <div class="input-wrapper">
+                    <button type="button" class="step-btn" aria-label="Zmniejsz wymiar" onclick="stepInput('target-dim', -1, 0.1)">−</button>
+                    <input type="number" class="stepper-input" id="target-dim" step="0.01" min="0.001" placeholder="np. 50.00" oninput="updateToleranceFields()" required>
+                    <button type="button" class="step-btn" aria-label="Zwiększ wymiar" onclick="stepInput('target-dim', 1, 0.1)">+</button>
+                    <span class="unit" aria-hidden="true">mm</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tol-class">Klasa tolerancji (ISO)</label>
+                <select id="tol-class" class="input-select" onchange="updateToleranceFields()">
+                    <option value="manual">Wybierz najpierw typ wymiaru...</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <label for="tol-upper">Odchyłka górna</label>
+                    <div class="input-wrapper" id="wrapper-tol-upper">
+                        <button type="button" class="step-btn step-upper" aria-label="Zmniejsz odchyłkę górną" onclick="stepInput('tol-upper', -1, 0.001)">−</button>
+                        <input type="number" class="stepper-input" id="tol-upper" step="0.001" placeholder="0.025" oninput="setManualMode()">
+                        <button type="button" class="step-btn step-upper" aria-label="Zwiększ odchyłkę górną" onclick="stepInput('tol-upper', 1, 0.001)">+</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="tol-lower">Odchyłka dolna</label>
+                    <div class="input-wrapper" id="wrapper-tol-lower">
+                        <button type="button" class="step-btn step-lower" aria-label="Zmniejsz odchyłkę dolną" onclick="stepInput('tol-lower', -1, 0.001)">−</button>
+                        <input type="number" class="stepper-input" id="tol-lower" step="0.001" placeholder="0.000" oninput="setManualMode()">
+                        <button type="button" class="step-btn step-lower" aria-label="Zwiększ odchyłkę dolną" onclick="stepInput('tol-lower', 1, 0.001)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="layer-thick">Grubość warstwy anody (T)</label>
+                <div class="input-wrapper">
+                    <button type="button" class="step-btn" aria-label="Zmniejsz grubość" onclick="stepInput('layer-thick', -1, 0.005)">−</button>
+                    <input type="number" class="stepper-input" id="layer-thick" step="0.001" min="0.001" placeholder="np. 0.05" required>
+                    <button type="button" class="step-btn" aria-label="Zwiększ grubość" onclick="stepInput('layer-thick', 1, 0.005)">+</button>
+                    <span class="unit" aria-hidden="true">mm</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="model-ratio">Proporcja powłoki (wnika / narasta)</label>
+                <select id="model-ratio" class="input-select" onchange="autoRecalculate()">
+                    <option value="0.5">50% wnika / 50% narasta (Domyślnie)</option>
+                    <option value="0.4">60% wnika / 40% narasta</option>
+                    <option value="0.6">40% wnika / 60% narasta</option>
+                    <option value="0.3">70% wnika / 30% narasta</option>
+                </select>
+            </div>
+
+            <button type="submit" class="calc-btn">OBLICZ WYMIAR SUROWY</button>
+        </form>
+
+        <!-- SEKCJA WYNIKOWA -->
+        <!-- role="region" ułatwia nawigację do wyników czytnikom ekranu -->
+        <section id="results-section" aria-live="polite" aria-label="Wyniki obliczeń">
+            <div class="final-result">
+                <p>Wymagany wymiar przed anodowaniem (Min - Max)</p>
+                <div class="value"><span id="final-val-min"></span> - <span id="final-val-max"></span> mm</div>
+            </div>
+
+            <div class="summary-row">
+                <span>Typ wymiaru:</span>
+                <span class="summary-val" id="res-type">-</span>
+            </div>
+            <div class="summary-row">
+                <span>Wymiar docelowy:</span>
+                <span class="summary-val" id="res-target">-</span>
+            </div>
+            <div class="summary-row">
+                <span>Odchyłki (górna / dolna):</span>
+                <span class="summary-val" id="res-tol">-</span>
+            </div>
+            <div class="summary-row">
+                <span>Proporcja (wnika/narasta):</span>
+                <span class="summary-val" id="res-model">-</span>
+            </div>
+            <div class="summary-row">
+                <span>Całkowita anoda (T):</span>
+                <span class="summary-val" id="res-layer">-</span>
+            </div>
+
+            <div class="calc-steps">
+                <div>Nawarstwienie (na stronę): <span id="step-ratio-text">50</span>% z <span id="step-t1"></span> mm = <strong><span id="step-t2"></span> mm</strong></div>
+                <div style="margin-top: 4px;">Całkowita zmiana wymiaru: 2 × <span id="step-t3"></span> = <strong><span id="step-t4"></span> mm</strong></div>
+                <div id="math-logic" style="margin-top: 12px; color: var(--accent); font-weight: 600;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        'use strict';
+
+        let currentType = null;
+        const errorBox = document.getElementById('error-box');
+        const resultsSection = document.getElementById('results-section');
+
+        const isoTable = {
+            'H7': [ [3, 10, 0], [6, 12, 0], [10, 15, 0], [18, 18, 0], [30, 21, 0], [50, 25, 0], [80, 30, 0], [120, 35, 0], [180, 40, 0], [250, 46, 0], [315, 52, 0], [400, 57, 0] ],
+            'H8': [ [3, 14, 0], [6, 18, 0], [10, 22, 0], [18, 27, 0], [30, 33, 0], [50, 39, 0], [80, 46, 0], [120, 54, 0], [180, 63, 0], [250, 72, 0], [315, 81, 0], [400, 89, 0] ],
+            'H9': [ [3, 25, 0], [6, 30, 0], [10, 36, 0], [18, 43, 0], [30, 52, 0], [50, 62, 0], [80, 74, 0], [120, 87, 0], [180, 100, 0], [250, 115, 0], [315, 130, 0], [400, 140, 0] ],
+            'h6': [ [3, 0, -6], [6, 0, -8], [10, 0, -9], [18, 0, -11], [30, 0, -13], [50, 0, -16], [80, 0, -19], [120, 0, -22], [180, 0, -25], [250, 0, -29], [315, 0, -32], [400, 0, -36] ],
+            'h7': [ [3, 0, -10], [6, 0, -12], [10, 0, -15], [18, 0, -18], [30, 0, -21], [50, 0, -25], [80, 0, -30], [120, 0, -35], [180, 0, -40], [250, 0, -46], [315, 0, -52], [400, 0, -57] ],
+            'f7': [ [3, -6, -16], [6, -10, -22], [10, -13, -28], [18, -16, -34], [30, -20, -41], [50, -25, -50], [80, -30, -60], [120, -36, -71], [180, -43, -83], [250, -50, -96], [315, -56, -108], [400, -62, -119] ],
+            'g6': [ [3, -2, -8], [6, -4, -12], [10, -5, -14], [18, -6, -17], [30, -7, -20], [50, -9, -25], [80, -10, -29], [120, -12, -34], [180, -14, -39], [250, -15, -44], [315, -17, -49], [400, -18, -54] ],
+            'k6': [ [3, 6, 0], [6, 9, 1], [10, 10, 1], [18, 12, 2], [30, 15, 2], [50, 18, 2], [80, 21, 2], [120, 25, 3], [180, 28, 3], [250, 33, 4], [315, 36, 4], [400, 40, 4] ],
+            'm6': [ [3, 8, 2], [6, 12, 4], [10, 15, 6], [18, 18, 7], [30, 21, 8], [50, 25, 9], [80, 30, 11], [120, 35, 13], [180, 40, 15], [250, 46, 17], [315, 52, 20], [400, 57, 21] ]
+        };
+
+        // Udostępnione globalnie dla inline eventów HTML
+        window.stepInput = function(id, direction, stepValue) {
+            const input = document.getElementById(id);
+            if (input.readOnly || input.disabled) return;
+
+            let val = parseFloat(input.value.replace(',', '.'));
+            if (isNaN(val)) val = 0;
+
+            // Bezpieczne operacje na liczbach zmiennoprzecinkowych z użyciem Math.round
+            const factor = Math.pow(10, stepValue.toString().split('.')[1]?.length || 0);
+            val = Math.round((val + direction * stepValue) * factor) / factor;
+
+            if ((id === 'target-dim' || id === 'layer-thick') && val <= 0) {
+                val = stepValue;
+            }
+
+            input.value = val.toFixed(factor.toString().length - 1);
+
+            if (id === 'target-dim') updateToleranceFields();
+            if (id === 'tol-upper' || id === 'tol-lower') setManualMode();
+
+            autoRecalculate();
+        };
+
+        window.setManualMode = function() {
+            document.getElementById('tol-class').value = 'manual';
+            updateToleranceFields();
+        };
+
+        window.autoRecalculate = function() {
+            if (resultsSection.style.display === 'block') {
+                window.calculate(false);
+            }
+        };
+
+        window.selectType = function(type) {
+            currentType = type;
+            const btnExt = document.getElementById('btn-ext');
+            const btnInt = document.getElementById('btn-int');
+            
+            btnExt.setAttribute('aria-pressed', type === 'external');
+            btnInt.setAttribute('aria-pressed', type === 'internal');
+            
+            populateTolerances(type);
+            hideError();
+            autoRecalculate();
+        };
+
+        window.updateToleranceFields = function() {
+            const dimStr = document.getElementById('target-dim').value.replace(',', '.');
+            const dim = parseFloat(dimStr);
+            const tolClass = document.getElementById('tol-class').value;
+            const upperInput = document.getElementById('tol-upper');
+            const lowerInput = document.getElementById('tol-lower');
+            const upperWrapper = document.getElementById('wrapper-tol-upper');
+            const lowerWrapper = document.getElementById('wrapper-tol-lower');
+            
+            const upperStepBtns = document.querySelectorAll('.step-upper');
+            const lowerStepBtns = document.querySelectorAll('.step-lower');
+
+            if (tolClass === 'manual') {
+                upperInput.readOnly = false;
+                lowerInput.readOnly = false;
+                upperWrapper.classList.remove('readonly-wrapper');
+                lowerWrapper.classList.remove('readonly-wrapper');
+                upperStepBtns.forEach(btn => btn.disabled = false);
+                lowerStepBtns.forEach(btn => btn.disabled = false);
+                autoRecalculate();
+                return;
+            }
+
+            if (isNaN(dim) || dim <= 0) {
+                document.getElementById('tol-class').value = 'manual';
+                showError("Wpisz najpierw wymiar docelowy, aby przeliczyć tolerancję ISO.");
+                return;
+            }
+            
+            hideError();
+
+            const limits = isoTable[tolClass];
+            if (limits) {
+                for (let i = 0; i < limits.length; i++) {
+                    if (dim <= limits[i][0] || i === limits.length - 1) {
+                        upperInput.value = (limits[i][1] / 1000).toFixed(4);
+                        lowerInput.value = (limits[i][2] / 1000).toFixed(4);
+                        break;
+                    }
+                }
+            }
+            
+            upperInput.readOnly = true;
+            lowerInput.readOnly = true;
+            upperWrapper.classList.add('readonly-wrapper');
+            lowerWrapper.classList.add('readonly-wrapper');
+            
+            // Blokada przycisków uniemożliwia interakcję z klawiatury podczas trybu ReadOnly
+            upperStepBtns.forEach(btn => btn.disabled = true);
+            lowerStepBtns.forEach(btn => btn.disabled = true);
+            
+            autoRecalculate();
+        };
+
+        window.calculate = function(doScroll = true) {
+            const targetDimStr = document.getElementById('target-dim').value.replace(',', '.');
+            const layerThickStr = document.getElementById('layer-thick').value.replace(',', '.');
+            const upperTolStr = document.getElementById('tol-upper').value.replace(',', '.');
+            const lowerTolStr = document.getElementById('tol-lower').value.replace(',', '.');
+            const ratioVal = parseFloat(document.getElementById('model-ratio').value);
+
+            const targetDim = parseFloat(targetDimStr);
+            const layerThick = parseFloat(layerThickStr);
+            const upperTol = parseFloat(upperTolStr) || 0;
+            const lowerTol = parseFloat(lowerTolStr) || 0;
+
+            if (!currentType) {
+                if (doScroll) showError("Wybierz typ wymiaru docelowego.");
+                return;
+            }
+            if (isNaN(targetDim) || targetDim <= 0) {
+                if (doScroll) showError("Podaj prawidłowy wymiar docelowy (wartość > 0).");
+                return;
+            }
+            if (isNaN(layerThick) || layerThick <= 0) {
+                if (doScroll) showError("Podaj prawidłową grubość warstwy anody (wartość > 0).");
+                return;
+            }
+
+            hideError();
+
+            const buildupPct = Math.round(ratioVal * 100);
+            const penetrationPct = 100 - buildupPct;
+
+            const buildupPerSide = layerThick * ratioVal;
+            const totalChange = buildupPerSide * 2;
+            
+            let rawDimMax = 0;
+            let rawDimMin = 0;
+            let logicText = "";
+
+            const targetMax = targetDim + upperTol;
+            const targetMin = targetDim + lowerTol;
+
+            if (currentType === 'external') {
+                rawDimMax = targetMax - totalChange;
+                rawDimMin = targetMin - totalChange;
+                logicText = `Wzór: Wymiar surowy = (Wymiar gotowy + odchyłka) - Całkowita zmiana`;
+            } else if (currentType === 'internal') {
+                rawDimMax = targetMax + totalChange;
+                rawDimMin = targetMin + totalChange;
+                logicText = `Wzór: Wymiar surowy = (Wymiar gotowy + odchyłka) + Całkowita zmiana`;
+            }
+
+            const finalMin = Math.min(rawDimMin, rawDimMax);
+            const finalMax = Math.max(rawDimMin, rawDimMax);
+
+            document.getElementById('res-type').textContent = currentType === 'external' ? 'Zewnętrzny (wałek, kostka)' : 'Wewnętrzny (otwór, gniazdo)';
+            document.getElementById('res-target').textContent = targetDim.toFixed(4) + ' mm';
+            
+            const signUpper = upperTol > 0 ? '+' : '';
+            const signLower = lowerTol > 0 ? '+' : '';
+            document.getElementById('res-tol').textContent = `${signUpper}${upperTol.toFixed(4)} / ${signLower}${lowerTol.toFixed(4)}`;
+            
+            document.getElementById('res-model').textContent = `${penetrationPct}% / ${buildupPct}%`;
+            document.getElementById('res-layer').textContent = layerThick.toFixed(4) + ' mm';
+
+            document.getElementById('step-ratio-text').textContent = buildupPct;
+            document.getElementById('step-t1').textContent = layerThick.toFixed(4);
+            document.getElementById('step-t2').textContent = buildupPerSide.toFixed(4);
+            document.getElementById('step-t3').textContent = buildupPerSide.toFixed(4);
+            document.getElementById('step-t4').textContent = totalChange.toFixed(4);
+            
+            document.getElementById('math-logic').textContent = logicText;
+            document.getElementById('final-val-min').textContent = finalMin.toFixed(4);
+            document.getElementById('final-val-max').textContent = finalMax.toFixed(4);
+
+            resultsSection.style.display = 'block';
+            
+            if (doScroll && window.innerWidth <= 480) {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        // Funkcje pomocnicze ukryte poza interfejsem window
+        function populateTolerances(type) {
+            const tolSelect = document.getElementById('tol-class');
+            tolSelect.innerHTML = '<option value="manual">Wpisz ręcznie odchyłki</option>';
+            
+            const options = type === 'external' 
+                ? ['h6', 'h7', 'f7', 'g6', 'k6', 'm6'] 
+                : ['H7', 'H8', 'H9'];
+                
+            options.forEach(opt => {
+                tolSelect.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            
+            window.updateToleranceFields();
+        }
+
+        function showError(message) {
+            errorBox.textContent = message;
+            errorBox.style.display = 'block';
+            resultsSection.style.display = 'none';
+        }
+
+        function hideError() {
+            errorBox.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
