@@ -133,6 +133,21 @@
 
         .header-actions { display: flex; gap: 12px; align-items: center; }
 
+        /* Nowe pole na klucz API */
+        .api-key-input {
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+            background: var(--workspace-bg);
+            color: var(--text-main);
+            font-size: 0.85rem;
+            width: 220px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .api-key-input:focus { border-color: var(--accent-1); }
+
         /* Workspace Layout */
         .workspace-body { display: flex; flex-grow: 1; overflow: hidden; }
 
@@ -259,6 +274,9 @@
                 <div class="modal-status">
                     <div class="status-dot"></div> Gemini 2.5 Flash
                 </div>
+                <!-- Dodane pole na własny klucz API -->
+                <input type="password" id="api-key-input" class="api-key-input" placeholder="Wklej tu klucz API Gemini..." title="Wygeneruj bezpłatny klucz w Google AI Studio">
+                
                 <button class="btn btn-secondary btn-small" id="new-project-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Nowy projekt
@@ -280,7 +298,7 @@
                         </div>
                         <div class="bubble">
                             Cześć! Jestem Scadia. Zbudowałam to środowisko tak, żeby oszczędzić Ci czasu. Ty dajesz wizję – ja zajmuję się kodem i weryfikuję geometrię pod kątem FDM.<br><br>
-                            Co dzisiaj robimy? Opisz projekt lub wrzuć szkic.
+                            Pamiętaj o podaniu swojego klucza API z Google AI Studio w polu u góry. Co dzisiaj robimy? Opisz projekt lub wrzuć szkic.
                         </div>
                     </div>
                 </div>
@@ -348,8 +366,6 @@
 
     <script>
         // --- KONFIGURACJA API ---
-        const _k = ['QUl6YVN5QTJGTk', 'RqN3RHUTEyb051', 'MjZqdmVYckRPMm', 'pBbmlYWmtF'];
-        const apiKey = atob(_k.join(''));
         const MODEL_NAME = "gemini-2.5-flash";
         const ticks = "\x60\x60\x60";
 
@@ -392,6 +408,7 @@ Zasady bloku javascript (podgląd wizualny):
         const fileUpload = document.getElementById('file-upload');
         const imagePreviewArea = document.getElementById('image-preview-area');
         const typingIndicator = document.getElementById('typing-indicator');
+        const apiKeyInput = document.getElementById('api-key-input');
         
         const codeEditorTextarea = document.getElementById('code-editor-textarea');
         const editorActions = document.getElementById('editor-actions');
@@ -402,6 +419,16 @@ Zasady bloku javascript (podgląd wizualny):
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         const renderStatus = document.getElementById('render-status');
+
+        // --- OBSŁUGA KLUCZA API W LOCALSTORAGE ---
+        const savedApiKey = localStorage.getItem('scadia_api_key');
+        if (savedApiKey) {
+            apiKeyInput.value = savedApiKey;
+        }
+
+        apiKeyInput.addEventListener('input', () => {
+            localStorage.setItem('scadia_api_key', apiKeyInput.value.trim());
+        });
 
         // --- LOGIKA ZAKŁADEK ---
         tabBtns.forEach(btn => {
@@ -458,6 +485,12 @@ Zasady bloku javascript (podgląd wizualny):
             const code = codeEditorTextarea.value.trim();
             if (!code) return;
 
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                appendMessage('ai', "Błąd: Wprowadź klucz API Gemini w polu u góry, aby zaktualizować model.");
+                return;
+            }
+
             const originalText = reRenderBtn.textContent;
             reRenderBtn.textContent = 'Przeliczanie...';
             reRenderBtn.disabled = true;
@@ -468,7 +501,7 @@ Zasady bloku javascript (podgląd wizualny):
 
             const prompt = `Użytkownik ręcznie zmodyfikował kod OpenSCAD w edytorze na następujący:\n\n${ticks}openscad\n${code}\n${ticks}\n\nWygeneruj TYLKO ZAKTUALIZOWANY blok ${ticks}javascript ... ${ticks} dla Three.js, który odzwierciedla ten nowy model. Pamiętaj, aby ułożyć model w sposób płaski do druku. Nie zwracaj ponownie kodu OpenSCAD.`;
 
-            const aiText = await fetchGeminiResponse(prompt, null);
+            const aiText = await fetchGeminiResponse(prompt, null, apiKey);
 
             reRenderBtn.textContent = originalText;
             reRenderBtn.disabled = false;
@@ -739,8 +772,8 @@ Zasady bloku javascript (podgląd wizualny):
         };
 
         // --- LOGIKA CZATU I LLM ---
-        async function fetchGeminiResponse(userText, imageObj) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+        async function fetchGeminiResponse(userText, imageObj, userApiKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${userApiKey}`;
             
             let parts = [];
             if (userText) parts.push({ text: userText });
@@ -759,13 +792,18 @@ Zasady bloku javascript (podgląd wizualny):
             for (let i = 0; i < maxRetries; i++) {
                 try {
                     const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API HTTP Error: ${response.status}`);
+                    if (!response.ok) {
+                        if(response.status === 400 || response.status === 403) {
+                            return "Błąd: Twój klucz API jest nieprawidłowy lub nie ma odpowiednich uprawnień. Sprawdź go w górnym panelu.";
+                        }
+                        throw new Error(`API HTTP Error: ${response.status}`);
+                    }
                     const data = await response.json();
                     const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Brak odpowiedzi.";
                     chatHistory.push({ role: "model", parts: [{ text: aiText }] });
                     return aiText;
                 } catch (error) {
-                    if (i === maxRetries - 1) return `Błąd połączenia. Próby wyczerpane.`;
+                    if (i === maxRetries - 1) return `Błąd połączenia z API. Sprawdź swój klucz i połączenie sieciowe.`;
                     await new Promise(r => setTimeout(r, delays[i]));
                 }
             }
@@ -847,7 +885,8 @@ Zasady bloku javascript (podgląd wizualny):
 
         compileBtn.addEventListener('click', () => {
             if(!latestGeneratedJs) {
-                alert("Brak danych wizualizacji. Model nie wygenerował podglądu 3D.");
+                renderStatus.textContent = "Brak danych wizualizacji. Model nie wygenerował podglądu 3D.";
+                renderStatus.style.color = "#ef4444";
                 return;
             }
             
@@ -868,6 +907,12 @@ Zasady bloku javascript (podgląd wizualny):
             const text = chatInput.value.trim();
             if (!text && !currentImage) return;
 
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                appendMessage('ai', "Zanim zaczniesz, musisz podać swój klucz API Gemini w polu u góry. Wygenerujesz go za darmo na stronie Google AI Studio.");
+                return;
+            }
+
             const imgToPass = currentImage;
             const imgUrlToShow = currentImage ? currentImage.dataUrl : null;
             
@@ -880,7 +925,7 @@ Zasady bloku javascript (podgląd wizualny):
             typingIndicator.classList.add('active');
             chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
 
-            const responseText = await fetchGeminiResponse(text, imgToPass);
+            const responseText = await fetchGeminiResponse(text, imgToPass, apiKey);
             
             typingIndicator.classList.remove('active');
             appendMessage('ai', responseText);
