@@ -82,7 +82,7 @@ export const projects = [
     title: "Kalkulator Powłok",
     description: "Kalkulator wymiarów surowych dla detali CNC pod powłoki galwaniczne. Obsługuje wymiary zewnętrzne, wewnętrzne, wałki, otwory, rowki i odsadzenia.",
     technologies: ["HTML5", "CSS3", "JavaScript", "Kalkulator"],
-    link: "/kalkulator-powłoki",
+    link: "/kalkulator-powloki",
     category: "Narzędzie",
   },
 ];
