@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szkolenie Barmańskie - Baza Wiedzy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --overlay-bg: rgba(15, 23, 42, 0.85);
+            --overlay-text: #ffffff;
+            --modal-bg: #ffffff;
+            --modal-overlay: rgba(15, 23, 42, 0.6);
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Klasa dodawana przy wymuszeniu trybu ciemnego */
+        .dark-mode {
+            --bg-color: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --overlay-bg: rgba(15, 23, 42, 0.9);
+            --modal-bg: #1e293b;
+            --modal-overlay: rgba(0, 0, 0, 0.8);
+            --accent: #34d399;
+            --accent-hover: #10b981;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not(.light-mode-forced) {
+                --bg-color: #0f172a;
+                --bg-secondary: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --card-bg: #1e293b;
+                --card-border: #334155;
+                --overlay-bg: rgba(15, 23, 42, 0.9);
+                --modal-bg: #1e293b;
+                --modal-overlay: rgba(0, 0, 0, 0.8);
+                --accent: #34d399;
+                --accent-hover: #10b981;
+                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+                --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* Przełącznik Motywu */
+        .theme-toggle-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--accent-hover);
+        }
+
+        /* Nav & Header */
+        header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background-color: var(--bg-secondary);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--card-border);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            outline: none;
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .search-container input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            border-color: var(--accent);
+        }
+
+        /* Filtry Kategorii */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border: 1px solid var(--card-border);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* Cocktail Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover, .card:focus-visible {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            outline: none;
+        }
+
+        /* Skeleton Loading Animation */
+        .card-image-wrapper {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            background-color: var(--bg-secondary);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--card-border) 25%, var(--card-bg) 50%, var(--card-border) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0; /* Ukryte na start */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .card-image.loaded {
+            opacity: 1;
+        }
+
+        .card:hover .card-image.loaded { 
+            transform: scale(1.05); 
+        }
+
+        .card-title {
+            padding: 1.25rem;
+            font-size: 1.3rem;
+            text-align: center;
+            border-top: 1px solid var(--card-border);
+            background: var(--card-bg);
+            z-index: 2;
+        }
+
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: var(--overlay-bg);
+            color: var(--overlay-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .card:hover .card-overlay, .card:focus-visible .card-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-overlay h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-overlay ul { list-style: none; font-size: 0.9rem; }
+        .card-overlay li { margin-bottom: 0.4rem; display: flex; align-items: flex-start; }
+        .card-overlay li::before { content: "•"; color: var(--accent); font-weight: bold; margin-right: 0.5rem; }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: var(--modal-overlay);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            background-color: var(--modal-bg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-backdrop.active .modal { transform: translateY(0) scale(1); }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .modal-close { background: rgba(255, 255, 255, 0.1); color: white; }
+        }
+        .modal-close:hover { background: var(--card-border); }
+
+        .modal-header-img { width: 100%; height: 300px; object-fit: cover; background-color: var(--card-border); }
+        .modal-content { padding: 2.5rem; }
+        .modal-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        
+        .modal-category {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 640px) { .recipe-grid { grid-template-columns: 1fr 1.2fr; } }
+
+        .recipe-section h3 { color: var(--accent); margin-bottom: 1rem; font-size: 1.2rem; }
+        .recipe-section ul, .recipe-section ol { padding-left: 1.2rem; color: var(--text-main); }
+        .recipe-section li { margin-bottom: 0.5rem; }
+
+        .meta-info {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-border);
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background-color: var(--bg-color);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- KNOWLEDGE BASE SECTIONS --- */
+        
+        .kb-section {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            padding: 4rem 0;
+        }
+
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .brand-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+        }
+
+        .brand-card h4 {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand-card ul { list-style: none; }
+        .brand-card li {
+            padding: 0.3rem 0;
+            color: var(--text-main);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .brand-card li::before {
+            content: "▹";
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .glossary-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .glossary-item {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+        }
+
+        .glossary-item dt {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .glossary-item dd {
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .glass-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .glass-item {
+            background-color: var(--card-bg);
+            padding: 2rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            font-weight: 600;
+            color: var(--text-main);
+            transition: transform 0.2s;
+        }
+        .glass-item:hover {
+            transform: translateY(-3px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Manualny przełącznik trybu -->
+    <button class="theme-toggle-btn" id="theme-toggle" aria-label="Zmień motyw">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+
+    <header>
+        <h1>Kompendium Barmańskie</h1>
+        <p>Baza koktajli, teoria miksologii, sprzęt barowy i przegląd marek alkoholowych w jednym miejscu.</p>
+        
+        <nav class="nav-links">
+            <a href="#koktajle">🍹 Receptury</a>
+            <a href="#marki">🍾 Marki Alkoholi</a>
+            <a href="#slowniczek">📖 Słowniczek</a>
+            <a href="#szklo">🍸 Szkło Barowe</a>
+        </nav>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Szukaj drinka lub składnika (np. rum, tequila)..." aria-label="Wyszukaj koktajl">
+        </div>
+
+        <div class="category-filters">
+            <button class="filter-btn active" data-filter="all">Wszystkie</button>
+            <button class="filter-btn" data-filter="Budowane">Budowane</button>
+            <button class="filter-btn" data-filter="Wstrząsane">Wstrząsane</button>
+            <button class="filter-btn" data-filter="Stirowane">Stirowane</button>
+            <button class="filter-btn" data-filter="Muddlowane">Muddlowane</button>
+            <button class="filter-btn" data-filter="Shot">Shoty</button>
+            <button class="filter-btn" data-filter="Dodatkowe">Dodatkowe</button>
+        </div>
+    </header>
+
+    <!-- SEKCJA 1: KOKTAJLE -->
+    <main class="container" id="koktajle">
+        <h2 class="section-title">Receptury Koktajlowe</h2>
+        <div class="grid" id="drinks-grid">
+            <!-- Karty renderowane przez JS -->
+        </div>
+        <div class="no-results" id="no-results">Nie znaleziono koktajlu pasującego do wyszukiwania.</div>
+    </main>
+
+    <!-- SEKCJA 2: MARKI ALKOHOLI -->
+    <section class="kb-section" id="marki">
+        <div class="container" style="padding-top: 0; padding-bottom: 0;">
+            <h2 class="section-title">Alkohole - Marki</h2>
+            <div class="brands-grid">
+                <div class="brand-card">
+                    <h4>Wódka</h4>
+                    <ul><li>Smirnoff</li><li>Finlandia</li><li>Absolut</li><li>Chopin</li><li>Belvedere</li><li>Ciroc</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Gin</h4>
+                    <ul><li>Gordon's</li><li>Beefeater</li><li>Seagram's</li><li>Bombay Sapphire</li><li>Tanqueray</li><li>Hendricks</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Tequila</h4>
+                    <ul><li>Sauza</li><li>Jose Cuervo</li><li>Sierra</li><li>Olmeca</li><li>Herradura</li><li>El Jimador</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Cognac / Brandy</h4>
+                    <ul><li>Hennessy</li><li>Rémy Martin</li><li>Martell</li><li>Courvoisier</li><li>Metaxa</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Whiskey - Bourbon</h4>
+                    <ul><li>Jim Beam</li><li>Bulleit</li><li>Maker's Mark</li><li>Wild Turkey</li><li>Woodford Reserve</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Whiskey - Tennessee</h4>
+                    <ul><li>Jack Daniel's</li><li>Jack Daniel's Honey</li><li>Jack Daniel's Fire</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Whisky Szkocka - Blended</h4>
+                    <ul><li>Johnnie Walker</li><li>Famous Grouse</li><li>Ballantine's</li><li>Grant's</li><li>Chivas Regal</li><li>Dewar's</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Whisky Szkocka - Single Malt</h4>
+                    <ul><li>Glenfiddich</li><li>Glenlivet</li><li>Talisker</li><li>Ardbeg</li><li>Macallan</li><li>Glenmorangie</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Whiskey Irlandzka</h4>
+                    <ul><li>Jameson</li><li>Tullamore Dew</li><li>Bushmills</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Rum</h4>
+                    <ul><li>Bacardi</li><li>Havana Club</li><li>Captain Morgan</li><li>Appleton Estate</li><li>Dictador</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Cachaça</h4>
+                    <ul><li>Canario</li><li>Pitú</li><li>Leblon</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Szampany</h4>
+                    <ul><li>Moët & Chandon</li><li>Dom Pérignon</li><li>G.H. Mumm</li><li>Veuve Clicquot</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Likiery - Marki</h4>
+                    <ul><li>Kahlúa</li><li>Malibu</li><li>Cointreau</li><li>Chartreuse</li><li>Jägermeister</li><li>Baileys</li><li>Archers</li><li>Passoã</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Bittery / Wermuty / Aperitif</h4>
+                    <ul><li>Campari</li><li>Aperol</li><li>Angostura</li><li>Martini</li><li>Cinzano</li></ul>
+                </div>
+                <div class="brand-card">
+                    <h4>Typy Likierów</h4>
+                    <ul><li>Triple sec</li><li>Blue curaçao</li><li>Amaretto</li><li>Sambuca</li><li>Maraschino</li><li>Likier brzoskwiniowy</li></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKCJA 3: SŁOWNICZEK -->
+    <section class="container" id="slowniczek">
+        <h2 class="section-title">Słowniczek Barmański</h2>
+        <dl class="glossary-list">
+            <div class="glossary-item">
+                <dt>Dash</dt>
+                <dd>Miara barmańska, oznaczająca jedno „zakropienie", używana najczęściej przy bitterach i innych przyprawach. Zazwyczaj ok. 1 ml.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Fine strainer</dt>
+                <dd>Sitko do dokładnego przecedzania (tzw. double strain), z bardzo drobnym splotem, używane by oddzielić najdrobniejsze cząstki lodu lub owoców.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Garnish</dt>
+                <dd>Dekoracje na koktajlach, które często pełnią również funkcję aromatyzującą.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Jigger</dt>
+                <dd>Miarka barowa do odmierzania objętości. Popularne typy to klasyczny dwustronny (np. 20/40ml) oraz wysoki, wąski "Japanese style" (np. 25/50ml).</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Maraska</dt>
+                <dd>Odmiana wiśni o charakterystycznym, gorzko-kwaśnym smaku. Produkuje się z niej likier Maraschino. Kandyzowane wiśnie koktajlowe często potocznie nazywa się maraskami.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Muddler</dt>
+                <dd>Tłuczek barmański służący do rozgniatania owoców, ziół i przypraw w celu wydobycia z nich soków i olejków eterycznych.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Shaker bostoński (Boston Shaker)</dt>
+                <dd>Dwuczęściowy shaker, składający się ze szklanicy i metalowego kubka lub dwóch metalowych kubków (tin-on-tin). Wymaga oddzielnego sitka.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Shaker trzyczęściowy (Cobbler Shaker)</dt>
+                <dd>Shaker składający się z metalowego kubka, głowicy z wbudowanym sitkiem oraz korka. Idealny dla początkujących.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Sour</dt>
+                <dd>Określenie na kwaśny składnik (zazwyczaj sok z cytryny lub limonki) oraz kategoria koktajli balansujących smak kwaśny i słodki (np. Whisky Sour).</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Speed opener (Bar blade)</dt>
+                <dd>Płaski, szybki otwieracz do butelek, popularny wśród barmanów pracujących w dużym tempie.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Speed rack</dt>
+                <dd>Półka lub "rynna" zamontowana pod blatem baru, mieszcząca najczęściej używane alkohole, co przyspiesza pracę.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Splash</dt>
+                <dd>Niewielka ilość płynu, "chluśnięcie", dodawane do koktajlu (np. splash wody sodowej).</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Strainer (Hawthorne Strainer)</dt>
+                <dd>Sitko barmańskie ze sprężyną, używane do przecedzania koktajli z shakera lub szklanicy barmańskiej, zatrzymujące lód.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Syrop cukrowy (Simple Syrup)</dt>
+                <dd>Roztwór cukru w wodzie. Standardowa proporcja to 1:1 (cukier:woda), a wersja "rich" to 2:1.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Szklanica barmańska (Mixing Glass)</dt>
+                <dd>Szklane naczynie z dzióbkiem, służące do mieszania koktajli (metoda stir) za pomocą łyżki barmańskiej.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Top up</dt>
+                <dd>Dopełnienie koktajlu w szkle końcowym, najczęściej napojem gazowanym (wodą sodową, winem musującym, colą).</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Trybuszon</dt>
+                <dd>Profesjonalny korkociąg kelnerski, często wyposażony w nożyk do folii i otwieracz do kapsli.</dd>
+            </div>
+            <div class="glossary-item">
+                <dt>Zest</dt>
+                <dd>Cienka warstwa kolorowej skórki cytrusa (bez białego albedo), zawierająca olejki eteryczne, używana do aromatyzowania i dekoracji.</dd>
+            </div>
+        </dl>
+    </section>
+
+    <!-- SEKCJA 4: SZKŁO -->
+    <section class="kb-section" id="szklo">
+        <div class="container" style="padding-top: 0; padding-bottom: 0;">
+            <h2 class="section-title">Szkło Barowe</h2>
+            <div class="glass-grid">
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🥃</span>Niska szklanka<br>(Rocks / Old Fashioned)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🥤</span>Wysoka szklanka<br>(Highball / Collins)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🍸</span>Kieliszek koktajlowy<br>(Martini Glass)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🥂</span>Szkło typu coupe<br>(Coupe Glass)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🍷</span>Kieliszek do wina<br>(Wine Glass)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🍹</span>Hurricane Glass</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🥃</span>Kieliszek do brandy<br>(Snifter)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🍸</span>Kieliszek do Margarity</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🗿</span>Kubek Tiki<br>(Tiki Mug)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🟤</span>Miedziany kubek<br>(Moscow Mule Mug)</div>
+                <div class="glass-item"><span style="display:block; font-size: 2rem; margin-bottom: 0.5rem;">🥃</span>Kieliszek do shotów<br>(Shot Glass)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Przepisów -->
+    <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button class="modal-close" id="modal-close" aria-label="Zamknij">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l12 12m0-12L1 13"/></svg>
+            </button>
+            <img src="" alt="" class="modal-header-img" id="modal-img">
+            <div class="modal-content">
+                <span class="modal-category" id="modal-category">Kategoria</span>
+                <h2 class="modal-title" id="modal-title">Nazwa</h2>
+                
+                <div class="recipe-grid">
+                    <div class="recipe-section">
+                        <h3>Składniki</h3>
+                        <ul id="modal-ingredients"></ul>
+                    </div>
+                    <div class="recipe-section">
+                        <h3>Przygotowanie</h3>
+                        <ol id="modal-steps"></ol>
+                    </div>
+                </div>
+
+                <div class="meta-info">
+                    <div class="badge">🥂 Szkło: <span id="modal-glass" style="font-weight: 600; margin-left: 5px;"></span></div>
+                    <div class="badge">🌿 Dekoracja: <span id="modal-garnish" style="font-weight: 600; margin-left: 5px;"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 41 KOKTAJLI - KAŻDY POSIADA WŁASNE, WYSELEKCJONOWANE I UNIKALNE ZDJĘCIE BEZ POWTÓRZEŃ
+        const drinks = [
+            // BUDOWANE
+            { name: "Cuba Libre", category: "Budowane", image: "https://images.unsplash.com/photo-1587223075055-82e9a937ddff?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml biały rum", "Sok z 2-3 cząstek limonki (cząstka = 1/8)", "Dopełnienie colą"], glass: "Wysoka szklanka (Highball)", garnish: "Cząstka limonki", steps: ["Wlewamy rum do szklanki.", "Wyciskamy limonkę i dopełniamy colą."] },
+            { name: "Tequila Sunrise", category: "Budowane", image: "https://images.unsplash.com/photo-1536934331753-2056fc00c4c4?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml tequila", "Dopełnienie sokiem pomarańczowym", "Niewielka ilość grenadyny na wierzch"], glass: "Wysoka szklanka (Highball)", garnish: "Plaster pomarańczy", steps: ["Wlewamy tequilę do szklanki.", "Dopełniamy sokiem pomarańczowym.", "Na wierzch wlewamy grenadynę, tak aby opadając stworzyła przejście kolorów."] },
+            { name: "Aperol Spritz", category: "Budowane", image: "https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&fit=crop&w=800&q=80", ingredients: ["3 części prosecco", "2 części Aperol", "1 część woda gazowana"], glass: "Kieliszek do wina", garnish: "Plasterek/półplasterek pomarańczy", steps: ["Wlewamy do kieliszka najpierw prosecco (nie odmierzamy jiggerem).", "Dodajemy Aperol i wodę.", "Dekorujemy plasterkiem pomarańczy."] },
+            { name: "B52", category: "Budowane / Shot", image: "https://images.unsplash.com/photo-1574056067299-a11c5b576e6c?auto=format&fit=crop&w=800&q=80", ingredients: ["1/3 Kahlúa", "1/3 Baileys", "1/3 Cointreau/triple sec"], glass: "Kieliszek (Shot)", garnish: "Brak", steps: ["Wlewamy składniki w podanej kolejności delikatnie (np. po łyżce), aby powstały warstwy."] },
+            
+            // WSTRZĄSANE
+            { name: "Whisky Sour", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1614316354146-235bba68903e?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml whisky (najczęściej bourbon)", "30ml sok z cytryny", "15ml syrop cukrowy", "2xdash Angostura Bitters", "Opcjonalnie: białko jajka (ok. 20 ml)"], glass: "Niska szklanka", garnish: "Skórka z pomarańczy", steps: ["Wszystkie składniki wstrząsamy w shakerze z lodem.", "Jeżeli używamy białka, najpierw wykonujemy dry shake (bez lodu), a następnie z lodem."] },
+            { name: "Tom Collins", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1575037614876-c3852d287df0?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml gin", "30ml sok z cytryny", "15ml syrop cukrowy", "Top up woda sodowa"], glass: "Collins glass / Wysoka szklanka", garnish: "Plaster cytryny", steps: ["Miksujemy w shakerze, przecedzamy do szkła z lodem.", "Dopełniamy wodą sodową i delikatnie mieszamy."] },
+            { name: "Margarita", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml tequila", "20ml Cointreau/triple sec", "20ml sok z limonki"], glass: "Kieliszek do Margarity", garnish: "Crusta z soli", steps: ["Brzeg kieliszka zwilżamy limonką i maczamy w soli.", "Składniki wstrząsamy w shakerze z lodem i cedzimy do kieliszka."] },
+            { name: "Cosmopolitan", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1639088661642-e08df9bc9233?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml wódka cytrynowa", "20ml Cointreau/triple sec", "15ml sok z limonki", "30ml sok żurawinowy"], glass: "Kieliszek koktajlowy typu coupe", garnish: "Flaming zest ze skóry pomarańczy", steps: ["Wszystkie składniki wstrząsamy w shakerze z lodem.", "Przecedzamy do schłodzonego kieliszka."] },
+            { name: "Orgasm", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=800&q=80", ingredients: ["1 część Baileys", "1 część Kahlúa", "1 część mleczko zagęszczone/śmietanka"], glass: "Niska szklanka", garnish: "Brak", steps: ["Składniki wstrząsamy w shakerze z lodem.", "Przecedzamy do szklanki."] },
+            { name: "White Russian", category: "Wstrząsane / Budowane", image: "https://images.unsplash.com/photo-1582232867500-1c05d7627402?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml wódka", "20ml likier kawowy", "30ml mleczko zagęszczone/śmietanka"], glass: "Niska szklanka", garnish: "Brak", steps: ["Metoda 1: budujemy w szkle i delikatnie mieszamy.", "Metoda 2: w shakerze ubijamy mleczko i przelewamy na wódkę z likierem i lodem."] },
+            { name: "Sex On The Beach", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1527661591450-0a256a42a033?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml wódka", "20ml likier brzoskwiniowy", "50ml sok pomarańczowy", "Sok żurawinowy"], glass: "Wysoka szklanka", garnish: "Plaster pomarańczy", steps: ["Miksujemy wódkę, likier brzoskwiniowy i sok pomarańczowy w shakerze.", "Przecedzamy do szklanki i po kościach lodu dopełniamy sokiem żurawinowym."] },
+            { name: "Long Island Iced Tea", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1514361892635-6b07e31e75f9?auto=format&fit=crop&w=800&q=80", ingredients: ["20ml wódka", "20ml tequila", "20ml biały rum", "20ml gin", "20ml Cointreau/triple sec", "20ml sok z cytryny", "20ml syrop cukrowy", "Cola"], glass: "Wysoka szklanka (Highball)", garnish: "Plaster cytryny", steps: ["Wszystkie składniki prócz coli mieszamy w shakerze z lodem.", "Przecedzamy i na koniec dodajemy odrobinę coli na wierzch."] },
+            { name: "Daiquiri", category: "Wstrząsane", image: "https://images.unsplash.com/photo-1563223771-3f044bb49b4c?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml biały rum", "20ml sok z limonki", "10ml syropu cukrowego"], glass: "Kieliszek koktajlowy typu coupe", garnish: "Plasterek limonki", steps: ["Składniki mocno wstrząsamy w shakerze z lodem.", "Przecedzamy podwójnie do schłodzonego szkła."] },
+            
+            // MIESZANE
+            { name: "Negroni", category: "Stirowane", image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80", ingredients: ["1 część gin", "1 część Campari", "1 część czerwony słodki wermut"], glass: "Niska szklanka (Old Fashioned)", garnish: "Skórka pomarańczy", steps: ["Wlewamy składniki bezpośrednio na lód.", "Mieszamy delikatnie łyżką barmańską do schłodzenia."] },
+            { name: "Martini", category: "Stirowane", image: "https://images.unsplash.com/photo-1578278854499-52e1e909a39f?auto=format&fit=crop&w=800&q=80", ingredients: ["60ml gin", "20ml wytrawny wermouth"], glass: "Kieliszek koktajlowy", garnish: "Skórka cytryny lub oliwka", steps: ["Składniki mieszamy w szklanicy barmańskiej z dużą ilością lodu.", "Przecedzamy do kieliszka i aromatyzujemy skórką cytryny."] },
+            { name: "Old Fashioned", category: "Stirowane", image: "https://images.unsplash.com/photo-1597075687490-8f673c6c17f6?auto=format&fit=crop&w=800&q=80", ingredients: ["50ml whiskey żytnia lub bourbon", "5ml syrop cukrowy", "3xdash Angostura Bitters"], glass: "Niska szklanka (Old Fashioned)", garnish: "Skórka pomarańczy", steps: ["Mieszamy syrop, bittery i whiskey z lodem.", "Serwujemy na czysty, świeży lód."] },
+            { name: "Manhattan", category: "Stirowane", image: "https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml whiskey żytnia lub bourbon", "20ml czerwony słodki wermut", "2xDash Angostura Bitter"], glass: "Kieliszek koktajlowy", garnish: "Wisienka koktajlowa", steps: ["Mieszamy w szklanicy barmańskiej ze sporym lodem.", "Cedzimy i dekorujemy czerwoną wisienką."] },
+            
+            // MUDDLOWANE
+            { name: "Mojito", category: "Muddlowane", image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml biały rum", "½ limonki", "Kilka listków świeżej mięty", "2ł. cukier trzcinowy/syrop cukrowy", "Top up woda gazowana", "Kruszony lód"], glass: "Wysoka szklanka", garnish: "Mięta i limonka", steps: ["Ugniatamy limonkę z cukrem w szklance.", "Dodajemy świeżą miętę, kruszony lód oraz rum.", "Mieszamy i dopełniamy wodą gazowaną."] },
+            { name: "Caipirinha", category: "Muddlowane", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml cachaça", "Pół limonki", "2ł. cukier trzcinowy", "Kruszony lód"], glass: "Niska szklanka", garnish: "Cząstka limonki", steps: ["Ugniatamy limonkę z cukrem bezpośrednio w szkle.", "Dodajemy kruszony lód, dolewamy cachaçę i energicznie mieszamy."] },
+            
+            // ROLOWANE
+            { name: "Krwawa Mary", category: "Rolowane / Throwing", image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml wódka", "ok. 100ml sok pomidorowy", "15ml soku z cytryny", "Dash sosu Worchestershire, Tabasco, sól, pieprz"], glass: "Wysoka szklanka", garnish: "Seler naciowy", steps: ["Mieszamy delikatną techniką throwing (przelewając z kubka do kubka).", "Przelewamy do szklanki i ozdabiamy świeżym selerem naciowym."] },
+            
+            // DODATKOWE
+            { name: "Gin Basil Smash", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1550246140-5119ae4790b8?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml gin", "30 ml sok z cytryny", "15 ml syrop cukrowy", "Garść bazylii"], glass: "Niska szklanka", garnish: "Liść bazylii", steps: ["Shakujemy mocno wszystkie składniki razem z bazylią i lodem.", "Przecedzamy podwójnie do szklanki z lodem."] },
+            { name: "Whiskey Smash", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1473347895085-f0e74f88e146?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml whisky", "30 ml sok z cytryny", "15 ml syrop cukrowy", "Kilka listków mięty"], glass: "Niska szklanka", garnish: "Gałązka mięty", steps: ["Do shakera wrzucamy miętę, cząstki cytryny i ugniatamy.", "Dodajemy whiskey, lód i wstrząsamy."] },
+            { name: "Amaretto Sour", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1567114382582-89510113c233?auto=format&fit=crop&w=800&q=80", ingredients: ["60 ml amaretto", "30 ml sok z cytryny", "20 ml białko jajka", "Dash Angostura"], glass: "Niska szklanka", garnish: "Skórka z cytryny / wiśnia", steps: ["Wykonujemy dry shake (wstrząsanie bez lodu).", "Dodajemy lód, shakujemy ponownie i cedzimy na świeży lód."] },
+            { name: "Mai-Tai", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1512401666699-25f05cd669a8?auto=format&fit=crop&w=800&q=80", ingredients: ["30 ml rum jamajski", "30 ml rum agricole", "15 ml triple sec", "15 ml syrop orgeat", "30 ml sok z limonki"], glass: "Naczynie typu tiki", garnish: "Mięta, limonka", steps: ["Składniki energicznie mieszamy z kruszonym lodem lub wykonujemy dirty shake.", "Serwujemy w kubku tiki."] },
+            { name: "Old Cuban", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1583269223385-d62f6b8bda5a?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml starzony rum", "20 ml sok z limonki", "10 ml syrop cukrowy", "Kilka listków mięty", "2x dash Angostura", "Ok. 20-30 ml wytrawne wino musujące"], glass: "Kieliszek koktajlowy typu coupe", garnish: "Liść mięty", steps: ["Wstrząsamy rum, limonkę, syrop, miętę i bittery w shakerze.", "Przecedzamy do kieliszka i dopełniamy winem musującym."] },
+            { name: "French 75", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1581005886638-348da7042f4c?auto=format&fit=crop&w=800&q=80", ingredients: ["30 ml gin", "20 ml sok z cytryny", "10 ml syrop cukrowy", "Dopełnienie wytrawnym winem musującym"], glass: "Kieliszek koktajlowy / flet", garnish: "Skórka cytryny", steps: ["Shakujemy gin, sok i syrop z lodem.", "Cedzimy i dolewamy powoli szampana lub prosecco."] },
+            { name: "Moscow Mule", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1520163351910-b9cc815d4833?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml wódka", "Sok z 2-3 cząstek limonki", "Dopełnienie ginger beer"], glass: "Miedziany kubek", garnish: "Cząstka limonki", steps: ["Wlewamy wódkę i sok z limonki do miedzianego kubka z lodem.", "Dopełniamy ginger beer."] },
+            { name: "Dark 'n Stormy", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1500318047970-e4b52c0021c3?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml starzony rum", "Sok z 2-3 cząstek limonki", "Ginger beer"], glass: "Wysoka szklanka", garnish: "Limonka", steps: ["Wyciskamy limonkę i dopełniamy ginger beer.", "Na koniec ostrożnie wlewamy rum jako górną warstwę (float)."] },
+            { name: "Clover Club", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1586503690412-2fbd659a8c1f?auto=format&fit=crop&w=800&q=80", ingredients: ["60 ml gin", "20 ml sok z cytryny", "20 ml syrop malinowy", "20 ml białko jajka"], glass: "Kieliszek koktajlowy", garnish: "Maliny", steps: ["Wykonujemy dry shake (bez lodu) dla ubicia piany z białka.", "Dodajemy lód, mocno wstrząsamy i przecedzamy (double strain)."] },
+            { name: "Side Car", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1595088210389-7cfc93d9b047?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml koniak", "20 ml Cointreau", "20 ml sok z cytryny"], glass: "Kieliszek koktajlowy", garnish: "Crusta z cukru", steps: ["Brzeg kieliszka zwilżamy cytryną i obtaczamy w cukrze.", "Shakujemy składniki z lodem i przecedzamy."] },
+            { name: "Southside", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1580136979644-245f34fb469a?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml gin", "30 ml sok z cytryny", "15 ml syrop cukrowy", "Kilka listków mięty"], glass: "Kieliszek koktajlowy", garnish: "Mięta", steps: ["Mocno shakujemy wszystkie składniki razem z miętą i lodem.", "Podwójnie przecedzamy do kieliszka."] },
+            { name: "Strawberry Margarita", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1592931557088-3465b0907e32?auto=format&fit=crop&w=800&q=80", ingredients: ["40ml tequila", "20ml Cointreau/triple sec", "20ml sok z limonki", "Truskawki/przecier truskawkowy"], glass: "Kieliszek do Margarity", garnish: "Truskawka, crusta z cukru", steps: ["Ugniatamy truskawki w shakerze i dodajemy pozostałe płyny.", "Shakujemy intensywnie z lodem i cedzimy do kieliszka z cukrowym brzegiem."] },
+            { name: "Ruska Heroina", category: "Dodatkowe / Shot", image: "https://images.unsplash.com/photo-1536480749-361958611186?auto=format&fit=crop&w=800&q=80", ingredients: ["½ Kahlúa", "½ Absynt"], glass: "Kieliszek (Shot)", garnish: "Brak", steps: ["Wlewamy delikatnie Kahlúa na spód kieliszka.", "Na wierzch ostrożnie tworzymy warstwę z zielonego absyntu."] },
+            { name: "Americano", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1600293102434-6014e4b2dcd6?auto=format&fit=crop&w=800&q=80", ingredients: ["1 część Campari", "1 część słodki czerwony wermut", "Woda gazowana"], glass: "Niska szklanka", garnish: "Plaster/półplaster pomarańczy", steps: ["Składniki wlewamy bezpośrednio do szklanki z lodem i delikatnie mieszamy."] },
+            { name: "Boulevardier", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1527662058098-b8db2c9183cc?auto=format&fit=crop&w=800&q=80", ingredients: ["30 ml Bourbon", "20 ml Campari", "20 ml słodki czerwony wermut"], glass: "Niska szklanka", garnish: "Zest z pomarańczy", steps: ["Mieszamy w szklanicy barmańskiej do schłodzenia.", "Cedzimy i aromatyzujemy zestem."] },
+            { name: "Martinez", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1610444372990-2bdc24f60f64?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml gin", "20 ml słodki czerwony wermut", "5 ml likier maraschino", "1x dash Angostura"], glass: "Kieliszek koktajlowy", garnish: "Skórka pomarańczy", steps: ["Łączymy składniki w szklanicy barmańskiej mieszając łyżką.", "Przecedzamy do czystego kieliszka."] },
+            { name: "Paloma", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1592659174154-b633083c2ba6?auto=format&fit=crop&w=800&q=80", ingredients: ["40 ml tequila", "30 ml sok grejpfrutowy", "15 ml sok z limonki", "10 ml syrop z agawy", "Woda gazowana"], glass: "Wysoka szklanka", garnish: "Plaster grejpfruta / limonka", steps: ["Tequilę, sok i syrop miksujemy w shakerze.", "Cedzimy i dopełniamy świeżą wodą gazowaną."] },
+            { name: "Chmurka", category: "Dodatkowe / Shot", image: "https://images.unsplash.com/photo-1571520626359-07b9f337f7a7?auto=format&fit=crop&w=800&q=80", ingredients: ["½ Archers", "½ Wódka", "Kilka kropel mleczka zagęszczonego/śmietanki"], glass: "Kieliszek (Shot)", garnish: "Brak", steps: ["Wlewamy delikatnie Archers i Wódkę tworząc warstwy.", "Na koniec przy pomocy rurki dodajemy krople mleczka zagęszczonego."] },
+            { name: "Hemingway Daiquiri", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1583091054044-b2586a603a11?auto=format&fit=crop&w=800&q=80", ingredients: ["60 ml rum", "30 ml sok grejpfrutowy", "20 ml sok z limonki", "5 ml likier maraschino"], glass: "Kieliszek koktajlowy typu coupe", garnish: "Plaster limonki", steps: ["Wszystkie składniki wstrząsamy z lodem.", "Cedzimy do kieliszka (double strain)."] },
+            { name: "Hugo", category: "Dodatkowe", image: "https://images.unsplash.com/photo-1597022204992-16a7040d86f7?auto=format&fit=crop&w=800&q=80", ingredients: ["Ok. 60 ml prosecco", "10-20 ml syrop/likier/kordiał elderflower", "20 ml sok z limonki", "Kilka listków mięty", "Splash woda gazowana"], glass: "Kieliszek do wina", garnish: "Mięta, limonka", steps: ["Budujemy bezpośrednio w kieliszku z dużą ilością lodu.", "Lekko mieszamy przed podaniem."] },
+            { name: "Małpi Móżdżek", category: "Dodatkowe / Shot", image: "https://images.unsplash.com/photo-1619623297059-869f7ebbb433?auto=format&fit=crop&w=800&q=80", ingredients: ["2/3 Archers", "1/3 Baileys", "ok. 5 ml grenadyna"], glass: "Kieliszek (Shot)", garnish: "Brak", steps: ["Wlewamy Archersa do kieliszka, tworzymy delikatną warstwę z Baileysa.", "Wkraplamy grenadynę na sam środek."] }
+        ];
+
+        const gridContainer = document.getElementById('drinks-grid');
+        const searchInput = document.getElementById('searchInput');
+        const noResultsMsg = document.getElementById('no-results');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalClose = document.getElementById('modal-close');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let currentFilter = "all";
+
+        // Przełączanie Trybu Jasnego / Ciemnego
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            if (isDark) {
+                document.body.classList.remove('dark-mode');
+                document.documentElement.classList.add('light-mode-forced');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.remove('light-mode-forced');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Wczytaj zapisany motyw
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-mode-forced');
+        }
+
+        // Filtrowanie Kategorii
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                renderCards(searchInput.value);
+            });
+        });
+
+        function renderCards(filterText = "") {
+            gridContainer.innerHTML = '';
+            let displayedCount = 0;
+            const lowerFilter = filterText.toLowerCase();
+
+            drinks.forEach(drink => {
+                const searchString = `${drink.name} ${drink.category} ${drink.ingredients.join(' ')}`.toLowerCase();
+                const matchesSearch = searchString.includes(lowerFilter);
+                
+                let matchesCategory = false;
+                if (currentFilter === "all") {
+                    matchesCategory = true;
+                } else if (currentFilter === "Shot") {
+                    matchesCategory = drink.category.toLowerCase().includes("shot");
+                } else {
+                    matchesCategory = drink.category.toLowerCase().includes(currentFilter.toLowerCase());
+                }
+
+                if (matchesSearch && matchesCategory) {
+                    displayedCount++;
+                    const card = document.createElement('article');
+                    card.className = 'card';
+                    card.tabIndex = 0;
+                    
+                    const ingredientsList = drink.ingredients.map(ing => `<li>${ing}</li>`).join('');
+
+                    card.innerHTML = `
+                        <div class="card-image-wrapper skeleton">
+                            <img src="${drink.image}" alt="${drink.name}" class="card-image" loading="lazy" onload="this.parentElement.classList.remove('skeleton'); this.classList.add('loaded')" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80';">
+                            <div class="card-overlay">
+                                <h3>Składniki:</h3>
+                                <ul>${ingredientsList}</ul>
+                            </div>
+                        </div>
+                        <h2 class="card-title">${drink.name}</h2>
+                    `;
+
+                    card.addEventListener('click', () => openModal(drink));
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openModal(drink);
+                        }
+                    });
+
+                    gridContainer.appendChild(card);
+                }
+            });
+
+            noResultsMsg.style.display = displayedCount === 0 ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            renderCards(e.target.value);
+            if(window.scrollY > 500 && e.target.value.length > 0) {
+                document.getElementById('koktajle').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        function openModal(drink) {
+            document.getElementById('modal-title').textContent = drink.name;
+            document.getElementById('modal-category').textContent = drink.category;
+            
+            // Do modala wrzucamy zdjęcie z głównej karty, żeby od razu się pokazało
+            const cardTitles = Array.from(document.querySelectorAll('.card-title'));
+            const matchedTitle = cardTitles.find(el => el.textContent === drink.name);
+            const cardImgSrc = matchedTitle ? matchedTitle.previousElementSibling.querySelector('.card-image').src : drink.image;
+            
+            document.getElementById('modal-img').src = cardImgSrc;
+            document.getElementById('modal-img').alt = drink.name;
+            
+            document.getElementById('modal-ingredients').innerHTML = drink.ingredients.map(i => `<li>${i}</li>`).join('');
+            document.getElementById('modal-steps').innerHTML = drink.steps.map(s => `<li>${s}</li>`).join('');
+            
+            document.getElementById('modal-glass').textContent = drink.glass;
+            document.getElementById('modal-garnish').textContent = drink.garnish;
+
+            modalBackdrop.classList.add('active');
+            modalBackdrop.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            modalClose.focus();
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.remove('active');
+            modalBackdrop.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalBackdrop.classList.contains('active')) closeModal();
+        });
+
+        // Start
+        renderCards();
+    </script>
+</body>
+</html>

@@ -85,6 +85,15 @@ export const projects = [
     link: "/kalkulator-powloki",
     category: "Narzędzie",
   },
+  {
+    id: "kompendium-barmanskie",
+    emoji: "🍹",
+    title: "Kompendium Barmańskie",
+    description: "Kompleksowa baza wiedzy barmańskiej — receptury koktajli, teoria miksologii, sprzęt barowy i przegląd marek alkoholowych.",
+    technologies: ["HTML5", "CSS3", "JavaScript"],
+    link: "/kompendium-barmanskie",
+    category: "Baza wiedzy",
+  },
 ];
 
 export const navLinks = [
