@@ -5,15 +5,18 @@ import { motion, useScroll, useSpring } from "motion/react";
 export default function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
+    stiffness: 80,
     damping: 30,
     restDelta: 0.001,
   });
 
   return (
     <motion.div
-      className="fixed left-0 right-0 top-0 z-[60] h-1 origin-left"
-      style={{ scaleX, background: "var(--accent-gradient)", boxShadow: "0 0 10px rgba(0, 210, 255, 0.3)" }}
+      className="fixed left-0 right-0 top-0 z-[60] h-[2px] origin-left"
+      style={{
+        scaleX,
+        background: "var(--scroll-gradient)",
+      }}
     />
   );
 }

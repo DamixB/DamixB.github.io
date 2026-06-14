@@ -20,10 +20,7 @@ export default function AboutSection() {
         >
           {/* Left — Bio */}
           <motion.div variants={fadeInUp}>
-            <p
-              className="text-lg leading-relaxed"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <p className="text-lg leading-relaxed color-secondary">
               {personalInfo.bio}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -33,24 +30,11 @@ export default function AboutSection() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
-                  style={{
-                    background: "var(--bg-surface)",
-                    color: "var(--text-secondary)",
-                    border: "1px solid var(--border-subtle)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--accent-neon)";
-                    e.currentTarget.style.color = "var(--accent-neon)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border-subtle)";
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                  }}
+                  className="glass-button h-auto px-5 py-2 text-sm"
                   aria-label={`Przejdź do profilu ${link.platform}`}
                 >
                   {link.platform}
-                  <span className="text-xs opacity-60">↗</span>
+                  <span className="text-xs opacity-50">↗</span>
                 </a>
               ))}
             </div>
@@ -65,23 +49,13 @@ export default function AboutSection() {
               <motion.div
                 key={item.title}
                 variants={fadeInUp}
-                className="card-glow rounded-xl p-4 transition-all duration-300"
-                style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border-subtle)",
-                }}
+                className="glass-card p-4"
               >
                 <span className="mb-2 inline-block text-2xl">{item.icon}</span>
-                <h3
-                  className="text-sm font-semibold leading-tight"
-                  style={{ color: "var(--text-primary)" }}
-                >
+                <h3 className="text-sm font-semibold leading-tight color-primary">
                   {item.title}
                 </h3>
-                <p
-                  className="mt-1 text-xs"
-                  style={{ color: "var(--text-muted)" }}
-                >
+                <p className="mt-1 text-xs color-muted">
                   {item.description}
                 </p>
               </motion.div>

@@ -20,62 +20,32 @@ export default function ProjectsSection() {
         >
           {projects.map((project) => (
             <motion.div key={project.id} variants={fadeInUp}>
-              <div
-                className="card-glow group relative flex h-full flex-col rounded-2xl p-6 transition-all duration-400 ease-out"
-                style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border-subtle)",
-                  boxShadow: "var(--shadow-card)",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "rgba(0, 210, 255, 0.2)";
-                  el.style.boxShadow = "var(--shadow-hover)";
-                  el.style.transform = "translateY(-4px)";
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = "var(--border-subtle)";
-                  el.style.boxShadow = "var(--shadow-card)";
-                  el.style.transform = "translateY(0)";
-                }}
-              >
+              <div className="glass-card group relative flex h-full flex-col p-6">
                 {/* Header: Emoji + Category */}
                 <div className="mb-5 flex items-center justify-between">
                   <div
                     className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
                     style={{
-                      background: "rgba(0, 210, 255, 0.06)",
-                      border: "1px solid rgba(0, 210, 255, 0.1)",
+                      background: "var(--card-icon-bg)",
+                      border: "1px solid var(--border-subtle)",
                     }}
                   >
                     {project.emoji}
                   </div>
-                  <span
-                    className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
-                    style={{
-                      background: "rgba(130, 80, 255, 0.08)",
-                      color: "var(--accent-purple)",
-                      border: "1px solid rgba(130, 80, 255, 0.12)",
-                    }}
-                  >
+                  <span className="glass-pill !py-1 !px-3 !text-[11px]">
                     {project.category}
                   </span>
                 </div>
 
                 {/* Title */}
                 <h3
-                  className="mb-3 text-xl font-bold transition-colors duration-300 group-hover:text-[var(--accent-neon)]"
-                  style={{ color: "var(--text-primary)" }}
+                  className="mb-3 text-xl font-bold transition-colors duration-300 group-hover:text-[var(--accent-blue)] color-primary"
                 >
                   {project.title}
                 </h3>
 
                 {/* Description */}
-                <p
-                  className="mb-6 flex-grow text-sm leading-relaxed"
-                  style={{ color: "var(--text-secondary)" }}
-                >
+                <p className="mb-6 flex-grow text-sm leading-relaxed color-secondary">
                   {project.description}
                 </p>
 
@@ -84,11 +54,10 @@ export default function ProjectsSection() {
                   {project.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="rounded-md px-2.5 py-1 text-[11px] font-medium"
+                      className="rounded-md px-2.5 py-1 text-[11px] font-medium color-muted"
                       style={{
-                        background: "rgba(255, 255, 255, 0.04)",
-                        color: "var(--text-muted)",
-                        border: "1px solid var(--border-subtle)",
+                        background: "var(--tech-badge-bg)",
+                        border: "1px solid var(--tech-badge-border)",
                       }}
                     >
                       {tech}
@@ -104,13 +73,12 @@ export default function ProjectsSection() {
                   >
                     <a
                       href={project.link}
-                      className="group/link inline-flex items-center gap-2 text-sm font-medium transition-all duration-300"
-                      style={{ color: "var(--accent-neon)" }}
+                      className="group/link inline-flex items-center gap-2 text-sm font-medium transition-all duration-300 color-secondary"
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.textShadow = "0 0 12px rgba(0, 210, 255, 0.4)";
+                        e.currentTarget.style.color = "var(--text-primary)";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.textShadow = "none";
+                        e.currentTarget.style.color = "var(--text-secondary)";
                       }}
                     >
                       Otwórz projekt

@@ -22,15 +22,11 @@ export default function SectionHeading({
       whileInView="animate"
       viewport={{ once: true, amount: 0.3 }}
     >
-      <h2
-        className="text-3xl font-bold tracking-tight sm:text-4xl"
-        style={{ color: "var(--text-primary)" }}
-      >
+      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl color-primary">
         {title}
-        <span style={{ color: "var(--accent-neon)" }}>.</span>
       </h2>
       {subtitle && (
-        <p className="mt-3 text-base" style={{ color: "var(--text-muted)" }}>
+        <p className="mt-3 text-base color-muted">
           {subtitle}
         </p>
       )}

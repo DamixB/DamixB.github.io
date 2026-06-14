@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { personalInfo } from "@/lib/data";
-import ParticleBackground from "@/components/ui/ParticleBackground";
 
 export default function HeroSection() {
   return (
@@ -12,17 +11,30 @@ export default function HeroSection() {
       id="hero"
       className="relative flex min-h-[92vh] flex-col justify-center overflow-hidden"
     >
-      {/* Interactive particle background */}
-      <ParticleBackground />
-
-      {/* Ambient glow orbs */}
+      {/* Ambient gradient orbs — Apple style */}
       <div
-        className="pointer-events-none absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full opacity-20 blur-[120px]"
-        style={{ background: "var(--accent-neon)" }}
+        className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full blur-[140px]"
+        style={{
+          background: "linear-gradient(135deg, var(--accent-blue), #5E5CE6)",
+          opacity: "var(--orb-opacity)",
+          animation: "orbFloat 20s ease-in-out infinite",
+        }}
       />
       <div
-        className="pointer-events-none absolute -bottom-40 -right-40 h-[400px] w-[400px] rounded-full opacity-15 blur-[120px]"
-        style={{ background: "var(--accent-purple)" }}
+        className="pointer-events-none absolute -bottom-32 -right-32 h-[400px] w-[400px] rounded-full blur-[140px]"
+        style={{
+          background: "linear-gradient(135deg, var(--accent-purple), #FF6482)",
+          opacity: "var(--orb-opacity)",
+          animation: "orbFloat 25s ease-in-out infinite reverse",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
+        style={{
+          background: "linear-gradient(135deg, var(--status-green), var(--accent-blue))",
+          opacity: "calc(var(--orb-opacity) * 0.5)",
+          animation: "orbFloat 30s ease-in-out infinite",
+        }}
       />
 
       <div className="relative z-10 mx-auto w-full max-w-5xl px-6 pt-20">
@@ -32,19 +44,12 @@ export default function HeroSection() {
           animate="animate"
         >
           <motion.div variants={fadeInUp} className="mb-6">
-            <span
-              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
-              style={{
-                background: "rgba(0, 210, 255, 0.08)",
-                color: "var(--accent-neon)",
-                border: "1px solid rgba(0, 210, 255, 0.15)",
-              }}
-            >
+            <span className="glass-pill">
               <span
                 className="inline-block h-1.5 w-1.5 rounded-full"
                 style={{
-                  background: "var(--accent-neon)",
-                  animation: "neonPulse 2s ease-in-out infinite",
+                  background: "var(--status-green)",
+                  animation: "glassPulse 2s ease-in-out infinite",
                 }}
               />
               Portfolio & Narzędzia
@@ -52,18 +57,17 @@ export default function HeroSection() {
           </motion.div>
 
           <motion.h1
-            className="mb-6 text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+            className="mb-6 text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
             variants={fadeInUp}
           >
-            <span style={{ color: "var(--text-primary)" }}>Tworzę </span>
-            <span className="text-neon-gradient">narzędzia</span>
+            <span className="text-subtle-gradient">Tworzę </span>
+            <span className="text-apple-gradient">narzędzia</span>
             <br />
-            <span style={{ color: "var(--text-primary)" }}>i rozwiązania.</span>
+            <span className="text-subtle-gradient">i rozwiązania.</span>
           </motion.h1>
 
           <motion.p
-            className="mb-12 max-w-2xl text-lg leading-relaxed sm:text-xl"
-            style={{ color: "var(--text-secondary)" }}
+            className="mb-12 max-w-2xl text-lg leading-relaxed sm:text-xl color-secondary"
             variants={fadeInUp}
           >
             {personalInfo.bio}
@@ -72,18 +76,7 @@ export default function HeroSection() {
           <motion.div className="flex flex-wrap items-center gap-4" variants={fadeInUp}>
             <Link
               href="/#projects"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full px-8 font-medium transition-all duration-300 hover:-translate-y-0.5"
-              style={{
-                background: "var(--accent-gradient)",
-                color: "#0a0a0f",
-                boxShadow: "var(--shadow-neon)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "var(--shadow-neon-strong)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "var(--shadow-neon)";
-              }}
+              className="glass-button glass-button-primary h-12 px-8 font-medium"
             >
               Zobacz projekty
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -96,22 +89,7 @@ export default function HeroSection() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 hover:-translate-y-0.5"
-                  style={{
-                    background: "var(--bg-surface)",
-                    border: "1px solid var(--border-subtle)",
-                    color: "var(--text-secondary)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--accent-neon)";
-                    e.currentTarget.style.color = "var(--accent-neon)";
-                    e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 210, 255, 0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border-subtle)";
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
+                  className="glass-button h-10 w-10 !gap-0 !px-0"
                   aria-label={`Przejdź do profilu ${link.platform}`}
                   title={link.platform}
                 >

@@ -18,16 +18,24 @@ export default function Footer() {
   return (
     <footer
       className="border-t"
-      style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-subtle)" }}
+      style={{
+        backgroundColor: "var(--bg-footer)",
+        backdropFilter: "blur(20px) saturate(150%)",
+        WebkitBackdropFilter: "blur(20px) saturate(150%)",
+        borderColor: "var(--border-subtle)",
+      }}
     >
       <div className="mx-auto max-w-6xl px-6 py-12 md:py-16">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <Link href="/" className="text-xl font-extrabold tracking-tighter">
-              <span className="text-neon-gradient">damixb</span>
-              <span style={{ color: "var(--text-muted)" }}>.github.io</span>
+            <Link
+              href="/"
+              className="text-lg font-semibold tracking-tight color-primary"
+            >
+              damixb
+              <span className="color-muted">.dev</span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed color-secondary">
               {personalInfo.bio}
             </p>
             <div className="mt-4 flex gap-3">
@@ -39,15 +47,17 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300"
                   style={{
-                    background: "rgba(255, 255, 255, 0.04)",
+                    background: "var(--social-bg)",
                     border: "1px solid var(--border-subtle)",
                     color: "var(--text-muted)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--accent-neon)";
-                    e.currentTarget.style.color = "var(--accent-neon)";
+                    e.currentTarget.style.background = "var(--social-bg-hover)";
+                    e.currentTarget.style.borderColor = "var(--border-strong)";
+                    e.currentTarget.style.color = "var(--text-primary)";
                   }}
                   onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "var(--social-bg)";
                     e.currentTarget.style.borderColor = "var(--border-subtle)";
                     e.currentTarget.style.color = "var(--text-muted)";
                   }}
@@ -67,14 +77,21 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold" style={{ color: "var(--text-primary)" }}>Na skróty</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider color-secondary">
+              Na skróty
+            </h3>
+            <ul className="space-y-2.5">
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm transition-colors hover:text-[var(--accent-neon)]"
-                    style={{ color: "var(--text-secondary)" }}
+                    className="text-sm transition-colors duration-300 color-muted"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--text-primary)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--text-muted)";
+                    }}
                   >
                     {link.label}
                   </Link>
@@ -84,14 +101,21 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold" style={{ color: "var(--text-primary)" }}>Informacje prawne</h3>
-            <ul className="space-y-2">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider color-secondary">
+              Informacje prawne
+            </h3>
+            <ul className="space-y-2.5">
               {legalLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm transition-colors hover:text-[var(--accent-neon)]"
-                    style={{ color: "var(--text-secondary)" }}
+                    className="text-sm transition-colors duration-300 color-muted"
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--text-primary)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--text-muted)";
+                    }}
                   >
                     {link.label}
                   </Link>
@@ -103,14 +127,14 @@ export default function Footer() {
 
         <div
           className="mt-12 h-px w-full"
-          style={{ background: "linear-gradient(90deg, transparent, var(--glow-cyan), var(--glow-purple), transparent)" }}
+          style={{ background: "linear-gradient(90deg, transparent, var(--divider-color), transparent)" }}
         />
         <div className="mt-6 flex flex-col items-center justify-between gap-2 md:flex-row">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            © {new Date().getFullYear()} damixb.github.io — Wszystkie prawa zastrzeżone
+          <p className="text-sm color-muted">
+            © {new Date().getFullYear()} damixb.dev — Wszystkie prawa zastrzeżone
           </p>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Zbudowane z pasją i kodem ⚡
+          <p className="text-sm color-muted">
+            Zbudowane z pasją i kodem
           </p>
         </div>
       </div>

@@ -23,7 +23,7 @@ const jsonLd = {
 
 export default function Home() {
   return (
-    <>
+    <div className="home-theme-wrapper flex-1 flex flex-col w-full">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -42,6 +42,6 @@ export default function Home() {
         <ContactSection />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

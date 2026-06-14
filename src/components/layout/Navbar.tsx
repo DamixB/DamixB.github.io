@@ -61,23 +61,17 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "border-b backdrop-blur-xl"
-          : "bg-transparent"
+      className={`fixed top-0 z-50 w-full transition-all duration-500 ${
+        scrolled ? "glass-nav" : "bg-transparent"
       }`}
-      style={{
-        backgroundColor: scrolled ? "rgba(10, 10, 15, 0.85)" : "transparent",
-        borderColor: scrolled ? "var(--border-subtle)" : "transparent",
-      }}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link
           href="/"
-          className="text-2xl font-extrabold tracking-tighter transition-opacity hover:opacity-80"
+          className="text-lg font-semibold tracking-tight transition-opacity hover:opacity-70 color-primary"
         >
-          <span className="text-neon-gradient">damixb</span>
-          <span style={{ color: "var(--text-muted)" }}>.github.io</span>
+          damixb
+          <span className="color-muted">.dev</span>
         </Link>
 
         {/* Desktop Menu */}
@@ -86,26 +80,12 @@ export default function Navbar() {
             const isContact = link.href === "/#contact";
 
             if (isContact) {
-              // CTA button for "Kontakt" — highlighted for conversion
               return (
                 <Link
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
-                  style={{
-                    background: "var(--accent-gradient)",
-                    color: "#0a0a0f",
-                    boxShadow: isActiveLink(link.href) ? "var(--shadow-neon)" : "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "var(--shadow-neon)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActiveLink(link.href)) {
-                      e.currentTarget.style.boxShadow = "none";
-                    }
-                  }}
+                  className="glass-button glass-button-primary h-9 px-5 text-sm font-medium"
                 >
                   {link.label}
                   <span className="text-xs">→</span>
@@ -118,21 +98,33 @@ export default function Navbar() {
                 key={link.label}
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
-                className="group relative text-sm font-medium transition-colors"
-                style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
+                className={`group relative text-sm font-medium transition-colors duration-300 ${
+                  isActiveLink(link.href)
+                    ? "color-primary"
+                    : "color-secondary hover:!color-primary"
+                }`}
+                style={{
+                  color: isActiveLink(link.href)
+                    ? "var(--text-primary)"
+                    : "var(--text-secondary)",
+                }}
                 onMouseEnter={(e) => {
-                  if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-primary)";
+                  if (!isActiveLink(link.href))
+                    e.currentTarget.style.color = "var(--text-primary)";
                 }}
                 onMouseLeave={(e) => {
-                  if (!isActiveLink(link.href)) e.currentTarget.style.color = "var(--text-secondary)";
+                  if (!isActiveLink(link.href))
+                    e.currentTarget.style.color = "var(--text-secondary)";
                 }}
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-1 left-0 h-0.5 w-full origin-left transition-transform duration-300 ${
-                    isActiveLink(link.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  className={`absolute -bottom-1 left-0 h-[1.5px] w-full origin-left transition-transform duration-300 ${
+                    isActiveLink(link.href)
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
                   }`}
-                  style={{ background: "var(--accent-neon)" }}
+                  style={{ background: "var(--text-primary)" }}
                 />
               </Link>
             );
@@ -147,9 +139,24 @@ export default function Navbar() {
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
         >
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${mobileMenuOpen ? "translate-y-2 rotate-45" : ""}`} style={{ background: "var(--text-primary)" }} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : "opacity-100"}`} style={{ background: "var(--text-primary)" }} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${mobileMenuOpen ? "-translate-y-2 -rotate-45" : ""}`} style={{ background: "var(--text-primary)" }} />
+          <span
+            className={`block h-[1.5px] w-5 rounded-full transition-all duration-300 ${
+              mobileMenuOpen ? "translate-y-[7px] rotate-45" : ""
+            }`}
+            style={{ background: "var(--text-primary)" }}
+          />
+          <span
+            className={`block h-[1.5px] w-5 rounded-full transition-all duration-300 ${
+              mobileMenuOpen ? "opacity-0" : "opacity-100"
+            }`}
+            style={{ background: "var(--text-primary)" }}
+          />
+          <span
+            className={`block h-[1.5px] w-5 rounded-full transition-all duration-300 ${
+              mobileMenuOpen ? "-translate-y-[7px] -rotate-45" : ""
+            }`}
+            style={{ background: "var(--text-primary)" }}
+          />
         </button>
       </div>
 
@@ -160,8 +167,12 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-20 z-40 px-6 py-8 md:hidden"
-            style={{ background: "var(--bg-primary)" }}
+            className="fixed inset-0 top-16 z-40 px-6 py-8 md:hidden"
+            style={{
+              background: "var(--mobile-overlay-bg)",
+              backdropFilter: "blur(40px) saturate(180%)",
+              WebkitBackdropFilter: "blur(40px) saturate(180%)",
+            }}
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -169,8 +180,12 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className="text-2xl font-semibold"
-                  style={{ color: isActiveLink(link.href) ? "var(--accent-neon)" : "var(--text-secondary)" }}
+                  className="text-2xl font-semibold transition-colors duration-300"
+                  style={{
+                    color: isActiveLink(link.href)
+                      ? "var(--text-primary)"
+                      : "var(--text-secondary)",
+                  }}
                 >
                   {link.label}
                 </Link>

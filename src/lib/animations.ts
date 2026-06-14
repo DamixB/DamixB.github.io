@@ -1,90 +1,90 @@
-﻿// ============================================================================
+// ============================================================================
 // damixb.github.io — Animation Presets
-// Reusable Motion (Framer Motion) animation variants & configs
+// Apple Liquid Glass — Smooth, refined motion
 // ============================================================================
 
 import type { Variants, Transition } from 'motion/react';
 
-// --- Shared Transitions ------------------------------------------------------
+// --- Shared Transitions — Apple-style smooth & weighty ---
 
-const springTransition: Transition = {
+const smoothTransition: Transition = {
   type: 'spring',
-  stiffness: 100,
-  damping: 15,
-  mass: 0.8,
-};
-
-const smoothSpring: Transition = {
-  type: 'spring',
-  stiffness: 80,
+  stiffness: 70,
   damping: 20,
   mass: 1,
 };
 
-const snappySpring: Transition = {
+const gentleTransition: Transition = {
   type: 'spring',
-  stiffness: 200,
-  damping: 22,
-  mass: 0.6,
+  stiffness: 50,
+  damping: 25,
+  mass: 1.2,
 };
 
-// --- Fade Variants -----------------------------------------------------------
+const snappyTransition: Transition = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 25,
+  mass: 0.8,
+};
+
+// --- Fade Variants ---
 
 export const fadeInUp: Variants = {
   initial: {
     opacity: 0,
-    y: 30,
+    y: 24,
   },
   animate: {
     opacity: 1,
     y: 0,
-    transition: springTransition,
+    transition: smoothTransition,
   },
 };
 
 export const fadeInDown: Variants = {
   initial: {
     opacity: 0,
-    y: -30,
+    y: -24,
   },
   animate: {
     opacity: 1,
     y: 0,
-    transition: springTransition,
+    transition: smoothTransition,
   },
 };
 
 export const fadeInLeft: Variants = {
   initial: {
     opacity: 0,
-    x: -30,
+    x: -24,
   },
   animate: {
     opacity: 1,
     x: 0,
-    transition: springTransition,
+    transition: smoothTransition,
   },
 };
 
 export const fadeInRight: Variants = {
   initial: {
     opacity: 0,
-    x: 30,
+    x: 24,
   },
   animate: {
     opacity: 1,
     x: 0,
-    transition: springTransition,
+    transition: smoothTransition,
   },
 };
 
-// --- Stagger Container -------------------------------------------------------
+// --- Stagger Containers ---
 
 export const staggerContainer: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
       delayChildren: 0.05,
     },
   },
@@ -94,7 +94,7 @@ export const staggerContainerSlow: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.12,
       delayChildren: 0.1,
     },
   },
@@ -104,122 +104,83 @@ export const staggerContainerFast: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.05,
+      staggerChildren: 0.04,
       delayChildren: 0.02,
     },
   },
 };
 
-// --- Scale Variants ----------------------------------------------------------
+// --- Scale Variants ---
 
 export const scaleIn: Variants = {
   initial: {
     opacity: 0,
-    scale: 0.8,
+    scale: 0.9,
   },
   animate: {
     opacity: 1,
     scale: 1,
-    transition: smoothSpring,
+    transition: gentleTransition,
   },
 };
 
 export const scaleInBounce: Variants = {
   initial: {
     opacity: 0,
-    scale: 0.5,
+    scale: 0.6,
   },
   animate: {
     opacity: 1,
     scale: 1,
-    transition: snappySpring,
+    transition: snappyTransition,
   },
 };
 
-// --- Slide Variants ----------------------------------------------------------
+// --- Slide Variants ---
 
 export const slideInFromLeft: Variants = {
   initial: {
-    x: -100,
+    x: -80,
     opacity: 0,
   },
   animate: {
     x: 0,
     opacity: 1,
-    transition: smoothSpring,
+    transition: gentleTransition,
   },
 };
 
 export const slideInFromRight: Variants = {
   initial: {
-    x: 100,
+    x: 80,
     opacity: 0,
   },
   animate: {
     x: 0,
     opacity: 1,
-    transition: smoothSpring,
+    transition: gentleTransition,
   },
 };
 
 export const slideInFromBottom: Variants = {
   initial: {
-    y: 100,
+    y: 80,
     opacity: 0,
   },
   animate: {
     y: 0,
     opacity: 1,
-    transition: smoothSpring,
+    transition: gentleTransition,
   },
 };
 
-// --- Glow Pulse (CSS Keyframes Object) ---------------------------------------
-// Use with inline style or CSS-in-JS for neon glow effects
-
-export const glowPulse = {
-  keyframes: {
-    '0%, 100%': {
-      boxShadow: '0 0 5px rgba(0, 245, 255, 0.3), 0 0 10px rgba(0, 245, 255, 0.15)',
-    },
-    '50%': {
-      boxShadow: '0 0 15px rgba(0, 245, 255, 0.6), 0 0 30px rgba(0, 245, 255, 0.3), 0 0 45px rgba(0, 245, 255, 0.15)',
-    },
-  },
-  animation: 'glowPulse 3s ease-in-out infinite',
-} as const;
-
-export const glowPulsePurple = {
-  keyframes: {
-    '0%, 100%': {
-      boxShadow: '0 0 5px rgba(180, 0, 255, 0.3), 0 0 10px rgba(180, 0, 255, 0.15)',
-    },
-    '50%': {
-      boxShadow: '0 0 15px rgba(180, 0, 255, 0.6), 0 0 30px rgba(180, 0, 255, 0.3), 0 0 45px rgba(180, 0, 255, 0.15)',
-    },
-  },
-  animation: 'glowPulsePurple 3s ease-in-out infinite',
-} as const;
-
-export const glowPulsePink = {
-  keyframes: {
-    '0%, 100%': {
-      boxShadow: '0 0 5px rgba(255, 0, 170, 0.3), 0 0 10px rgba(255, 0, 170, 0.15)',
-    },
-    '50%': {
-      boxShadow: '0 0 15px rgba(255, 0, 170, 0.6), 0 0 30px rgba(255, 0, 170, 0.3), 0 0 45px rgba(255, 0, 170, 0.15)',
-    },
-  },
-  animation: 'glowPulsePink 3s ease-in-out infinite',
-} as const;
-
-// --- Text / Letter Animation -------------------------------------------------
+// --- Text / Letter Animation ---
 
 export const letterAnimation: Variants = {
   initial: {
     opacity: 0,
-    y: 20,
-    rotateX: -90,
+    y: 16,
+    rotateX: -60,
   },
   animate: {
     opacity: 1,
@@ -227,8 +188,8 @@ export const letterAnimation: Variants = {
     rotateX: 0,
     transition: {
       type: 'spring',
-      stiffness: 150,
-      damping: 12,
+      stiffness: 120,
+      damping: 14,
     },
   },
 };
@@ -243,8 +204,7 @@ export const letterContainerAnimation: Variants = {
   },
 };
 
-// --- Viewport Config ---------------------------------------------------------
-// Default IntersectionObserver settings for scroll-triggered animations
+// --- Viewport Config ---
 
 export const viewportConfig = {
   once: true,
@@ -256,23 +216,18 @@ export const viewportConfigEager = {
   margin: '-50px' as const,
 };
 
-// --- Hover & Tap Presets -----------------------------------------------------
+// --- Hover & Tap Presets — Apple-refined ---
 
 export const hoverScale = {
-  scale: 1.05,
-  transition: { type: 'spring', stiffness: 400, damping: 15 },
+  scale: 1.03,
+  transition: { type: 'spring', stiffness: 300, damping: 20 },
 };
 
 export const tapScale = {
   scale: 0.97,
 };
 
-export const hoverGlow = {
-  boxShadow: '0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 245, 255, 0.2)',
-  transition: { duration: 0.3 },
-};
-
-// --- Page Transition Variants ------------------------------------------------
+// --- Page Transition ---
 
 export const pageTransition: Variants = {
   initial: {
@@ -282,33 +237,33 @@ export const pageTransition: Variants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: 'easeOut',
+      ease: [0.4, 0, 0.2, 1],
     },
   },
   exit: {
     opacity: 0,
     transition: {
       duration: 0.3,
-      ease: 'easeIn',
+      ease: [0.4, 0, 1, 1],
     },
   },
 };
 
-// --- Utility: Create Custom Delay Variant ------------------------------------
+// --- Utility: Create Custom Delay Variant ---
 
 export function createFadeInUp(delay: number = 0): Variants {
   return {
-    initial: { opacity: 0, y: 30 },
+    initial: { opacity: 0, y: 24 },
     animate: {
       opacity: 1,
       y: 0,
-      transition: { ...springTransition, delay },
+      transition: { ...smoothTransition, delay },
     },
   };
 }
 
 export function createStaggerContainer(
-  stagger: number = 0.1,
+  stagger: number = 0.08,
   delay: number = 0
 ): Variants {
   return {

@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin", "latin-ext"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
@@ -72,16 +66,23 @@ export default function RootLayout({
   return (
     <html
       lang="pl"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#0a0a0f] text-[#e8e8f0] font-[family-name:var(--font-inter)]">
+      <body
+        className="min-h-full flex flex-col"
+        style={{
+          fontFamily:
+            '"SF Pro Display", "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif',
+        }}
+      >
         {/* Skip-to-content — accessibility */}
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium"
           style={{
-            background: "var(--accent-neon)",
-            color: "#0a0a0f",
+            background: "var(--accent-blue)",
+            color: "#fff",
           }}
         >
           Przejdź do treści
